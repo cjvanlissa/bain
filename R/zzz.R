@@ -5,17 +5,15 @@
   body(t.test.default)[[18]] <<- quote({rval <- list(statistic = tstat, parameter = df, p.value = pval,
                                                     conf.int = cint, estimate = estimate, null.value = mu, alternative = alternative,
                                                     method = method, data.name = dname);
-  rval$n <- if(hasArg("y")){
-    n = c(nx, ny)
+  if(hasArg("y")&!paired){
+    rval$n <- c(nx, ny)
+    rval$v <- c(vx, vy)
   } else {
-    nx
-  };
-  rval$v <- if(hasArg("y")){
-    n = c(vx, vy)
-  } else {
-    vx
+    rval$n <- nx
+    rval$v <- vx
   }
   })
+  body(t.test.default)[[19]] <<- quote({class(rval) <- c("bain_htest", "htest")})
 }
 
 .onUnload <- function(libname, pkgname){

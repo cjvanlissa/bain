@@ -244,6 +244,58 @@ bain.lm <-
   }
 
 
+#' @method bain htest
+#' @export
+bain.htest <-
+  function(x,
+           hypothesis,
+           ...) {
+    stop("To be able to run bain on the results of an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t.test is replaced by a version that does return this necessary information.")
+}
+
+#' @method bain bain_htest
+#' @export
+bain.bain_htest <-
+  function(x,
+           hypothesis,
+           ...) {
+      cl <- match.call()
+      Args <- as.list(cl[-1])
+
+      estimate <- x$estimate
+      if(x$method == "Paired t-test"){
+        names(estimate) <- "difference"
+      } else {
+        names(estimate) <- substring(names(estimate), 9)
+      }
+
+      Args$estimate <- estimate
+      Args$n <- x$n
+
+      if(length(x$estimate) == 1){
+        Args$Sigma <- x$v/x$n
+        Args$groups <- 0
+        Args$joint_parameters <- 1
+      } else {
+        if (!x$method == " Two Sample t-test") {
+          Args$Sigma <- lapply(x$v/x$n, as.matrix)
+        } else {
+          df <- sum(x$n) - 2
+          v <- 0
+          if (x$n[1] > 1)
+            v <- v + (x$n[1] - 1) * x$v[1]
+          if (x$n[2] > 1)
+            v <- v + (x$n[2] - 1) * x$v[2]
+          v <- v/df
+          Args$Sigma <- lapply(v / sum(x$n), as.matrix)
+        }
+        Args$groups <- 1
+        Args$joint_parameters <- 0
+      }
+      Bain_res <- do.call(bain, Args)
+      Bain_res$Call <- cl
+      Bain_res
+}
 
 #' @method bain default
 #' @export
