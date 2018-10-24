@@ -1,0 +1,577 @@
+#' Bayes factors for informative hypotheses
+#'
+#' This function computes approximated adjusted fractional Bayes factors
+#' (AAFBFs) for equality, inequality, and about equality constrained
+#' hypotheses. The function can also be used for computing the AAFBF in the
+#' case of multiple groups.
+#'
+#' The vector "estimate" and the matrix (or list) "Sigma" should be obtained
+#' before evaluating hypotheses in Bain. For examples, see Gu, Mulder, and
+#' Hoijtink (2017) and Hoijtink, Gu, and Mulder (unpublished) and under the
+#' MGBain button at http://informative-hypotheses.sites.uu.nl/ were also the
+#' papers and other information can be found.
+#'
+#' The length of "estimate" should be equal to grouppara * P + jointpara, where
+#' P denotes the number of groups or the length of list "Sigma".
+#'
+#' "ERr" is used to specify equality constraints, and "IRr" is used to specify
+#' inequality constraints. The general form of the constraints is ER * t^T = r
+#' and IR * t^T = r where t is a vector containing the estimates, ER is a
+#' length of t by number of equality constraints matrix, IR is a length of t by
+#' number of inequality constraints matrix, and r (used with ER) has a length
+#' equal to the number of equality constraints, and r (used with IR) has a
+#' length equal to the number of inequality constraints. ER, IR, and r contain
+#' real numbers.
+#'
+#' %%For example, an equality constraint t1=t2+1 can be specified as
+#' ER*(t1,t2)^T = r, where ER = (1,-1), and r = 1. %%Then ERr = (ER,r) =
+#' (1,-1,1), which is provided to Bain using the command
+#' ERr<-matrix(c(1,-1,1),nrow=1,ncol=3%%,byrow = TRUE).
+#'
+#' %%Another example, if the inequality constraints are t1 > t2 and t2 > t3
+#' then IR * (t1,t2,t3)^T = r where IR= \cr %%1 -1 0 \cr %%0 \sspace 1 -1 \cr
+#' %%and r = (0 0). %%Then IRr =\cr %%1 -1 0 0 \cr %%0 1 -1 0 \cr %%which is
+#' provided to Bain using the command:\cr
+#' %%IRr<-matrix(c(1,-1,0,0,0,1,-1,0),nrow=2,ncol=4,byrow = TRUE)
+#'
+#' @param x An object used to select a method for computing Bayes factors.
+#' Currently, methods are available for:
+#' \itemize{
+#' \item Named vectors of estimates
+#' \item lm objects
+#' }
+#' @return Returns a list that contains hypothesis testing results (i.e., Bayes
+#' factors (BFs), relative fit (f), relative complexity (c), posterior model
+#' probabilities (PMPs)), the approximated posterior and prior covariance
+#' matrices, the approximated posteriors means, and the fraction (b).
+#' @author Caspar van Lissa, Xin Gu, Herbert Hoijtink, Joris Mulder
+#' @references Gu, X., Mulder, J., and Hoijtink, H. (2017). Approximated
+#' adjusted fractional Bayes factors: A general method for testing informative
+#' hypotheses. British Journal of Mathematical and Statistical Psychology.
+#'
+#' Hoijtink, H., Gu, X., and Mulder, J. (unpublished). Multiple group Bayesian
+#' evaluation of informative hypotheses.
+#' @keywords htest
+#' @examples
+#'
+#' #One group:
+#' #Example 1:
+#' #Hypothesis
+#' #H1: theta1>theta2>theta3   #coefficients in regression model
+#'
+#' #Input
+#' estimate<-c(3,2,1)  #estimates of coefficients
+#' Sigma<-matrix(c(3,0,0,0,2,0,0,0,1),3,3,byrow = TRUE) #covariance matrix of coefficients
+#'
+#' n<-50 #samples size
+#'
+#' #H1
+#' ERr<-NULL
+#' IRr<-matrix(c(1,-1,0,0,0,1,-1,0),nrow=2,ncol=4,byrow = TRUE)
+#'
+#' res<-Bain(estimate=estimate,grouppara=0,jointpara=3,Sigma=Sigma,n=n,ERr,IRr) #run
+#' #Results are printed.
+#' #Results for fit, complexity, Bayes factor, and PMPs are saved in "res":
+#'
+#' plot(res)
+#' #Results for PMPs are plotted.
+#'
+#'
+#' #Multiple groups
+#' #Example 2
+#' #t test:
+#' #Hypotheses:
+#' #H1: theta1=theta2   #group means
+#' #H2: theta1>theta2
+#' #H3: theta1<theta2
+#'
+#' #Input
+#' estimate<-c(0,0)         #Estimates of group means theta1 and theta2.
+#'
+#' cov1<-matrix(c(.5),1,1)
+#' cov2<-matrix(c(.1),1,1)
+#' Sigma<-list(cov1,cov2) #List of variances of group means
+#'
+#' n<-c(22,37)           #samplesize
+#'
+#' #H1:
+#' ERr1<-matrix(c(1,-1,0),nrow=1,ncol=3,byrow = TRUE)
+#' IRr1<-NULL
+#'
+#' #H2
+#' ERr2<-NULL
+#' IRr2<-matrix(c(1,-1,0),nrow=1,ncol=3,byrow = TRUE)
+#'
+#' #H3
+#' ERr3<-NULL
+#' IRr3<-matrix(c(-1,1,0),nrow=1,ncol=3,byrow = TRUE)
+#'
+#' res<-Bain(estimate,Sigma,grouppara=1,jointpara=0,n=n,ERr1,IRr1,ERr2,IRr2,ERr3,IRr3) #run
+#' #Results are printed.
+#' #Results for fit, complexity, Bayes factor, and PMPs are also saved in "res":
+#'
+#' plot(res)
+#' #Results for PMPs are plotted.
+#'
+#' @rdname bain
+#' @export
+#' @useDynLib bain, .registration = TRUE
+
+bain <- function(x, hypothesis, ...) {
+  deprecated_arguments(
+    c(
+      "estimate" = "This argument has been renamed to 'x'.",
+      "Sigma" = "Sigma was extracted automatically from the 'lm' object provided to argument 'x'.",
+      "groups" = "groups was extracted automatically from the 'lm' object provided to argument 'x'.",
+      "joint_parameters" = "joint_parameters was extracted automatically from the 'lm' object provided to argument 'x'.",
+      "ERr" = "Bain now automatically constructs matrices from a written hypothesis, specified in the argument 'hypothesis'.",
+      "IRr" = "Bain now automatically constructs matrices from a written hypothesis, specified in the argument 'hypothesis'.",
+      "print" = "Bain now has a print method."
+    )
+  )
+  UseMethod("bain", x)
+}
+
+
+#' @method bain lm
+#' @export
+bain.lm <-
+  function(x,
+           hypothesis,
+           ...,
+           standardize = FALSE) {
+
+    cl <- match.call()
+    Args <- as.list(cl[-1])
+    variable_types <- sapply(x$model, class)
+
+    which_model <- if(any(variable_types[-1] == "factor")){
+        if(ncol(x$model) == 2){
+          "ANOVA"
+        } else {
+          if(sum(variable_types[-1] == "factor") == 1){
+            "ANCOVA"
+          } else {
+            "mixed_predictors"
+          }
+        }
+      } else {
+        "continuous_predictors"
+      }
+
+    switch(which_model,
+           ANOVA = {
+             n <- table(x$model[, 2])
+             anovafm <- lm(x$model[, 1] ~ -1 + x$model[, 2])
+             estimate <- coef(anovafm)
+             names(estimate) <- substring(names(estimate), 13)
+             Args$x <- estimate
+             Args$Sigma <- lapply((1/n * summary.lm(anovafm)$sigma**2), matrix)
+             Args$groups <- 1
+             Args$joint_parameters <- 0
+             Args$n <- n
+           },
+           ANCOVA = {
+             df <- x$model
+             var_factor <- which(variable_types[-1] == "factor")+1
+             var_numeric <- c(FALSE, variable_types[-1] == "numeric")
+             # Altijd scalen? Waarom
+             df[, var_numeric] <- scale(df[, var_numeric])
+
+             ##analysis
+             ancovafm <-  lm(as.formula(paste0(names(df)[1], "~ -1 + .")), df)
+             estimate <- coef(ancovafm)
+             names(estimate) <- gsub(names(df)[var_factor], "", names(estimate))
+             resvar <- summary(ancovafm)$sigma**2
+
+             Args$x <- estimate
+             Args$Sigma <- by(cbind(1, df[, var_numeric]), df[[var_factor]], function(x){
+               resvar * solve(t(as.matrix(x)) %*% as.matrix(x))
+             })
+             Args$groups <- 1
+             Args$joint_parameters <- sum(var_numeric)
+             Args$n <- table(df[[var_factor]])
+           },
+           {
+
+             dependent <- x$model[, 1]
+             predictor <- model.matrix(as.formula(x$call[2]), x$model)
+
+             predictor_names <- names(x$coefficients) # If (Intercept) must be dropped, drop it BY NAME, don't drop first column
+
+             if(any(variable_types[-1] == "factor")){
+               predictor_names <- gsub(paste0("^(",
+                                              paste(names(x$model)[-1][variable_types[-1] == "factor"], sep = "|"),
+                                              ")"), "", predictor_names)
+             }
+
+             covariates_hypo <-
+               predictor_names[sapply(predictor_names, grepl, x = hypothesis)]
+
+             if (!standardize) {
+               estimate <- coef(x)[covariates_hypo]
+               Sigma <- vcov(x)[covariates_hypo, covariates_hypo]
+             } else{
+               ses <- seBeta(
+                 x$model[, -1],
+                 x$model[, 1],
+                 Nobs = nrow(x$model),
+                 alpha = .05,
+                 estimator = 'Normal'
+               )
+               select_parameters <- which(names(x$model)[-1] %in% covariates_hypo)
+               estimate <- ses$CIs$estimate[select_parameters]
+               Sigma <- ses$cov.mat[select_parameters, select_parameters]
+             }
+
+             Args$x <- estimate
+             Args$Sigma <- Sigma
+             Args$groups <- 0
+             Args$joint_parameters <- length(covariates_hypo)
+             Args$n <- nrow(x$model)
+           }
+           )
+
+    Bain_res <- do.call(bain, Args)
+    Bain_res$Call <- cl
+    if(which_model == "mixed_predictors"){
+      Bain_res$Warnings = c(
+        Bain_res$Warnings,
+        "Calling bain on an object of type 'lm' with mixed predictors (factors and numeric predictors) may result in untrustworthy results. Please interpret with caution."
+      )
+    }
+    Bain_res
+  }
+
+
+
+#' @method bain default
+#' @export
+bain.default <- function(x,
+                         hypothesis,
+                         ...,
+                         n,
+                         Sigma,
+                         groups = 0,
+                         joint_parameters = 0
+                         )
+{
+
+  cl <- match.call()
+  Args <- as.list(cl[-1])
+  seed <- sample(1:2^15, 1)
+
+  estimate <- x
+  n_estimates <- length(estimate)
+
+  parsed_hyp <- parse_hypothesis(names(estimate), hypothesis)
+  hyp_mat <- parsed_hyp$hyp_mat
+  n_hyp <- length(parsed_hyp$original_hypothesis)
+  n_constraints <- parsed_hyp$n_constraints
+
+  rank_hyp <- qr(hyp_mat)$rank
+
+  ##for unit group
+  if (groups == 0) {
+    if (length(n) != 1) {
+      stop("Argument 'n' should be vector of length 1, with value equal to sample size, when 'groups' = 0.")
+    }
+    if (is.list(Sigma)) {
+      stop("Argument 'Sigma' should be a matrix or number when 'groups' = 0.")
+    }
+    if (nrow(as.matrix(Sigma)) != n_estimates ||
+        ncol(as.matrix(Sigma)) != n_estimates) {
+      stop("The rank of covariance matrix 'Sigma' did not match the number of estimates in 'x'.")
+    }
+    if (.checkcov(Sigma) == 1) {
+      # CJ: Please give a more informative error here
+      stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
+    }
+
+    b <- rank_hyp / n
+    thetacovpost <- Sigma
+    thetacovprior <- thetacovpost / b
+  }
+
+  ##for multiple groups
+  if (groups != 0) {
+    #if(length(n)==1){stop("n should be a vector when groups>0")}
+    if (!is.list(Sigma)) {
+      stop("Argument 'Sigma' should be a list of covariance matrices, with a number of elements equal to the number of 'groups'.")
+    }
+    if (any(unlist(lapply(Sigma, .checkcov)) == 1)) {
+      # CJ: Please replace with a more informative error message
+      stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
+    }
+
+    dim_groups <- sapply(Sigma, dim)
+    if (any(dim_groups != mean(dim_groups))) {
+      stop("Argument 'Sigma' should be a list of covariance matrices, and each covariance matrix should have the same dimensions.")
+    }
+
+    n_Sigma <- length(Sigma)
+    if (n_Sigma != length(n)) {
+      stop("Length of the vector of sample sizes is not equal to the number of covariance matrices in 'Sigma'.")
+    }
+    if (n_estimates != groups * n_Sigma + joint_parameters) {
+      stop("The length of the vector of estimates (parameter 'x') is not correct for multiple groups")
+    }
+    if (any(dim_groups != groups + joint_parameters)) {
+      stop("The dimensions (rows and columns) of each covariance matrix in 'Sigma' should be equal to the number of group-specific parameters, plus the number of joint parameters ('groups' + 'joint_parameters').")
+    }
+
+    b <- rep(0, n_Sigma)
+    prior_cov <- vector("list", length = n_Sigma)
+    for (p in 1:n_Sigma) {
+      b[p] <- 1 / n_Sigma * rank_hyp / n[p]
+      prior_cov[[p]] <- Sigma[[p]] / b[p]
+    }
+
+    inv_prior <- lapply(prior_cov, solve)
+    inv_post <- lapply(Sigma, solve)
+
+    thetacovprior <- .covmatrixfun(inv_prior, groups, joint_parameters, n_Sigma)
+    thetacovpost <- .covmatrixfun(inv_post, groups, joint_parameters, n_Sigma)
+  }
+
+# From here on, it's the classic Bain function, no alterations -----------------
+
+  #check about equality constraints or the comparability issue
+  About <- .Fortran(
+    "about",
+    as.integer(n_hyp),
+    as.integer(n_estimates),
+    as.integer(n_constraints),
+    totalRr = hyp_mat,
+    numARi = as.integer(rep(0, n_hyp)),
+    error = as.integer(0)
+  )
+
+  hyp_matadjust <- About$totalRr
+  numAR <- About$numARi
+  error <- About$error
+
+  if (qr(hyp_matadjust)$rank > (qr(hyp_matadjust[1:sum(n_constraints), 1:n_estimates])$rank + sum(numAR))) {
+    error = 2
+  }
+
+  for (i in 1:sum(n_constraints)) {
+    for (j in 1:sum(n_constraints)) {
+      if (all(hyp_matadjust[i, 1:n_estimates] == hyp_matadjust[j, 1:n_estimates]) &&
+          abs(hyp_matadjust[i, n_estimates + 1] - hyp_matadjust[j, n_estimates +
+                                                                                1]) > 0) {
+        error = 2
+      }
+      if (all(hyp_matadjust[i, 1:n_estimates] == -hyp_matadjust[j, 1:n_estimates]) &&
+          abs(hyp_matadjust[i, n_estimates + 1] + hyp_matadjust[j, n_estimates +
+                                                                                1]) > 0) {
+        error = 2
+      }
+    }
+  }
+
+  #Hypotheses are not comparable.
+  if (error == 1) {
+    stop(
+      "BaIn is not suited for the evaluation of one or more of the hypotheses,\n because the adjusted prior mean cannot be determined from R theta = r."
+    )
+  }
+  if (error == 2) {
+    stop(
+      "The informative hypotheses under evaluation are not comparable,\n and/or BaIn is not suited for the evaluation of one or more of the hypotheses,\n because the adjusted prior mean cannot be determined from R theta = r."
+    )
+  }
+
+  fit = com = BF = rep(0, n_hyp)
+  fiteq = fitin = comeq = comin = rep(1, n_hyp)
+  results = rep(0, 5 * n_hyp)
+
+  for (h in 1:n_hyp) {
+    ERr = IRr = constant = 0
+    if (n_constraints[2 * h - 1] != 0) {
+      ERr <-
+        matrix(hyp_mat[(sum(n_constraints[1:(2 * h - 1)]) - n_constraints[2 * h - 1] + 1):sum(n_constraints[1:(2 *
+                                                                                              h - 1)]), 1:(n_estimates + 1)], n_constraints[2 * h - 1], n_estimates + 1)
+    }
+    if (n_constraints[2 * h] != 0) {
+      IRr <-
+        matrix(hyp_mat[(sum(n_constraints[1:(2 * h)]) - n_constraints[2 * h] + 1):sum(n_constraints[1:(2 *
+                                                                                      h)]), 1:(n_estimates + 1)], n_constraints[2 * h], n_estimates + 1)
+      constant = IRr[, n_estimates + 1]
+    }
+
+    #compute the rowrank of IRr and the linear combiniation of independent constraints
+    Mrank = .Fortran(
+      "mrank",
+      n_constraints[2 * h],
+      n_estimates,
+      rowrank = as.integer(0),
+      IRr = IRr,
+      transR = diag(0, n_constraints[2 * h], n_constraints[2 * h]),
+      constant,
+      transcon = rep(0, n_constraints[2 * h])
+    )
+
+    rowrank = Mrank$rowrank
+    IRr = Mrank$IRr
+    transR = Mrank$transR
+    transcon = Mrank$transcon
+
+    if (n_constraints[2 * h - 1] == 0) {
+      Rr = IRr
+    }
+    if (n_constraints[2 * h] == 0) {
+      Rr = ERr
+    }
+    if (n_constraints[2 * h - 1] != 0 && n_constraints[2 * h] != 0) {
+      Rr = rbind(ERr, IRr)
+    }
+
+    #parameter transformation for the estimates of theta
+    thetar <- c(estimate, -1)
+    betapost <- Rr[1:(n_constraints[2 * h - 1] + rowrank), 1:(n_estimates + 1)] %*%
+      thetar
+
+
+    #parameter transformation for the covariance matrix of theta
+    betacovpost <-
+      Rr[1:(n_constraints[2 * h - 1] + rowrank), 1:n_estimates] %*% thetacovpost %*% t(matrix(Rr[1:(n_constraints[2 *
+                                                                                                  h - 1] + rowrank), 1:n_estimates], nrow = n_constraints[2 * h - 1] + rowrank, ncol =
+                                                                                       n_estimates))
+    betacovpri <-
+      Rr[1:(n_constraints[2 * h - 1] + rowrank), 1:n_estimates] %*% thetacovprior %*% t(matrix(Rr[1:(n_constraints[2 *
+                                                                                                   h - 1] + rowrank), 1:n_estimates], nrow = n_constraints[2 * h - 1] + rowrank, ncol =
+                                                                                        n_estimates))
+
+    #specify prior mean
+    betapri <- rep(0, n_constraints[2 * h - 1] + rowrank)
+
+    #adjust prior mean for about equality constraints
+    if (numAR[h] > 0) {
+      for (i in (n_constraints[2 * h - 1] + 1):(n_constraints[2 * h - 1] + rowrank)) {
+        for (j in (sum(n_constraints[1:(2 * h)]) - n_constraints[2 * h] + 1):sum(n_constraints[1:(2 * h)])) {
+          if (all(Rr[i, 1:n_estimates] == hyp_matadjust[j, 1:n_estimates]) &&
+              Rr[i, n_estimates + 1] != hyp_matadjust[j, n_estimates + 1])
+          {
+            betapri[i] = hyp_matadjust[j, n_estimates + 1] - Rr[i, n_estimates +
+                                                                          1]
+          }
+        }
+      }
+    }
+
+    invbetadiagpost <- diag(solve(as.matrix(betacovpost)))
+    invbetadiagpri <- diag(solve(as.matrix(betacovpri)))
+    Bpost <-
+      diag(1, n_constraints[2 * h - 1] + rowrank) - solve(diag(invbetadiagpost, n_constraints[2 *
+                                                                              h - 1] + rowrank, n_constraints[2 * h - 1] + rowrank)) %*% solve(betacovpost)
+    Bpri <-
+      diag(1, n_constraints[2 * h - 1] + rowrank) - solve(diag(invbetadiagpri, n_constraints[2 *
+                                                                             h - 1] + rowrank, n_constraints[2 * h - 1] + rowrank)) %*% solve(betacovpri)
+
+    #equality constraints
+    if (n_constraints[2 * h - 1] > 0) {
+      fiteq[h] <-
+        1 / sqrt((2 * pi) ^ n_constraints[2 * h - 1] * abs(det(as.matrix(betacovpost[1:n_constraints[2 *
+                                                                                     h - 1], 1:n_constraints[2 * h - 1]])))) * exp(-1 / 2 * (betapost[1:n_constraints[2 * h - 1]] %*%
+                                                                                                                                      solve(betacovpost[1:n_constraints[2 * h - 1], 1:n_constraints[2 * h - 1]]) %*% betapost[1:n_constraints[2 *
+                                                                                                                                                                                                                     h - 1]]))
+      comeq[h] <-
+        1 / sqrt((2 * pi) ^ n_constraints[2 * h - 1] * abs(det(as.matrix(betacovpri[1:n_constraints[2 *
+                                                                                    h - 1], 1:n_constraints[2 * h - 1]]))))
+    }
+
+
+    #inequality constraints
+    if (n_constraints[2 * h] > 0) {
+      # function for the computation of complexity or fit for inequality constraints
+      fitcom <- function(bet, invbetadiag, B, seed) {
+        forc = .Fortran(
+          "forc",
+          as.integer(n_constraints[2 * h - 1]),
+          as.integer(n_constraints[2 * h]),
+          as.integer(rowrank),
+          bet,
+          transcon,
+          invbetadiag,
+          B,
+          transR,
+          f_or_c = as.double(0),
+          Numfc = as.integer(0),
+          as.integer(seed)
+        )
+        return(c(forc$f_or_c, forc$Numfc))
+      }
+
+      fitin[h] <- fitcom(betapost, invbetadiagpost, Bpost, seed)[1]
+      numf <- fitcom(betapost, invbetadiagpost, Bpost, seed)[2]
+      comin[h] <- fitcom(betapri, invbetadiagpri, Bpri, seed)[1]
+      numc <- fitcom(betapri, invbetadiagpri, Bpri, seed)[2]
+    }
+
+    #total fit and complexity
+
+    fit[h] <- fitin[h] * fiteq[h]
+    com[h] <- comin[h] * comeq[h]
+
+    #Bayes factor for a hypothesis vs its complement
+    ifelse(n_constraints[2 * h - 1] > 0, BF[h] <-
+             fit[h] / com[h], BF[h] <- (fit[h] / com[h]) / ((1 - fit[h]) / (1 - com[h])))
+  }
+
+
+  fctable <- matrix(0, n_hyp + 1, 9)
+  PMPa <- c()
+  PMPb <- c()
+
+  for (h in 1:n_hyp) {
+    PMPa[h] <- fit[h] / com[h] / (sum(fit / com))
+    PMPb[h] <- fit[h] / com[h] / (1 + sum(fit / com))
+    fctable[h, ] <-
+      c(fiteq[h], fitin[h], comeq[h], comin[h], fit[h], com[h], BF[h], PMPa[h], PMPb[h])
+  }
+  fctable[n_hyp + 1, ] <- c(rep(NA, 8), 1 / (1 + sum(fit / com)))
+  fctable <- formatC(fctable, digits = 3, format = "f")
+
+  fctable[which(fctable == "  NA", arr.ind = T)] <- "."
+  fctable <- as.data.frame(fctable)
+  rownames(fctable) <- c(paste("H", 1:n_hyp, sep = ""), "Hu")
+  colnames(fctable) <-
+    c("f=", "f>|=", "c=", "c>|=", "f", "c", "BF.c", "PMPa", "PMPb")
+
+
+  BFmatrix <- diag(1, n_hyp)
+  for (h1 in 1:n_hyp) {
+    for (h2 in 1:n_hyp) {
+      BFmatrix[h1, h2] <- fit[h1] / fit[h2] / (com[h1] / com[h2])
+    }
+  }
+  rownames(BFmatrix) <- paste("H", 1:n_hyp, sep = "")
+  colnames(BFmatrix) <- paste("H", 1:n_hyp, sep = "")
+
+
+  res <- matrix(0, n_hyp, 5)
+  colnames(res) <- c("fit", "complexity", "BF", "PMPa", "PMPb")
+  rownames(res) <- paste("H", 1:n_hyp, sep = "")
+
+  for (h in 1:n_hyp) {
+    res[h, ] <-
+      c(fit[h],
+        com[h],
+        BF[h],
+        fit[h] / com[h] / sum(fit / com),
+        fit[h] / com[h] / (1 + sum(fit / com)))
+  }
+
+  Bainres <- list(
+    b = b,
+    priorCov = thetacovprior,
+    posterCov = thetacovpost,
+    testResult = as.data.frame(res),
+    fit_com_table = as.data.frame(fctable),
+    BFmatrix = as.data.frame(BFmatrix, row.names = attributes(BFmatrix)$row.names),
+    call = cl
+  )
+  class(Bainres) <- "Bain"
+  Bainres
+}
