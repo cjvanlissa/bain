@@ -2,36 +2,23 @@
 % Please edit documentation in R/create_matrices.R
 \name{constraint_to_equation}
 \alias{constraint_to_equation}
-\title{Flip inequality}
+\title{Constraint to equation}
 \usage{
-constraint_to_equation(hyp)
-
 constraint_to_equation(hyp)
 }
 \arguments{
 \item{hyp}{Character. A BAIN (in)equality constraint}
-
-\item{hyp}{Character. A BAIN (in)equality constraint}
 }
 \value{
 Character
-
-Character
 }
 \description{
-Takes a BAIN constraint and flips elements on both sides of any "<"
-operators so that only the ">" operator is used to define inequality
-constraints.
-
 Formats a BAIN constraint as an equation that can be evaluated. Adds scalars
 to all parameters in the constraint, and adds a XXXconstant parameter to any
 constants. Also adds "*" and "+" operators where necessary for evaluation.
 }
 \examples{
-
-flip_inequality("b<c")
-
-
+\dontrun{
 constraint_to_equation(hyp = c("-strength>wisdom", "intelligence>wisdom",
                     "strength>dexterity", "intelligence>dexterity"))
 constraint_to_equation("1*b")
@@ -39,6 +26,6 @@ constraint_to_equation(hyp  ="b")
 constraint_to_equation(hyp = "5*b-4c")
 constraint_to_equation("5+c=0")
 constraint_to_equation("5+c=d")
-
+}
 }
 \keyword{internal}

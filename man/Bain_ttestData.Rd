@@ -32,7 +32,7 @@ This function computes approximated adjusted fractional Bayes factors
 one-sample or two-sample t test.
 }
 \examples{
-
+\dontrun{
   #Example 1
   #One sample t test:
   #H0: theta=0
@@ -69,8 +69,7 @@ one-sample or two-sample t test.
 
   plot(res)
   #Results for PMPs are plotted.
-
-
+}
 }
 \author{
 Xin Gu, Herbert Hoijtink, Joris Mulder

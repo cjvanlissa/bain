@@ -40,7 +40,7 @@ This function computes approximated adjusted fractional Bayes factors for
 anova test with user-friendly hypotheses input.
 }
 \examples{
-
+\dontrun{
   #Example 1
   #Hypotheses
   #H1: group.1=group.2=group.3   #group means
@@ -82,7 +82,7 @@ anova test with user-friendly hypotheses input.
 
   plot(res)
   #Results for PMPs are plotted.
-
+}
 }
 \author{
 Xin Gu, Herbert Hoijtink, Joris Mulder

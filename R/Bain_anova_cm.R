@@ -30,7 +30,7 @@
 #' @author Xin Gu, Herbert Hoijtink, Joris Mulder
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #'   #Example 1
 #'   #Hypotheses
 #'   #H1: group.1=group.2=group.3   #group means
@@ -72,7 +72,7 @@
 #'
 #'   plot(res)
 #'   #Results for PMPs are plotted.
-#'
+#' }
 #' @export
 Bain_anova_cm<-function(X, dep_var=NULL, group=NULL, hyp){
 

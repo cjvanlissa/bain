@@ -40,6 +40,27 @@
 #' \item Named vectors of estimates
 #' \item lm objects
 #' }
+#' @param hypothesis A character string, containing a Bain hypothesis (see Details).
+#' @param ... Arguments passed to and from other functions.
+#' @details Informative hypotheses should adhere to the following simple syntax:
+#' \itemize{
+#' \item Competing hypotheses are separated by ";".  Thus, "a=b;a>b" means that
+#' H1: a=b, and H2: a>b.
+#' \item Each individual hypothesis consists of a (series of) (in)equality
+#' constraint(s). Every single (in)equality constraint is of the form "R1*mu1 +
+#' R2*mu2+... = r", where capital Rs refer to numeric scaling constants, must
+#' refer to the names of parameters in the model, and the lower case r refers
+#' to a constant. Standard mathematical simplification rules apply; thus,
+#' "R1*mu1 = R2*mu2" is equivalent to "R1*mu1 - R2*mu2 = 0".
+#' \item Multiple unrelated constraints within one hypothesis can be chained by
+#' "&". Thus, "a=b&c=d" means that H1: a=b AND c=d.
+#' \item Multiple related constraints within one hypothesis can be chained by
+#' repeating the (in)equality operators "=", "<", or ">". Thus, "a<b<c" means
+#' that H1: a < b AND b < c.
+#' \item Parameters can be grouped by placing them in a parenthesized, comma
+#' separated list. Thus, "(a,b)>c" means that H1: a > c AND b > c.  Similarly,
+#' "(a,b)>(c,d)" means that H1: a > c AND b > c AND b > c AND b > d.
+#' }
 #' @return Returns a list that contains hypothesis testing results (i.e., Bayes
 #' factors (BFs), relative fit (f), relative complexity (c), posterior model
 #' probabilities (PMPs)), the approximated posterior and prior covariance
@@ -53,7 +74,7 @@
 #' evaluation of informative hypotheses.
 #' @keywords htest
 #' @examples
-#'
+#' \dontrun{
 #' #One group:
 #' #Example 1:
 #' #Hypothesis
@@ -112,11 +133,13 @@
 #'
 #' plot(res)
 #' #Results for PMPs are plotted.
-#'
+#' }
 #' @rdname bain
 #' @export
 #' @useDynLib bain, .registration = TRUE
-
+#' @importFrom stats as.formula coef complete.cases cov lm model.frame
+#' model.matrix pt qt sd setNames summary.lm var vcov
+#'
 bain <- function(x, hypothesis, ...) {
   UseMethod("bain", x)
 }
@@ -440,6 +463,8 @@ bain.default <- function(x,
   fiteq <- fitin <- comeq <- comin <- rep(1, n_hyp)
   results <- rep(0, 5 * n_hyp)
 
+# Start of a mega loop along the hypotheses -------------------------------
+
   for (h in 1:n_hyp) {
     ERr <- IRr <- constant <- 0
     if (n_constraints[2 * h - 1] != 0) {
@@ -590,54 +615,38 @@ bain.default <- function(x,
       comin[h] <- forc_prior$f_or_c
       numc <- forc_prior$Numfc
     }
-
-    #total fit and complexity
-
-    fit[h] <- fitin[h] * fiteq[h]
-    com[h] <- comin[h] * comeq[h]
-
-    #Bayes factor for a hypothesis vs its complement
-    ifelse(n_constraints[2 * h - 1] > 0, BF[h] <-
-             fit[h] / com[h], BF[h] <- (fit[h] / com[h]) / ((1 - fit[h]) / (1 - com[h])))
   }
 
 
-  fctable <- matrix(0, n_hyp + 1, 9)
-  PMPa <- c()
-  PMPb <- c()
+# End of mega loop --------------------------------------------------------
 
-  for (h in 1:n_hyp) {
-    PMPa[h] <- fit[h] / com[h] / (sum(fit / com))
-    PMPb[h] <- fit[h] / com[h] / (1 + sum(fit / com))
-    fctable[h, ] <-
-      c(fiteq[h], fitin[h], comeq[h], comin[h], fit[h], com[h], BF[h], PMPa[h], PMPb[h])
-  }
-  fctable[n_hyp + 1, ] <- c(rep(NA, 8), 1 / (1 + sum(fit / com)))
-  fctable <- formatC(fctable, digits = 3, format = "f")
+  #total fit and complexity
+  fit <- fitin * fiteq
+  com <- comin * comeq
 
-  fctable[which(fctable == "  NA", arr.ind = T)] <- "."
-  fctable <- as.data.frame(fctable)
-  rownames(fctable) <- c(paste("H", 1:n_hyp, sep = ""), "Hu")
-  colnames(fctable) <-
-    c("f=", "f>|=", "c=", "c>|=", "f", "c", "BF.c", "PMPa", "PMPb")
+  #Bayes factor for a hypothesis vs its complement
+  #n_constraints <- c(0,1,1,3,0,3,0,1)
+  BF <- fit/com
+  has_in <- n_constraints[seq(1, n_hyp*2, by = 2)] > 0
+  BF[has_in] <- BF[has_in] / ((1 - fit[has_in]) / (1 - com[has_in]))
 
-
+  # Create matrix of Bayes factors
   BFmatrix <- fit %*% t(1/fit) / com %*% t(1/com)
+  rownames(BFmatrix) <- colnames(BFmatrix) <- paste0("H", 1:n_hyp)
 
-  rownames(BFmatrix) <- paste0("H", 1:n_hyp)
-  colnames(BFmatrix) <- paste0("H", 1:n_hyp)
-
-  res <- cbind("Fit" = fit, "Complexity" = com, "BF" = BF, "PMPa" = fit / com / sum(fit / com), "PMPb" = fit / com / (1 + sum(fit / com)))
-  rownames(res) <- parsed_hyp$original_hypothesis
-
+  # Create table of fit indices
+  res <- cbind("Fit_eq" = fiteq, "Fit_in" = fitin, "Com_eq" = comeq, "Com_in" = comin, "Fit" = fit, "Complexity" = com, "BF" = BF, "PMPa" = fit / com / sum(fit / com), "PMPb" = fit / com / (1 + sum(fit / com)))
+  res <- rbind(res, c(rep(NA, ncol(res)-1), 1 / (1 + sum(fit / com))))
+  rownames(res) <- c(paste("H", 1:n_hyp, sep = ""), "Hu")
+  # Either provide these as rownames, but can take a lot of space, or print a 'legend' below the table
+  # rownames(res) <- parsed_hyp$original_hypothesis
 
   Bainres <- list(
+    fit = res,
+    BFmatrix = BFmatrix,
     b = b,
     prior = thetacovprior,
     posterior = thetacovpost,
-    test = res,
-    fit = as.data.frame(fctable),
-    BFmatrix = as.data.frame(BFmatrix, row.names = attributes(BFmatrix)$row.names),
     call = cl
   )
   class(Bainres) <- "Bain"

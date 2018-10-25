@@ -45,7 +45,7 @@ This function computes approximated adjusted fractional Bayes factors for
 ancova test with user-friendly hypotheses input.
 }
 \examples{
-
+\dontrun{
   data(ChickWeight)
   #Hypotheses
   hyp<-"Diet.1=Diet.2=Diet.3=Diet.4;
@@ -58,7 +58,7 @@ ancova test with user-friendly hypotheses input.
 
   plot(res)
   #Results for PMPs are plotted.
-
+}
 }
 \author{
 Xin Gu, Herbert Hoijtink, Joris Mulder

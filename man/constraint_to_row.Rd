@@ -19,10 +19,10 @@ all terms moved to the left hand side, and return a single row of a BAIN
 (in)equality constraint matrix.
 }
 \examples{
-
+\dontrun{
 constraint_to_row(varnames = c("a", "b", "c", "d"), hyp = "+1*a-1*b+0=")
 constraint_to_row(c("a", "b", "c", "d"), "+1*b-1*c+0=")
 constraint_to_row(c("a", "b", "c", "d"), "-+0+1*c-1*d=")
-
+}
 }
 \keyword{internal}

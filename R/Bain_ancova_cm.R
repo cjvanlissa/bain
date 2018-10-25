@@ -34,7 +34,7 @@
 #' @author Xin Gu, Herbert Hoijtink, Joris Mulder
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #'   data(ChickWeight)
 #'   #Hypotheses
 #'   hyp<-"Diet.1=Diet.2=Diet.3=Diet.4;
@@ -47,7 +47,7 @@
 #'
 #'   plot(res)
 #'   #Results for PMPs are plotted.
-#'
+#' }
 Bain_ancova_cm<-function(X, dep_var, covariates, group, hyp){
 
   if(!is.data.frame(X)){stop("X should be a data frame")}  #X data frame

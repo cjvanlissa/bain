@@ -50,7 +50,7 @@
 #' Psychometrika, 80, 365-378.
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #'   ##Example 1
 #'   #Input
 #'   data(cars)
@@ -95,6 +95,7 @@
 #'
 #'   plot(res)
 #'   #Results for PMPs are plotted.
+#'   }
 Bain_regression<-function(formula, data, ERr = NULL, IRr = NULL,...,covariates_hypo = NULL, standardize = FALSE){
   TRr<-list(ERr,IRr,...)
   IR_chara<-paste0("TRr[[",1:length(TRr),"]]",sep=",",collapse = "")

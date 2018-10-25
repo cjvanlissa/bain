@@ -57,7 +57,7 @@ if the groups are labelled yellow, blue and gray, then the order is blue,
 gray, yellow.
 }
 \examples{
-
+\dontrun{
   #Input
   #Build in data: Weight versus age (Time) of chicks on different diets (Diet).
   data(ChickWeight)
@@ -82,6 +82,7 @@ gray, yellow.
 
   plot(res)
   #Results for PMPs are plotted.
+}
 }
 \author{
 Xin Gu, Herbert Hoijtink, Joris Mulder

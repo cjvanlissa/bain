@@ -33,7 +33,7 @@
 #' @author Xin Gu, Herbert Hoijtink, Joris Mulder
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #'   #Hypotheses
 #'   #H1: theta1=theta2=theta3   #group means
 #'   #H2: theta1>theta2>theta3
@@ -64,6 +64,7 @@
 #'
 #'   plot(res)
 #'   #Results for PMPs are plotted.
+#' }
 #' @export
 Bain_anova<-function(X, dep_var=NULL, group=NULL, ERr=NULL,IRr=NULL, ...){
   TRr<-list(ERr,IRr,...)

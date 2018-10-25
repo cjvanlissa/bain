@@ -21,7 +21,7 @@
 #' @author Xin Gu, Herbert Hoijtink, Joris Mulder
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #'   #Example 1
 #'   #One sample t test:
 #'   #H0: theta=0
@@ -58,8 +58,7 @@
 #'
 #'   plot(res)
 #'   #Results for PMPs are plotted.
-#'
-#'
+#' }
 Bain_ttestData<-function(x,y=NULL,nu=0,type=1,paired=FALSE){
   if(is.null(y)&&!paired){
     estimate<-mean(x)

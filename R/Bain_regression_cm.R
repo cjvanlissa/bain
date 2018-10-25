@@ -37,7 +37,7 @@
 #' Psychometrika, 80, 365-378.
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #'   ##Example 1
 #'   #Input
 #'   data(cars)
@@ -68,7 +68,7 @@
 #'
 #'   plot(res)
 #'   #Results for PMPs are plotted.
-
+#'   }
 Bain_regression_cm<-function(formula, data, hyp, standardize = FALSE){
 
   dependent<-model.frame(formula,data)[,1]

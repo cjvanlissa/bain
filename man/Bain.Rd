@@ -13,6 +13,10 @@ Currently, methods are available for:
 \item Named vectors of estimates
 \item lm objects
 }}
+
+\item{hypothesis}{A character string, containing a Bain hypothesis (see Details).}
+
+\item{...}{Arguments passed to and from other functions.}
 }
 \value{
 Returns a list that contains hypothesis testing results (i.e., Bayes
@@ -55,9 +59,29 @@ then IR * (t1,t2,t3)^T = r where IR= \cr %%1 -1 0 \cr %%0 \sspace 1 -1 \cr
 %%and r = (0 0). %%Then IRr =\cr %%1 -1 0 0 \cr %%0 1 -1 0 \cr %%which is
 provided to Bain using the command:\cr
 %%IRr<-matrix(c(1,-1,0,0,0,1,-1,0),nrow=2,ncol=4,byrow = TRUE)
+
+Informative hypotheses should adhere to the following simple syntax:
+\itemize{
+\item Competing hypotheses are separated by ";".  Thus, "a=b;a>b" means that
+H1: a=b, and H2: a>b.
+\item Each individual hypothesis consists of a (series of) (in)equality
+constraint(s). Every single (in)equality constraint is of the form "R1*mu1 +
+R2*mu2+... = r", where capital Rs refer to numeric scaling constants, must
+refer to the names of parameters in the model, and the lower case r refers
+to a constant. Standard mathematical simplification rules apply; thus,
+"R1*mu1 = R2*mu2" is equivalent to "R1*mu1 - R2*mu2 = 0".
+\item Multiple unrelated constraints within one hypothesis can be chained by
+"&". Thus, "a=b&c=d" means that H1: a=b AND c=d.
+\item Multiple related constraints within one hypothesis can be chained by
+repeating the (in)equality operators "=", "<", or ">". Thus, "a<b<c" means
+that H1: a < b AND b < c.
+\item Parameters can be grouped by placing them in a parenthesized, comma
+separated list. Thus, "(a,b)>c" means that H1: a > c AND b > c.  Similarly,
+"(a,b)>(c,d)" means that H1: a > c AND b > c AND b > c AND b > d.
+}
 }
 \examples{
-
+\dontrun{
 #One group:
 #Example 1:
 #Hypothesis
@@ -116,7 +140,7 @@ res<-Bain(estimate,Sigma,grouppara=1,jointpara=0,n=n,ERr1,IRr1,ERr2,IRr2,ERr3,IR
 
 plot(res)
 #Results for PMPs are plotted.
-
+}
 }
 \references{
 Gu, X., Mulder, J., and Hoijtink, H. (2017). Approximated

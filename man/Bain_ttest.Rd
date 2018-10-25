@@ -36,7 +36,7 @@ This function computes approximated adjusted fractional Bayes factors for
 one-sample or two-sample t test.
 }
 \examples{
-
+\dontrun{
 #Example 1
 #One sample t test:
 #H0: mu=0
@@ -81,6 +81,7 @@ res<-Bain_ttest(estimate,variance,nu=0,n) #Run
 
 plot(res)
 #Results for PMPs are plotted.
+}
 }
 \author{
 Xin Gu, Herbert Hoijtink, Joris Mulder

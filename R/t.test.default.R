@@ -27,6 +27,8 @@
 #  https://www.R-project.org/Licenses/
 #' @method t.test default
 #' @export
+#' @importFrom stats t.test
+#' @importFrom methods hasArg
 t.test.default <-
   function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
            mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95,

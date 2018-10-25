@@ -42,7 +42,7 @@
 #' @author Xin Gu, Herbert Hoijtink, Joris Mulder
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #'   #Input
 #'   #Build in data: Weight versus age (Time) of chicks on different diets (Diet).
 #'   data(ChickWeight)
@@ -67,6 +67,7 @@
 #'
 #'   plot(res)
 #'   #Results for PMPs are plotted.
+#' }
 Bain_ancova<-function(X, dep_var, covariates, group, ERr=NULL,IRr=NULL,...){
   TRr<-list(ERr,IRr,...)
 

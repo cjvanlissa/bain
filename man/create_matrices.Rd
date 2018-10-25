@@ -41,7 +41,7 @@ separated list. Thus, "(a,b)>c" means that H1: a > c AND b > c.  Similarly,
 "(a,b)>(c,d)" means that H1: a > c AND b > c AND b > c AND b > d.  }
 }
 \examples{
-
+\dontrun{
 varnames <- c("a","b","c","d","e","f")
 hyp <- "e=f<a=b=c"
 create_matrices(varnames, hyp)
@@ -107,7 +107,7 @@ create_matrices(varnames, hyp)
 
 hyp1 <- "a+a+b>b+b+a"
 create_matrices(varnames, hyp1)
-
+}
 }
 \author{
 Caspar van Lissa

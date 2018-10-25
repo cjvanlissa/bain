@@ -94,7 +94,7 @@ parse_hypothesis <- function(varnames, hyp){
 #' @author Caspar van Lissa
 #' @keywords internal utilities
 #' @examples
-#'
+#' \dontrun{
 #' varnames <- c("a","b","c","d","e","f")
 #' hyp <- "e=f<a=b=c"
 #' create_matrices(varnames, hyp)
@@ -160,7 +160,7 @@ parse_hypothesis <- function(varnames, hyp){
 #'
 #' hyp1 <- "a+a+b>b+b+a"
 #' create_matrices(varnames, hyp1)
-#'
+#' }
 create_matrices <- function(varnames, hyp){
   if(is.null(varnames)) stop("Please input proper linear model object")
   hyp <- gsub("\\s", "", hyp)
@@ -212,10 +212,10 @@ create_matrices <- function(varnames, hyp){
 #' @return A character vector with one element for each simple constraint
 #' @keywords internal
 #' @examples
-#'
+#' \dontrun{
 #' expand_compound_constraints("a=b=c")
 #' expand_compound_constraints("openness>neuroticism>extraversion==c")
-#'
+#' }
 expand_compound_constraints <- function(hyp){
   equality_operators <- gregexpr("[=<>]", hyp)[[1]]
   if(length(equality_operators) > 1){
@@ -242,10 +242,10 @@ expand_compound_constraints <- function(hyp){
 #' @return A character vector with one element for each simple constraint
 #' @keywords internal
 #' @examples
-#'
+#' \dontrun{
 #' expand_parentheses("(a,b)>c")
 #' expand_parentheses("(openness, conscientiousness)>(neuroticism,extraversion)")
-#'
+#' }
 expand_parentheses <- function(hyp){
   parenth_locations <- gregexpr("[\\(\\)]", hyp)[[1]]
   if(!parenth_locations[1] == -1){
@@ -278,10 +278,10 @@ expand_parentheses <- function(hyp){
 #' @return Character
 #' @keywords internal
 #' @examples
-#'
+#' \dontrun{
 #' flip_inequality("b<c")
-#'
-constraint_to_equation <- function(hyp){
+#' }
+flip_inequality <- function(hyp){
   if(grepl("<", hyp)){
     loc <- gregexpr("<", hyp)[[1]][1]
     return(paste0(substring(hyp, (loc+1)), ">", substring(hyp, 1, (loc-1))))
@@ -305,7 +305,7 @@ constraint_to_equation <- function(hyp){
 #' @return Character
 #' @keywords internal
 #' @examples
-#'
+#' \dontrun{
 #' constraint_to_equation(hyp = c("-strength>wisdom", "intelligence>wisdom",
 #'                     "strength>dexterity", "intelligence>dexterity"))
 #' constraint_to_equation("1*b")
@@ -313,7 +313,7 @@ constraint_to_equation <- function(hyp){
 #' constraint_to_equation(hyp = "5*b-4c")
 #' constraint_to_equation("5+c=0")
 #' constraint_to_equation("5+c=d")
-#'
+#' }
 constraint_to_equation <- function(hyp){
   # When the string starts with a word, OR when a word is not preceded by
   # a number or *-sign, replace the "word" with "1*word"
@@ -368,13 +368,13 @@ constraint_to_equation <- function(hyp){
 #' @return Character
 #' @keywords internal
 #' @examples
-#'
+#' \dontrun{
 #' order_terms("+2+1*a-1=+1*b-2")
 #' order_terms(hyp = "+1*a=-2")
 #' order_terms(hyp = "+1*a=-2+3")
 #' order_terms(hyp = "+1*a=+1*b")
 #' order_terms(hyp = "-2+1*a=+1*b")
-#'
+#' }
 order_terms <- function(hyp){
   eq_location <- gregexpr("[=<>]", hyp)[[1]]
   rhs <- substring(hyp, eq_location+1, nchar(hyp))
@@ -398,11 +398,11 @@ order_terms <- function(hyp){
 #' @return Numeric vector.
 #' @keywords internal
 #' @examples
-#'
+#' \dontrun{
 #' constraint_to_row(varnames = c("a", "b", "c", "d"), hyp = "+1*a-1*b+0=")
 #' constraint_to_row(c("a", "b", "c", "d"), "+1*b-1*c+0=")
 #' constraint_to_row(c("a", "b", "c", "d"), "-+0+1*c-1*d=")
-#'
+#' }
 constraint_to_row <- function(varnames, hyp){
   e <- new.env()
   objects <- c(varnames, "XXXconstant")

@@ -30,7 +30,7 @@
 #' @author Xin Gu, Herbert Hoijtink, Joris Mulder
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #' #Example 1
 #' #One sample t test:
 #' #H0: mu=0
@@ -75,6 +75,7 @@
 #'
 #' plot(res)
 #' #Results for PMPs are plotted.
+#' }
 Bain_ttest<-function(estimate,variance,n,nu=0,type=1){
   if(type==1&&length(estimate)==1){  # mu=nu vs mu!=nu
     Bain_res<-Bain(estimate=estimate,

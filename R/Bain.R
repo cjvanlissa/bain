@@ -83,7 +83,7 @@
 #' evaluation of informative hypotheses.
 #' @keywords internal htest
 #' @examples
-#'
+#' \dontrun{
 #' #One group:
 #' #Example 1:
 #' #Hypothesis
@@ -144,6 +144,8 @@
 #'
 #' plot(res)
 #' #Results for PMPs are plotted.
+#' }
+#' @importFrom utils capture.output write.table
 Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr = NULL, ..., seed = 100, print = TRUE)
 {
 
@@ -362,6 +364,8 @@ Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr
     PMPb[h]<-fit[h]/com[h]/(1+sum(fit/com))
     fctable[h,]<-c(fiteq[h],fitin[h],comeq[h],comin[h],fit[h],com[h],BF[h],PMPa[h],PMPb[h])
   }
+
+
   fctable[numH+1,]<-c(rep(NA,8),1/(1+sum(fit/com)))
   fctable<-formatC(fctable, digits = 3, format = "f")
 

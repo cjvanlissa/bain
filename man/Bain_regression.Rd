@@ -60,7 +60,7 @@ This function computes approximated adjusted fractional Bayes factors for
 hypothesis tests in regression models.
 }
 \examples{
-
+\dontrun{
   ##Example 1
   #Input
   data(cars)
@@ -105,6 +105,7 @@ hypothesis tests in regression models.
 
   plot(res)
   #Results for PMPs are plotted.
+  }
 }
 \references{
 Jones, J.A. and Waller, N.G. (2015). The normal theory and
