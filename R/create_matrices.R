@@ -1,18 +1,31 @@
 parse_hypothesis <- function(varnames, hyp){
   # Check if varnames occur in hyp.
+  params_in_hyp <- trimws(unique(strsplit(hyp, split = "(?<![a-zA-Z\\._])[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
+  if(any(!params_in_hyp %in% varnames)){
+    stop(
+         "Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  Your hypothesis is: ",
+         hyp,
+         "\n  The parameters of your model are: ",
+         paste(varnames, collapse = ", "),
+         ".\nPlease use these parameter names in your hypothesis."
+       )
+  }
+  # Currently disabled: Is it a problem if there are parameters that don't occur in the hypothesis?
+  if(FALSE & any(!varnames %in% params_in_hyp)){
+    message(
+      "Some of the parameters in your model are not referred to in the 'hypothesis'. Make sure that this is what you intended.\n  Your hypothesis is: ",
+      hyp,
+      "\n  The parameters that are not mentioned are: ",
+      paste(varnames[which(!varnames %in% params_in_hyp)], collapse = ", ")
+    )
+  }
   # Ultimately, it would be best to check the reverse as well. This would also
   # allow us to make a string like "(a|b|c)" with the varnames, and insert it
   # into the regular expressions below. That would be faster than the complex
   # expressions currently used, and less prone to breakage.
   # varnames_in_hyp <- sapply(varnames, grepl, x = hyp)
   # if (FALSE) {
-  #   stop(
-  #     "Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  Your hypothesis is: ",
-  #     hypothesis,
-  #     "\n  The parameters of your model are: ",
-  #     paste(predictor_names, collapse = ", "),
-  #     ".\nPlease use these parameter names in your hypothesis."
-  #   )
+  #
   # }
   # End check
   hyp <- gsub("\\s", "", hyp)
@@ -406,123 +419,3 @@ constraint_to_row <- function(varnames, hyp){
     constant
   }), equal_to)
 }
-
-
-
-#' Create BAIN (in)equality constraint matrices
-#'
-#' Parses a character string describing a set of BAIN informative hypotheses,
-#' and returns BAIN (in)equality constraint matrices. See Details for more
-#' information.
-#' @details Informative hypotheses specified as a character string should adhere
-#' to the following simple syntax:
-#' \itemize{
-#'   \item Competing hypotheses are separated by ";".
-#'         Thus, "a=b;a>b" means that H1: a=b, and H2: a>b.
-#'   \item Each individual hypothesis consists of a (series of) (in)equality
-#'         constraint(s). Every single (in)equality constraint is of the form
-#'         "R1*mu1 + R2*mu2+... = r", where capital Rs refer to numeric scaling
-#'         constants, must refer to the names of parameters in the model, and
-#'         the lower case r refers to a constant. Standard mathematical
-#'         simplification rules apply; thus, "R1*mu1 = R2*mu2" is equivalent to
-#'         "R1*mu1 - R2*mu2 = 0".
-#'   \item Multiple unrelated constraints within one hypothesis can be chained
-#'         by "&". Thus, "a=b&c=d" means that H1: a=b AND c=d.
-#'   \item Multiple related constraints within one hypothesis can be chained by
-#'         repeating the (in)equality operators "=", "<", or ">". Thus, "a<b<c"
-#'         means that H1: a < b AND b < c.
-#'   \item Parameters can be grouped by placing them in a parenthesized, comma
-#'         separated list. Thus, "(a,b)>c" means that H1: a > c AND b > c.
-#'         Similarly, "(a,b)>(c,d)" means that H1: a > c AND b > c AND b > c AND
-#'         b > d.
-#' }
-#' @param object Object of class \code{lm}, from which the model parameters are
-#' extracted.
-#' @param hyp Character string, containing a BAIN hypothesis (see Details).
-#' @return A pair of named matrices for every hypothesis specified in the
-#' \code{hyp} argument; one matrix named ERr, specifying equality constraints,
-#' and one matrix named IRr, specifying inequality constraints.
-#' #@import stats
-#' #@import ranger
-#' #@import metafor
-#' @export
-#' @examples
-#' varnames <- c("strength","intelligence","wisdom","dexterity","constitution","charisma")
-#' hyp <- "(strength, intelligence) > (wisdom, dexterity)"
-#' create_matrices(varnames, hyp)
-#' hyp2 <- hyp <- "strength > charisma > intelligence = .5"
-#' create_matrices(varnames, hyp2)
-#' hyp3 <- "wisdom > 0& (strength, intelligence) > dexterity = constitution"
-#' create_matrices(varnames, hyp3)
-#'
-#' varnames <- c("a","b","c","d","e","f")
-#' hyp <- "e=f<a=b=c"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- ".5*f>e>0&c>0&d=0&a=b=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "f>e<0&c>0&d=0&a=b=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "f<e>0&c>0&d=0&a=b=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>b<c>d"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "d<c>b<a"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>2"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>2& b+3=0& b>c=d&e=f=4"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "(a,b)>c&d=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>-1&a<1"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>b&b>c&c>a"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a+b>2"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "(a+b)>2"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a&b>c&d"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "(.5*a,b)>c"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "1/2*a>c"
-#' create_matrices(varnames, hyp)
-#'
-#' varnames <- c("a", "b", "c")
-#' hyp <- "a < -2"
-#' create_matrices(varnames, hyp)
-#' hyp <- "-2 > a"
-#' create_matrices(varnames, hyp)
-#'
-#' # HET - TEKEN VOOR DE C CONSTRAINT WORD IN DE UITVOER NIET NAAR EEN + OMGEZET
-#' varnames <- c("a","b","c","d","e","f")
-#' hyp <- "a>2; b=0; c< -0.5; d>e=f"
-#' create_matrices(varnames, hyp)
-#'
-#' # -.5 WORD NIET BEGREPEN, -0.5 WEL
-#' hyp1 <- "a>2; b=0; c< -.5; d>e=f"
-#' create_matrices(varnames, hyp1)
-#'
-#' varnames <- c("a","b","c","d","e","f")
-#' hyp <- "(a+a+a,c+c+c)>b+b"
-#' create_matrices(varnames, hyp)
-#' varnames <- c("a","b","c","d","e","f")
-#' hyp1 <- "a+a+b>b+b+a"
-#' create_matrices(varnames, hyp1)
-

@@ -15,8 +15,7 @@ deprecated_arguments <- function(args, call = NULL){
 }
 
 
-
-.checkcov <- function(Sigma) {
+checkcov <- function(Sigma) {
   error = 0
   if (!isTRUE(all.equal(as.matrix(Sigma), t(Sigma), tolerance = 1e-10))) {
     error = 1
@@ -29,7 +28,7 @@ deprecated_arguments <- function(args, call = NULL){
 }
 
 
-.covmatrixfun <- function(inv_cov_list, grouppara, jointpara, P) {
+covmatrixfun <- function(inv_cov_list, grouppara, jointpara, P) {
   inv_upperleft <-
     lapply(inv_cov_list, function(x)
       x[1:grouppara, 1:grouppara])
@@ -69,7 +68,7 @@ deprecated_arguments <- function(args, call = NULL){
 }
 
 
-.add_col<-function(x,n_cov){
+add_col<-function(x,n_cov){
   if(length(x)!=0) x<-cbind(x, matrix(0,nrow(x),n_cov))
   return(x)
 }

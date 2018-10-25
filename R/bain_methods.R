@@ -118,17 +118,6 @@
 #' @useDynLib bain, .registration = TRUE
 
 bain <- function(x, hypothesis, ...) {
-  deprecated_arguments(
-    c(
-      "estimate" = "This argument has been renamed to 'x'.",
-      "Sigma" = "Sigma was extracted automatically from the 'lm' object provided to argument 'x'.",
-      "groups" = "groups was extracted automatically from the 'lm' object provided to argument 'x'.",
-      "joint_parameters" = "joint_parameters was extracted automatically from the 'lm' object provided to argument 'x'.",
-      "ERr" = "Bain now automatically constructs matrices from a written hypothesis, specified in the argument 'hypothesis'.",
-      "IRr" = "Bain now automatically constructs matrices from a written hypothesis, specified in the argument 'hypothesis'.",
-      "print" = "Bain now has a print method."
-    )
-  )
   UseMethod("bain", x)
 }
 
@@ -175,7 +164,7 @@ bain.lm <-
              df <- x$model
              var_factor <- which(variable_types[-1] == "factor")+1
              var_numeric <- c(FALSE, variable_types[-1] == "numeric")
-             # Altijd scalen? Waarom
+             # Altijd scalen? Waarom? Dit gaat er vanuit dat de gebruiker nooit de gecontrolleerde gemiddelden wil weten
              df[, var_numeric] <- scale(df[, var_numeric])
 
              ##analysis
@@ -233,7 +222,8 @@ bain.lm <-
            )
 
     Bain_res <- do.call(bain, Args)
-    Bain_res$Call <- cl
+    Bain_res$call <- cl
+    Bain_res$model <- x
     if(which_model == "mixed_predictors"){
       Bain_res$Warnings = c(
         Bain_res$Warnings,
@@ -269,7 +259,7 @@ bain.bain_htest <-
         names(estimate) <- substring(names(estimate), 9)
       }
 
-      Args$estimate <- estimate
+      Args$x <- estimate
       Args$n <- x$n
 
       if(length(x$estimate) == 1){
@@ -292,8 +282,10 @@ bain.bain_htest <-
         Args$groups <- 1
         Args$joint_parameters <- 0
       }
+
       Bain_res <- do.call(bain, Args)
-      Bain_res$Call <- cl
+      Bain_res$call <- cl
+      Bain_res$model <- x
       Bain_res
 }
 
@@ -311,15 +303,21 @@ bain.default <- function(x,
 
   cl <- match.call()
   Args <- as.list(cl[-1])
-  seed <- sample(1:2^15, 1)
+  seed <- 100#sample(1:2^15, 1)
 
   estimate <- x
   n_estimates <- length(estimate)
+
+
+# Parse hypotheses --------------------------------------------------------
 
   parsed_hyp <- parse_hypothesis(names(estimate), hypothesis)
   hyp_mat <- parsed_hyp$hyp_mat
   n_hyp <- length(parsed_hyp$original_hypothesis)
   n_constraints <- parsed_hyp$n_constraints
+
+
+# Check legal input -------------------------------------------------------
 
   rank_hyp <- qr(hyp_mat)$rank
 
@@ -335,7 +333,7 @@ bain.default <- function(x,
         ncol(as.matrix(Sigma)) != n_estimates) {
       stop("The rank of covariance matrix 'Sigma' did not match the number of estimates in 'x'.")
     }
-    if (.checkcov(Sigma) == 1) {
+    if (checkcov(Sigma) == 1) {
       # CJ: Please give a more informative error here
       stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
     }
@@ -351,7 +349,7 @@ bain.default <- function(x,
     if (!is.list(Sigma)) {
       stop("Argument 'Sigma' should be a list of covariance matrices, with a number of elements equal to the number of 'groups'.")
     }
-    if (any(unlist(lapply(Sigma, .checkcov)) == 1)) {
+    if (any(unlist(lapply(Sigma, checkcov)) == 1)) {
       # CJ: Please replace with a more informative error message
       stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
     }
@@ -382,18 +380,19 @@ bain.default <- function(x,
     inv_prior <- lapply(prior_cov, solve)
     inv_post <- lapply(Sigma, solve)
 
-    thetacovprior <- .covmatrixfun(inv_prior, groups, joint_parameters, n_Sigma)
-    thetacovpost <- .covmatrixfun(inv_post, groups, joint_parameters, n_Sigma)
+    thetacovprior <- covmatrixfun(inv_prior, groups, joint_parameters, n_Sigma)
+    thetacovpost <- covmatrixfun(inv_post, groups, joint_parameters, n_Sigma)
   }
 
-# From here on, it's the classic Bain function, no alterations -----------------
+
+# Check legality of constraints -------------------------------------------
 
   #check about equality constraints or the comparability issue
   About <- .Fortran(
     "about",
-    as.integer(n_hyp),
-    as.integer(n_estimates),
-    as.integer(n_constraints),
+    numH = as.integer(n_hyp),
+    numSP = as.integer(n_estimates),
+    numR = as.integer(n_constraints),
     totalRr = hyp_mat,
     numARi = as.integer(rep(0, n_hyp)),
     error = as.integer(0)
@@ -404,19 +403,19 @@ bain.default <- function(x,
   error <- About$error
 
   if (qr(hyp_matadjust)$rank > (qr(hyp_matadjust[1:sum(n_constraints), 1:n_estimates])$rank + sum(numAR))) {
-    error = 2
+    error <- 2
   }
 
   for (i in 1:sum(n_constraints)) {
     for (j in 1:sum(n_constraints)) {
       if (all(hyp_matadjust[i, 1:n_estimates] == hyp_matadjust[j, 1:n_estimates]) &&
           abs(hyp_matadjust[i, n_estimates + 1] - hyp_matadjust[j, n_estimates +
-                                                                                1]) > 0) {
+                                                                1]) > 0) {
         error = 2
       }
       if (all(hyp_matadjust[i, 1:n_estimates] == -hyp_matadjust[j, 1:n_estimates]) &&
           abs(hyp_matadjust[i, n_estimates + 1] + hyp_matadjust[j, n_estimates +
-                                                                                1]) > 0) {
+                                                                1]) > 0) {
         error = 2
       }
     }
@@ -434,12 +433,15 @@ bain.default <- function(x,
     )
   }
 
-  fit = com = BF = rep(0, n_hyp)
-  fiteq = fitin = comeq = comin = rep(1, n_hyp)
-  results = rep(0, 5 * n_hyp)
+
+# End check legality of constraints ---------------------------------------
+
+  fit <- com <- BF <- rep(0, n_hyp)
+  fiteq <- fitin <- comeq <- comin <- rep(1, n_hyp)
+  results <- rep(0, 5 * n_hyp)
 
   for (h in 1:n_hyp) {
-    ERr = IRr = constant = 0
+    ERr <- IRr <- constant <- 0
     if (n_constraints[2 * h - 1] != 0) {
       ERr <-
         matrix(hyp_mat[(sum(n_constraints[1:(2 * h - 1)]) - n_constraints[2 * h - 1] + 1):sum(n_constraints[1:(2 *
@@ -453,10 +455,10 @@ bain.default <- function(x,
     }
 
     #compute the rowrank of IRr and the linear combiniation of independent constraints
-    Mrank = .Fortran(
+    Mrank <- .Fortran(
       "mrank",
-      n_constraints[2 * h],
-      n_estimates,
+      numIR = n_constraints[2 * h],
+      numSP = n_estimates,
       rowrank = as.integer(0),
       IRr = IRr,
       transR = diag(0, n_constraints[2 * h], n_constraints[2 * h]),
@@ -464,10 +466,10 @@ bain.default <- function(x,
       transcon = rep(0, n_constraints[2 * h])
     )
 
-    rowrank = Mrank$rowrank
-    IRr = Mrank$IRr
-    transR = Mrank$transR
-    transcon = Mrank$transcon
+    rowrank <- Mrank$rowrank
+    IRr <- Mrank$IRr
+    transR <- Mrank$transR
+    transcon <- Mrank$transcon
 
     if (n_constraints[2 * h - 1] == 0) {
       Rr = IRr
@@ -533,7 +535,6 @@ bain.default <- function(x,
                                                                                     h - 1], 1:n_constraints[2 * h - 1]]))))
     }
 
-
     #inequality constraints
     if (n_constraints[2 * h] > 0) {
       # function for the computation of complexity or fit for inequality constraints
@@ -554,11 +555,40 @@ bain.default <- function(x,
         )
         return(c(forc$f_or_c, forc$Numfc))
       }
+      forc_post <- .Fortran(
+        "forc",
+        as.integer(n_constraints[2 * h - 1]),
+        as.integer(n_constraints[2 * h]),
+        as.integer(rowrank),
+        betapost,
+        transcon,
+        invbetadiagpost,
+        Bpost,
+        transR,
+        f_or_c = as.double(0),
+        Numfc = as.integer(0),
+        as.integer(seed)
+      )
 
-      fitin[h] <- fitcom(betapost, invbetadiagpost, Bpost, seed)[1]
-      numf <- fitcom(betapost, invbetadiagpost, Bpost, seed)[2]
-      comin[h] <- fitcom(betapri, invbetadiagpri, Bpri, seed)[1]
-      numc <- fitcom(betapri, invbetadiagpri, Bpri, seed)[2]
+      forc_prior <- .Fortran(
+        "forc",
+        as.integer(n_constraints[2 * h - 1]),
+        as.integer(n_constraints[2 * h]),
+        as.integer(rowrank),
+        betapri,
+        transcon,
+        invbetadiagpri,
+        Bpri,
+        transR,
+        f_or_c = as.double(0),
+        Numfc = as.integer(0),
+        as.integer(seed)
+      )
+
+      fitin[h] <- forc_post$f_or_c
+      numf <- forc_post$Numfc
+      comin[h] <- forc_prior$f_or_c
+      numc <- forc_prior$Numfc
     }
 
     #total fit and complexity
@@ -592,35 +622,21 @@ bain.default <- function(x,
     c("f=", "f>|=", "c=", "c>|=", "f", "c", "BF.c", "PMPa", "PMPb")
 
 
-  BFmatrix <- diag(1, n_hyp)
-  for (h1 in 1:n_hyp) {
-    for (h2 in 1:n_hyp) {
-      BFmatrix[h1, h2] <- fit[h1] / fit[h2] / (com[h1] / com[h2])
-    }
-  }
-  rownames(BFmatrix) <- paste("H", 1:n_hyp, sep = "")
-  colnames(BFmatrix) <- paste("H", 1:n_hyp, sep = "")
+  BFmatrix <- fit %*% t(1/fit) / com %*% t(1/com)
 
+  rownames(BFmatrix) <- paste0("H", 1:n_hyp)
+  colnames(BFmatrix) <- paste0("H", 1:n_hyp)
 
-  res <- matrix(0, n_hyp, 5)
-  colnames(res) <- c("fit", "complexity", "BF", "PMPa", "PMPb")
-  rownames(res) <- paste("H", 1:n_hyp, sep = "")
+  res <- cbind("Fit" = fit, "Complexity" = com, "BF" = BF, "PMPa" = fit / com / sum(fit / com), "PMPb" = fit / com / (1 + sum(fit / com)))
+  rownames(res) <- parsed_hyp$original_hypothesis
 
-  for (h in 1:n_hyp) {
-    res[h, ] <-
-      c(fit[h],
-        com[h],
-        BF[h],
-        fit[h] / com[h] / sum(fit / com),
-        fit[h] / com[h] / (1 + sum(fit / com)))
-  }
 
   Bainres <- list(
     b = b,
-    priorCov = thetacovprior,
-    posterCov = thetacovpost,
-    testResult = as.data.frame(res),
-    fit_com_table = as.data.frame(fctable),
+    prior = thetacovprior,
+    posterior = thetacovpost,
+    test = res,
+    fit = as.data.frame(fctable),
     BFmatrix = as.data.frame(BFmatrix, row.names = attributes(BFmatrix)$row.names),
     call = cl
   )

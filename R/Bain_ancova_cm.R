@@ -110,7 +110,7 @@ Bain_ancova_cm<-function(X, dep_var, covariates, group, hyp){
   }
 
   ##hypothesis
-  newTRr<- lapply(TRr,.add_col,n_cov=n_covars)## add extra columns for covariates' coeffs.
+  newTRr<- lapply(TRr,add_col,n_cov=n_covars)## add extra columns for covariates' coeffs.
   IR_chara<-paste0(",newTRr[[",1:length(newTRr),"]]",sep="",collapse = "")
 
 
@@ -145,7 +145,7 @@ Bain_ancova_cm<-function(X, dep_var, covariates, group, hyp){
 }
 
 
-.add_col<-function(x,n_cov){
+add_col<-function(x,n_cov){
   if(length(x)!=0) x<-cbind(x, matrix(0,nrow(x),n_cov))
   return(x)
 }

@@ -97,9 +97,11 @@
 #'
 #' #H1
 #' ERr<-NULL
-#' IRr<-matrix(c(1,-1,0,0,0,1,-1,0),nrow=2,ncol=4,byrow = TRUE)
+#' IRr<-matrix(c(1,-1,0,0,
+#'               0,1,-1,0,
+#'               -1,1,0,2), ncol=4,byrow = TRUE)
 #'
-#' res<-Bain(estimate=estimate,grouppara=0,jointpara=3,Sigma=Sigma,n=n,ERr,IRr) #run
+#' res<-bain:::Bain(estimate=estimate,grouppara=0,jointpara=3,Sigma=Sigma,n=n,ERr,IRr) #run
 #' #Results are printed.
 #' #Results for fit, complexity, Bayes factor, and PMPs are saved in "res":
 #'
@@ -172,7 +174,7 @@ Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr
     if(nrow(as.matrix(Sigma))!=numSP||ncol(as.matrix(Sigma))!=numSP){
       stop("length of parameters and rank of covariance matrix 'Sigma' are not matched")
     }
-    if(.checkcov(Sigma)==1){stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")}
+    if(checkcov(Sigma)==1){stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")}
 
     b<-J/n
     thetacovpost<-Sigma
@@ -183,7 +185,7 @@ Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr
   if(grouppara!=0){
     #if(length(n)==1){stop("n should be a vector when grouppara>0")}
     if(!is.list(Sigma)){stop("Sigma should be a list when grouppara>0")}
-    if(any(unlist(lapply(Sigma,.checkcov))==1)){stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")}
+    if(any(unlist(lapply(Sigma,checkcov))==1)){stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")}
 
     dim_groups<-unlist(lapply(Sigma,dim))
     if(any(dim_groups!=mean(dim_groups))){
@@ -205,8 +207,8 @@ Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr
     inv_prior<-lapply(prior_cov,solve)
     inv_post<-lapply(Sigma,solve)
 
-    thetacovprior<-.covmatrixfun(inv_prior,grouppara,jointpara,P)
-    thetacovpost<-.covmatrixfun(inv_post,grouppara,jointpara,P)
+    thetacovprior<-covmatrixfun(inv_prior,grouppara,jointpara,P)
+    thetacovpost<-covmatrixfun(inv_post,grouppara,jointpara,P)
   }
 
   #check about equality constraints or the comparability issue
@@ -424,7 +426,7 @@ Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr
 }
 
 
-.checkcov<-function(Sigma){
+checkcov<-function(Sigma){
   error=0
   if(!isTRUE(all.equal(as.matrix(Sigma),t(Sigma),tolerance=1e-10))){error=1}else{
     if(any(eigen(Sigma)$values<=0)){error=1}}
@@ -432,7 +434,7 @@ Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr
 }
 
 
-.covmatrixfun<-function(inv_cov_list,grouppara,jointpara,P){
+covmatrixfun<-function(inv_cov_list,grouppara,jointpara,P){
 
   inv_upperleft<-lapply(inv_cov_list,function(x) x[1:grouppara,1:grouppara])
   if(jointpara>0){
