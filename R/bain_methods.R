@@ -634,7 +634,7 @@ bain.default <- function(x,
   rownames(BFmatrix) <- colnames(BFmatrix) <- paste0("H", 1:n_hyp)
 
   # Create table of fit indices
-  res <- cbind("Fit_eq" = fiteq, "Fit_in" = fitin, "Com_eq" = comeq, "Com_in" = comin, "Fit" = fit, "Complexity" = com, "BF" = BF, "PMPa" = fit / com / sum(fit / com), "PMPb" = fit / com / (1 + sum(fit / com)))
+  res <- cbind("Fit_eq" = fiteq, "Com_eq" = comeq, "Fit_in" = fitin, "Com_in" = comin, "Fit" = fit, "Com" = com, "BF" = BF, "PMPa" = fit / com / sum(fit / com), "PMPb" = fit / com / (1 + sum(fit / com)))
   res <- rbind(res, c(rep(NA, ncol(res)-1), 1 / (1 + sum(fit / com))))
   rownames(res) <- c(paste("H", 1:n_hyp, sep = ""), "Hu")
   # Either provide these as rownames, but can take a lot of space, or print a 'legend' below the table
@@ -647,7 +647,8 @@ bain.default <- function(x,
     prior = thetacovprior,
     posterior = thetacovpost,
     call = cl,
-    model = x
+    model = x,
+    hypotheses = parsed_hyp$original_hypothesis
   )
   class(Bainres) <- "Bain"
   Bainres
