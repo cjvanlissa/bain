@@ -156,7 +156,7 @@ bain.lm <-
     cl <- match.call()
     Args <- as.list(cl[-1])
     variable_types <- sapply(x$model, class)
-
+    Warnings <- NULL
     which_model <- if(any(variable_types[-1] == "factor")){
         if(ncol(x$model) == 2){
           "ANOVA"
@@ -165,6 +165,9 @@ bain.lm <-
             "ANCOVA"
           } else {
             "mixed_predictors"
+            Warnings <- c(Warnings,
+                          "Calling bain on an object of type 'lm' with mixed predictors (factors and numeric predictors) may result in untrustworthy results. Please interpret with caution."
+            )
           }
         }
       } else {
@@ -173,18 +176,22 @@ bain.lm <-
 
     switch(which_model,
            ANOVA = {
+             if(names(x$coefficients)[1] == "(Intercept)"){
+               Warnings <- c(Warnings, "Your ANOVA model included an intercept, which was dropped by bain. Please specify your hypothesis in terms of group means.")
+             }
              n <- table(x$model[, 2])
              anovafm <- lm(x$model[, 1] ~ -1 + x$model[, 2])
-             estimate <- anovafm$coefficients
-             # Wordt correct gedaan door name_estimates:
-             names(estimate) <- substring(names(estimate), 13)
-             Args$x <- estimate
+             Args$x <- anovafm$coefficients
+             names(Args$x) <- gsub(names(x$model)[2], "", names(Args$x))
              Args$Sigma <- lapply((1/n * summary.lm(anovafm)$sigma**2), matrix)
              Args$groups <- 1
              Args$joint_parameters <- 0
              Args$n <- n
            },
            ANCOVA = {
+             if(names(x$coefficients)[1] == "(Intercept)"){
+               Warnings <- c(Warnings, "Your ANCOVA model included an intercept, which was dropped by bain. Please specify your hypothesis in terms of group means.")
+             }
              df <- x$model
              var_factor <- which(variable_types[-1] == "factor")+1
              var_numeric <- c(FALSE, variable_types[-1] == "numeric")
@@ -193,11 +200,10 @@ bain.lm <-
 
              ##analysis
              ancovafm <-  lm(as.formula(paste0(names(df)[1], "~ -1 + .")), df)
-             estimate <- coef(ancovafm)
-             names(estimate) <- gsub(names(df)[var_factor], "", names(estimate))
-             resvar <- summary(ancovafm)$sigma**2
 
-             Args$x <- estimate
+             Args$x <- ancovafm$coefficients
+             names(Args$x) <- gsub(names(df)[var_factor], "", names(Args$x))
+             resvar <- summary(ancovafm)$sigma**2
              Args$Sigma <- by(cbind(1, df[, var_numeric]), df[[var_factor]], function(x){
                resvar * solve(t(as.matrix(x)) %*% as.matrix(x))
              })
@@ -248,11 +254,9 @@ bain.lm <-
     Bain_res <- do.call(bain, Args)
     Bain_res$call <- cl
     Bain_res$model <- x
-    if(which_model == "mixed_predictors"){
-      Bain_res$Warnings = c(
-        Bain_res$Warnings,
-        "Calling bain on an object of type 'lm' with mixed predictors (factors and numeric predictors) may result in untrustworthy results. Please interpret with caution."
-      )
+
+    if(!is.null(Warnings)){
+      Bain_res$Warnings <- Warnings
     }
     class(Bain_res) <- c("Bain_lm", class(Bain_res))
     Bain_res
@@ -277,14 +281,7 @@ bain.bain_htest <-
       cl <- match.call()
       Args <- as.list(cl[-1])
 
-      estimate <- x$estimate
-      if(x$method == "Paired t-test"){
-        names(estimate) <- "difference"
-      } else {
-        names(estimate) <- substring(names(estimate), 9)
-      }
-
-      Args$x <- estimate
+      Args$x <- x$estimate
       Args$n <- x$n
 
       if(length(x$estimate) == 1){
@@ -331,7 +328,7 @@ bain.default <- function(x,
   Args <- as.list(cl[-1])
   seed <- 100#sample(1:2^15, 1)
 
-  estimate <- x
+  estimate <- rename_estimate(x)
   n_estimates <- length(estimate)
 
 
@@ -626,11 +623,11 @@ bain.default <- function(x,
   #total fit and complexity
   fit <- fitin * fiteq
   com <- comin * comeq
-
+  #return(list(fit, com, n_constraints,n_hyp))
   #Bayes factor for a hypothesis vs its complement
   BF <- fit/com
-  has_in <- n_constraints[seq(1, n_hyp*2, by = 2)] > 0
-  BF[has_in] <- BF[has_in] / ((1 - fit[has_in]) / (1 - com[has_in]))
+  no_eq <- n_constraints[seq(1, n_hyp*2, by = 2)] == 0
+  BF[no_eq] <- BF[no_eq] / ((1 - fit[no_eq]) / (1 - com[no_eq]))
 
   # Create matrix of Bayes factors
   BFmatrix <- fit %*% t(1/fit) / com %*% t(1/com)

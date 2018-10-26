@@ -18,4 +18,6 @@ Depends:
     R (>= 3.0.0),
     stats,
     methods
-Suggests: MASS
+Suggests: 
+    MASS,
+    testthat
