@@ -175,7 +175,8 @@ bain.lm <-
            ANOVA = {
              n <- table(x$model[, 2])
              anovafm <- lm(x$model[, 1] ~ -1 + x$model[, 2])
-             estimate <- coef(anovafm)
+             estimate <- anovafm$coefficients
+             # Wordt correct gedaan door name_estimates:
              names(estimate) <- substring(names(estimate), 13)
              Args$x <- estimate
              Args$Sigma <- lapply((1/n * summary.lm(anovafm)$sigma**2), matrix)
@@ -253,6 +254,7 @@ bain.lm <-
         "Calling bain on an object of type 'lm' with mixed predictors (factors and numeric predictors) may result in untrustworthy results. Please interpret with caution."
       )
     }
+    class(Bain_res) <- c("Bain_lm", class(Bain_res))
     Bain_res
   }
 
@@ -309,6 +311,7 @@ bain.bain_htest <-
       Bain_res <- do.call(bain, Args)
       Bain_res$call <- cl
       Bain_res$model <- x
+      class(Bain_res) <- c("Bain_htest", class(Bain_res))
       Bain_res
 }
 
@@ -625,7 +628,6 @@ bain.default <- function(x,
   com <- comin * comeq
 
   #Bayes factor for a hypothesis vs its complement
-  #n_constraints <- c(0,1,1,3,0,3,0,1)
   BF <- fit/com
   has_in <- n_constraints[seq(1, n_hyp*2, by = 2)] > 0
   BF[has_in] <- BF[has_in] / ((1 - fit[has_in]) / (1 - com[has_in]))
@@ -647,7 +649,8 @@ bain.default <- function(x,
     b = b,
     prior = thetacovprior,
     posterior = thetacovpost,
-    call = cl
+    call = cl,
+    model = x
   )
   class(Bainres) <- "Bain"
   Bainres

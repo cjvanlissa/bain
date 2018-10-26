@@ -83,7 +83,6 @@
 #' evaluation of informative hypotheses.
 #' @keywords internal htest
 #' @examples
-#' \dontrun{
 #' #One group:
 #' #Example 1:
 #' #Hypothesis
@@ -98,16 +97,14 @@
 #' #H1
 #' ERr<-NULL
 #' IRr<-matrix(c(1,-1,0,0,
-#'               0,1,-1,0,
-#'               -1,1,0,2), ncol=4,byrow = TRUE)
+#'               0,1,-1,0), ncol=4,byrow = TRUE)
 #'
 #' res<-bain:::Bain(estimate=estimate,grouppara=0,jointpara=3,Sigma=Sigma,n=n,ERr,IRr) #run
 #' #Results are printed.
 #' #Results for fit, complexity, Bayes factor, and PMPs are saved in "res":
 #'
-#' plot(res)
-#' #Results for PMPs are plotted.
-#'
+#' # Use new bain:
+#' bain_res <- bain(c(a=3, b=2, c=1), "a>b>c", n = n, Sigma = Sigma, groups = 0, joint_parameters = 3)
 #'
 #' #Multiple groups
 #' #Example 2
@@ -138,13 +135,10 @@
 #' ERr3<-NULL
 #' IRr3<-matrix(c(-1,1,0),nrow=1,ncol=3,byrow = TRUE)
 #'
-#' res<-Bain(estimate,Sigma,grouppara=1,jointpara=0,n=n,ERr1,IRr1,ERr2,IRr2,ERr3,IRr3) #run
+#' res<-bain:::Bain(estimate,Sigma,grouppara=1,jointpara=0,n=n,ERr1,IRr1,ERr2,IRr2,ERr3,IRr3) #run
+#' bain_res <- bain(c(a = 0, b = 0), Sigma = Sigma, groups = 1, joint_parameters = 0, n=n, hypothesis = "a=b;a>b;a<b")
 #' #Results are printed.
 #' #Results for fit, complexity, Bayes factor, and PMPs are also saved in "res":
-#'
-#' plot(res)
-#' #Results for PMPs are plotted.
-#' }
 #' @importFrom utils capture.output write.table
 Bain<-function(estimate, Sigma, grouppara = 0, jointpara = 0, n, ERr = NULL, IRr = NULL, ..., seed = 100, print = TRUE)
 {

@@ -3,6 +3,8 @@
 .RData
 .Ruserdata
 .dll
-.o
+*.o
+*.dll
 R/oud/
 binary/
+.dll

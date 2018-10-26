@@ -1,6 +1,10 @@
 parse_hypothesis <- function(varnames, hyp){
   # Check if varnames occur in hyp.
-  params_in_hyp <- trimws(unique(strsplit(hyp, split = "(?<![a-zA-Z\\._])[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
+  #params_in_hyp <- trimws(unique(strsplit(hyp, split = "(?<![a-zA-Z\\._])[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
+  # This works for single characters
+  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
+  params_in_hyp <- params_in_hyp[grepl("^[a-zA-Z]", params_in_hyp)]
+
   if(any(!params_in_hyp %in% varnames)){
     stop(
          "Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  Your hypothesis is: ",
