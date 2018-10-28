@@ -1,3 +1,14 @@
+escape_special <- function (strings){
+  vals <- c("\\\\", "\\[", "\\]", "\\(", "\\)", "\\{", "\\}",
+            "\\^", "\\$", "\\*", "\\+", "\\?", "\\.", "\\|")
+  replace.vals <- paste0("\\\\", vals)
+  for (i in seq_along(vals)) {
+    strings <- gsub(vals[i], replace.vals[i], strings)
+  }
+  strings
+}
+
+
 deprecated_arguments <- function(args, call = NULL){
   if(is.null(call)){
     call <- sys.call(-1)

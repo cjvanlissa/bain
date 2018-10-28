@@ -137,7 +137,7 @@ t.test.default <-
     rval <- list(statistic = tstat, parameter = df, p.value = pval,
                  conf.int = cint, estimate = estimate, null.value = mu, alternative = alternative,
                  method = method, data.name = dname);
-    if(hasArg("y")&!paired){
+    if(!is.null(y)&!paired){
       rval$n <- c(nx, ny)
       rval$v <- c(vx, vy)
     } else {

@@ -101,7 +101,7 @@ get_estimates.htest <- function(x, ...) {
 #' m_tt <- label_estimates(m_tt, c("a", "b"))
 #' # Example 2
 #' m_lm <- lm(Sepal.Length ~., iris)
-#' m_lm <- label_estimates(m_lm, c("a", "b", "c", "d", "e", "f"))
+#' m_lm <- label_estimates(m_lm, labels = c("a", "b", "c", "d", "e", "f"))
 #' @rdname label_estimates
 #' @export
 label_estimates <- function(x, labels, ...){
@@ -111,6 +111,18 @@ label_estimates <- function(x, labels, ...){
 #' @rdname label_estimates
 #' @export
 label_estimates.lm <- function(x, labels, ...){
+  names_coefs <- names(x$coefficients)
+  if(length(names_coefs) != length(labels)) stop("The length of the vector of 'labels' must be equal to the length of the vector of coefficients in the model. To view the vector of coefficients, use 'get_estimates()'.")
+  variable_types <- sapply(x$model, class)
+
+  if (any(variable_types[-1] == "factor")) {
+    for (fac_name in names(x$model)[-1][variable_types[-1] == "factor"]) {
+      fac_levels <- levels(x$model[[fac_name]])
+      which_coef <- match(paste0(fac_name, fac_levels), names_coefs)
+      fac_levels[which(!is.na(which_coef))] <- labels[which_coef[!is.na(which_coef)]]
+      x$model[[fac_name]] <- ordered(x$model[[fac_name]], labels = fac_levels)
+    }
+  }
   names(x$coefficients) <- labels
   invisible(get_estimates(x))
   x

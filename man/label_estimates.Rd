@@ -37,7 +37,7 @@ m_tt <- t.test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
 m_tt <- label_estimates(m_tt, c("a", "b"))
 # Example 2
 m_lm <- lm(Sepal.Length ~., iris)
-m_lm <- label_estimates(m_lm, c("a", "b", "c", "d", "e", "f"))
+m_lm <- label_estimates(m_lm, labels = c("a", "b", "c", "d", "e", "f"))
 }
 \seealso{
 get_estimates bain
