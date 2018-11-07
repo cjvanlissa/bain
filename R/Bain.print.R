@@ -24,6 +24,8 @@ print.Bain <- function(x,...){
 
 }
 
+
+
 #' @method print bain
 #' @export
 print.bain <- function(x, stats = c("Fit_eq", "Com_eq", "Fit_in", "Com_in", "Fit", "Com", "BF", "PMPa", "PMPb"),
@@ -45,7 +47,7 @@ print.bain <- function(x, stats = c("Fit_eq", "Com_eq", "Fit_in", "Com_in", "Fit
            quote = FALSE,
            na.print = na.print)
 
-  cat("Hypotheses:\n  ", paste(rownames(dat)[-nrow(dat)], ": ", x$hypotheses, sep = "", collapse = "\n  "))
+  cat("\nHypotheses:\n  ", paste(rownames(dat)[-nrow(dat)], ": ", x$hypotheses, sep = "", collapse = "\n  "))
 
   if(!is.null(x[["warnings"]])){
     warning("Bain analysis returned the following warnings:\n  ", paste(1:length(x$warnings), ". ", x$warnings, sep = "", collapse = "\n  "))

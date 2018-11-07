@@ -196,7 +196,7 @@ bain.lm <-
              var_factor <- which(variable_types[-1] == "factor")+1
              var_numeric <- c(FALSE, variable_types[-1] == "numeric")
              # Altijd scalen? Waarom? Dit gaat er vanuit dat de gebruiker nooit de gecontrolleerde gemiddelden wil weten
-             df[, var_numeric] <- scale(df[, var_numeric])
+             df[, var_numeric] <- scale(df[, var_numeric], scale = FALSE)
 
              ##analysis
              ancovafm <-  lm(as.formula(paste0(names(df)[1], "~ -1 + .")), df)
@@ -258,7 +258,7 @@ bain.lm <-
     if(!is.null(Warnings)){
       Bain_res$Warnings <- Warnings
     }
-    class(Bain_res) <- c("Bain_lm", class(Bain_res))
+    class(Bain_res) <- c("bain_lm", class(Bain_res))
     Bain_res
   }
 
@@ -308,7 +308,7 @@ bain.bain_htest <-
       Bain_res <- do.call(bain, Args)
       Bain_res$call <- cl
       Bain_res$model <- x
-      class(Bain_res) <- c("Bain_htest", class(Bain_res))
+      class(Bain_res) <- c("bain_htest", class(Bain_res))
       Bain_res
 }
 
@@ -650,6 +650,6 @@ bain.default <- function(x,
     model = x,
     hypotheses = parsed_hyp$original_hypothesis
   )
-  class(Bainres) <- "Bain"
+  class(Bainres) <- "bain"
   Bainres
 }

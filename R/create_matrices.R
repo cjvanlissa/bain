@@ -2,7 +2,8 @@ parse_hypothesis <- function(varnames, hyp){
   # Check if varnames occur in hyp.
   #params_in_hyp <- trimws(unique(strsplit(hyp, split = "(?<![a-zA-Z\\._])[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
   # This works for single characters
-  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
+  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>;&\\*+-]+", perl = TRUE)[[1]]))
+  params_in_hyp <- params_in_hyp[!sapply(params_in_hyp, grepl, pattern = "^[0-9]*\\.?[0-9]+$")]
   params_in_hyp <- params_in_hyp[grepl("^[a-zA-Z]", params_in_hyp)]
 
   if(any(!params_in_hyp %in% varnames)){
@@ -39,7 +40,7 @@ parse_hypothesis <- function(varnames, hyp){
   hyp_list <- lapply(hyp_list, function(x){ strsplit(x, "&")[[1]]})
   hyp_list <- lapply(hyp_list, function(x){unlist(lapply(x, expand_compound_constraints))})
   hyp_list <- lapply(hyp_list, function(x){unlist(lapply(x, expand_parentheses))})
-  hyp_list <- lapply(hyp_list, function(x){sapply(x, constraint_to_equation)})
+  hyp_list <- lapply(hyp_list, function(x){sapply(x, flip_inequality)})
   hyp_list <- lapply(hyp_list, function(x){sapply(x, constraint_to_equation)})
   hyp_list <- lapply(hyp_list, function(x){sapply(x, order_terms)})
 
@@ -174,7 +175,7 @@ create_matrices <- function(varnames, hyp){
   hyp_list <- lapply(hyp_list, function(x){ strsplit(x, "&")[[1]]})
   hyp_list <- lapply(hyp_list, function(x){unlist(lapply(x, expand_compound_constraints))})
   hyp_list <- lapply(hyp_list, function(x){unlist(lapply(x, expand_parentheses))})
-  hyp_list <- lapply(hyp_list, function(x){sapply(x, constraint_to_equation)})
+  hyp_list <- lapply(hyp_list, function(x){sapply(x, flip_inequality)})
   hyp_list <- lapply(hyp_list, function(x){sapply(x, constraint_to_equation)})
   hyp_list <- lapply(hyp_list, function(x){sapply(x, order_terms)})
 
@@ -348,13 +349,13 @@ constraint_to_equation <- function(hyp){
   hyp <- gsub("(^|(?<![\\.0-9+-]))([0-9]{1,})(?!\\.)(?=\\*)", "+\\2", hyp, perl = TRUE)
 
   # Gu: To complement the above two, for a single number (constant), add a +
-  hyp <- gsub("(?<=[=<>]|^)(\\d|(\\d+\\.\\d+))(?=[=+-<>]|$)", "+\\1", hyp, perl = TRUE)
+  hyp <- gsub("(?<=[=<>]|^)(\\d+|(\\d+\\.\\d+))(?=[=+-<>]|$)", "+\\1", hyp, perl = TRUE)
 
   # When a number is followed by =, >, <, +, or -, or is the last character of
   # the string, add "*XXXconstant" to the number
   # hyp <- gsub("(\\d)((?=[=<>+-])|$)", "\\1*XXXconstant", hyp, perl = TRUE)
   # Gu: but not preceded by word, number, period and  underline
-  gsub("(?<![a-zA-Z0-9_\\.])(\\d|(\\d+\\.\\d+))((?=[=<>+-])|$)", "\\1*XXXconstant", hyp, perl = TRUE)
+  gsub("(?<![a-zA-Z0-9_\\.])(\\d+|(\\d+\\.\\d+))((?=[=<>+-])|$)", "\\1*XXXconstant", hyp, perl = TRUE)
 }
 
 
