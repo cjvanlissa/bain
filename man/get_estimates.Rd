@@ -2,18 +2,9 @@
 % Please edit documentation in R/get_estimates.R
 \name{get_estimates}
 \alias{get_estimates}
-\alias{get_estimates.lm}
-\alias{get_estimates.bain_htest}
-\alias{get_estimates.htest}
 \title{Get estimates from a model object}
 \usage{
 get_estimates(x, ...)
-
-\method{get_estimates}{lm}(x, ...)
-
-\method{get_estimates}{bain_htest}(x, ...)
-
-\method{get_estimates}{htest}(x, ...)
 }
 \arguments{
 \item{x}{A model object for which a \code{\link{bain}} method exists.}

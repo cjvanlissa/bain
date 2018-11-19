@@ -2,18 +2,9 @@
 % Please edit documentation in R/get_estimates.R
 \name{label_estimates}
 \alias{label_estimates}
-\alias{label_estimates.lm}
-\alias{label_estimates.bain_htest}
-\alias{label_estimates.htest}
 \title{Label estimates from a model object}
 \usage{
 label_estimates(x, labels, ...)
-
-\method{label_estimates}{lm}(x, labels, ...)
-
-\method{label_estimates}{bain_htest}(x, labels, ...)
-
-\method{label_estimates}{htest}(x, labels, ...)
 }
 \arguments{
 \item{x}{A model object for which a \code{\link{bain}} method exists.}

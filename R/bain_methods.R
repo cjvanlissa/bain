@@ -155,13 +155,16 @@ bain.lm <-
 
     cl <- match.call()
     Args <- as.list(cl[-1])
-    variable_types <- sapply(x$model, class)
+    # Checken of het factor OF ordered factor is!!!!!!
+    # Nu wordt overal (?) factor_variables[-1] gebruikt. Kan het niet gewoon één keer hier [-1]?
+    factor_variables <- sapply(x$model[-1], inherits, what = "factor")
     Warnings <- NULL
-    which_model <- if(any(variable_types[-1] == "factor")){
+    # Checken of het factor OF ordered factor is!!!!!!
+    which_model <- if(any(factor_variables)){
         if(ncol(x$model) == 2){
           "ANOVA"
         } else {
-          if(sum(variable_types[-1] == "factor") == 1){
+          if(sum(factor_variables) == 1){
             "ANCOVA"
           } else {
             "mixed_predictors"
@@ -182,9 +185,9 @@ bain.lm <-
              n <- table(x$model[, 2])
              anovafm <- lm(x$model[, 1] ~ -1 + x$model[, 2])
              Args$x <- anovafm$coefficients
-             names(Args$x) <- gsub(names(x$model)[2], "", names(Args$x))
+             names(Args$x) <- levels(x$model[, 2])
              Args$Sigma <- lapply((1/n * summary.lm(anovafm)$sigma**2), matrix)
-             Args$groups <- 1
+             Args$group_parameters <- 1
              Args$joint_parameters <- 0
              Args$n <- n
            },
@@ -193,8 +196,8 @@ bain.lm <-
                Warnings <- c(Warnings, "Your ANCOVA model included an intercept, which was dropped by bain. Please specify your hypothesis in terms of group means.")
              }
              df <- x$model
-             var_factor <- which(variable_types[-1] == "factor")+1
-             var_numeric <- c(FALSE, variable_types[-1] == "numeric")
+             var_factor <- which(factor_variables)+1
+             var_numeric <- c(FALSE, sapply(x$model[-1], is.numeric))
              # Altijd scalen? Waarom? Dit gaat er vanuit dat de gebruiker nooit de gecontrolleerde gemiddelden wil weten
              df[, var_numeric] <- scale(df[, var_numeric], scale = FALSE)
 
@@ -207,7 +210,7 @@ bain.lm <-
              Args$Sigma <- by(cbind(1, df[, var_numeric]), df[[var_factor]], function(x){
                resvar * solve(t(as.matrix(x)) %*% as.matrix(x))
              })
-             Args$groups <- 1
+             Args$group_parameters <- 1
              Args$joint_parameters <- sum(var_numeric)
              Args$n <- table(df[[var_factor]])
            },
@@ -218,9 +221,9 @@ bain.lm <-
 
              predictor_names <- names(x$coefficients) # If (Intercept) must be dropped, drop it BY NAME, don't drop first column
 
-             if(any(variable_types[-1] == "factor")){
+             if(any(factor_variables)){
                predictor_names <- gsub(paste0("^(",
-                                              paste(names(x$model)[-1][variable_types[-1] == "factor"], sep = "|"),
+                                              paste(names(x$model)[-1][factor_variables], sep = "|"),
                                               ")"), "", predictor_names)
              }
 
@@ -231,6 +234,7 @@ bain.lm <-
                estimate <- coef(x)[covariates_hypo]
                Sigma <- vcov(x)[covariates_hypo, covariates_hypo]
              } else{
+               # Hier moeten even de juiste namen meegegeven worden!!!
                ses <- seBeta(
                  x$model[, -1],
                  x$model[, 1],
@@ -240,12 +244,14 @@ bain.lm <-
                )
                select_parameters <- which(names(x$model)[-1] %in% covariates_hypo)
                estimate <- ses$CIs$estimate[select_parameters]
+               # Check even of dit lekker loopt!
+               names(estimate) <- names(x$model)[-1][select_parameters]
                Sigma <- ses$cov.mat[select_parameters, select_parameters]
              }
 
              Args$x <- estimate
              Args$Sigma <- Sigma
-             Args$groups <- 0
+             Args$group_parameters <- 0
              Args$joint_parameters <- length(covariates_hypo)
              Args$n <- nrow(x$model)
            }
@@ -286,7 +292,7 @@ bain.bain_htest <-
 
       if(length(x$estimate) == 1){
         Args$Sigma <- x$v/x$n
-        Args$groups <- 0
+        Args$group_parameters <- 0
         Args$joint_parameters <- 1
       } else {
         if (!x$method == " Two Sample t-test") {
@@ -299,9 +305,9 @@ bain.bain_htest <-
           if (x$n[2] > 1)
             v <- v + (x$n[2] - 1) * x$v[2]
           v <- v/df
-          Args$Sigma <- lapply(v / sum(x$n), as.matrix)
+          Args$Sigma <- lapply(v / x$n, as.matrix)
         }
-        Args$groups <- 1
+        Args$group_parameters <- 1
         Args$joint_parameters <- 0
       }
 
@@ -319,7 +325,7 @@ bain.default <- function(x,
                          ...,
                          n,
                          Sigma,
-                         groups = 0,
+                         group_parameters = 0,
                          joint_parameters = 0
                          )
 {
@@ -345,12 +351,12 @@ bain.default <- function(x,
   rank_hyp <- qr(hyp_mat)$rank
 
   ##for unit group
-  if (groups == 0) {
+  if (group_parameters == 0) {
     if (length(n) != 1) {
-      stop("Argument 'n' should be vector of length 1, with value equal to sample size, when 'groups' = 0.")
+      stop("Argument 'n' should be vector of length 1, with value equal to sample size, when 'group_parameters' = 0.")
     }
     if (is.list(Sigma)) {
-      stop("Argument 'Sigma' should be a matrix or number when 'groups' = 0.")
+      stop("Argument 'Sigma' should be a matrix or number when 'group_parameters' = 0.")
     }
     if (nrow(as.matrix(Sigma)) != n_estimates ||
         ncol(as.matrix(Sigma)) != n_estimates) {
@@ -367,18 +373,18 @@ bain.default <- function(x,
   }
 
   ##for multiple groups
-  if (groups != 0) {
-    #if(length(n)==1){stop("n should be a vector when groups>0")}
+  if (group_parameters != 0) {
+    #if(length(n)==1){stop("n should be a vector when group_parameters>0")}
     if (!is.list(Sigma)) {
-      stop("Argument 'Sigma' should be a list of covariance matrices, with a number of elements equal to the number of 'groups'.")
+      stop("Argument 'Sigma' should be a list of covariance matrices, with a number of elements equal to the number of 'group_parameters'.")
     }
     if (any(unlist(lapply(Sigma, checkcov)) == 1)) {
       # CJ: Please replace with a more informative error message
       stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
     }
 
-    dim_groups <- sapply(Sigma, dim)
-    if (any(dim_groups != mean(dim_groups))) {
+    dim_group_parameters <- sapply(Sigma, dim)
+    if (any(dim_group_parameters != mean(dim_group_parameters))) {
       stop("Argument 'Sigma' should be a list of covariance matrices, and each covariance matrix should have the same dimensions.")
     }
 
@@ -386,11 +392,11 @@ bain.default <- function(x,
     if (n_Sigma != length(n)) {
       stop("Length of the vector of sample sizes is not equal to the number of covariance matrices in 'Sigma'.")
     }
-    if (n_estimates != groups * n_Sigma + joint_parameters) {
+    if (n_estimates != group_parameters * n_Sigma + joint_parameters) {
       stop("The length of the vector of estimates (parameter 'x') is not correct for multiple groups")
     }
-    if (any(dim_groups != groups + joint_parameters)) {
-      stop("The dimensions (rows and columns) of each covariance matrix in 'Sigma' should be equal to the number of group-specific parameters, plus the number of joint parameters ('groups' + 'joint_parameters').")
+    if (any(dim_group_parameters != group_parameters + joint_parameters)) {
+      stop("The dimensions (rows and columns) of each covariance matrix in 'Sigma' should be equal to the number of group-specific parameters, plus the number of joint parameters ('group_parameters' + 'joint_parameters').")
     }
 
     b <- rep(0, n_Sigma)
@@ -403,8 +409,8 @@ bain.default <- function(x,
     inv_prior <- lapply(prior_cov, solve)
     inv_post <- lapply(Sigma, solve)
 
-    thetacovprior <- covmatrixfun(inv_prior, groups, joint_parameters, n_Sigma)
-    thetacovpost <- covmatrixfun(inv_post, groups, joint_parameters, n_Sigma)
+    thetacovprior <- covmatrixfun(inv_prior, group_parameters, joint_parameters, n_Sigma)
+    thetacovpost <- covmatrixfun(inv_post, group_parameters, joint_parameters, n_Sigma)
   }
 
 
@@ -641,14 +647,17 @@ bain.default <- function(x,
   # rownames(res) <- parsed_hyp$original_hypothesis
 
   Bainres <- list(
-    fit = res,
+    fit = data.frame(res),
     BFmatrix = BFmatrix,
     b = b,
     prior = thetacovprior,
     posterior = thetacovpost,
     call = cl,
     model = x,
-    hypotheses = parsed_hyp$original_hypothesis
+    hypotheses = parsed_hyp$original_hypothesis,
+    independent_restrictions = rank_hyp,
+    estimates = x,
+    n = n
   )
   class(Bainres) <- "bain"
   Bainres

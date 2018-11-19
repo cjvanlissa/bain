@@ -57,7 +57,7 @@ get_estimates <- function(x, ...){
   UseMethod("get_estimates", x)
 }
 
-#' @rdname get_estimates
+#' @method get_estimates lm
 #' @export
 get_estimates.lm <- function(x, ...){
   estimates <- x$coefficients
@@ -71,14 +71,14 @@ get_estimates.lm <- function(x, ...){
   rename_estimate(estimates)
 }
 
-#' @rdname get_estimates
+#' @method get_estimates bain_htest
 #' @export
 get_estimates.bain_htest <- function(x, ...){
   rename_estimate(x$estimate)
 }
 
 
-#' @rdname get_estimates
+#' @method get_estimates htest
 #' @export
 get_estimates.htest <- function(x, ...) {
   stop("To be able to run bain on the results of an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t.test is replaced by a version that does return this necessary information.")
@@ -108,7 +108,7 @@ label_estimates <- function(x, labels, ...){
   UseMethod("label_estimates", x)
 }
 
-#' @rdname label_estimates
+#' @method label_estimates lm
 #' @export
 label_estimates.lm <- function(x, labels, ...){
   names_coefs <- names(x$coefficients)
@@ -128,7 +128,7 @@ label_estimates.lm <- function(x, labels, ...){
   x
 }
 
-#' @rdname label_estimates
+#' @method label_estimates bain_htest
 #' @export
 label_estimates.bain_htest <- function(x, labels, ...){
   names(x$estimate) <- labels
@@ -137,7 +137,7 @@ label_estimates.bain_htest <- function(x, labels, ...){
 }
 
 
-#' @rdname label_estimates
+#' @method label_estimates htest
 #' @export
 label_estimates.htest <- function(x, labels, ...) {
   stop("To be able to run bain on the results of an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t.test is replaced by a version that does return this necessary information.")

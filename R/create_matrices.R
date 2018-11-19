@@ -2,7 +2,7 @@ parse_hypothesis <- function(varnames, hyp){
   # Check if varnames occur in hyp.
   #params_in_hyp <- trimws(unique(strsplit(hyp, split = "(?<![a-zA-Z\\._])[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
   # This works for single characters
-  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>;&\\*+-]+", perl = TRUE)[[1]]))
+  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>,\\(\\);&\\*+-]+", perl = TRUE)[[1]]))
   params_in_hyp <- params_in_hyp[!sapply(params_in_hyp, grepl, pattern = "^[0-9]*\\.?[0-9]+$")]
   params_in_hyp <- params_in_hyp[grepl("^[a-zA-Z]", params_in_hyp)]
 
@@ -320,11 +320,14 @@ flip_inequality <- function(hyp){
 #' constraint_to_equation("5+c=d")
 #' }
 constraint_to_equation <- function(hyp){
+  # If scalar comes after variable name, move it in front
+  hyp <- gsub("([\\.a-zA-Z][a-zA-Z0-9_\\.]{0,})\\*(\\d+)", "\\2*\\1", hyp, perl = TRUE)
+
   # When the string starts with a word, OR when a word is not preceded by
   # a number or *-sign, replace the "word" with "1*word"
   # hyp <- gsub("(^|(?<![\\*\\d]))([a-zA-Z][a-zA-Z0-9_]{0,})", "1*\\2", hyp, perl = TRUE)
   # Gu: add if not being preceded by any of .a-zA-Z0-9 , then ignore. otherwise x.A becomes x.1*A
-  hyp <- gsub("(^|(?<![\\*\\d\\.a-zA-Z0-9_]))([a-zA-Z][a-zA-Z0-9_]{0,})", "1*\\2", hyp, perl = TRUE)
+  hyp <- gsub("(^|(?<![\\*\\d\\.a-zA-Z0-9_]))([a-zA-Z\\.][a-zA-Z0-9_\\.]{0,})", "1*\\2", hyp, perl = TRUE)
 
   # If a number starts with a period, add a leading zero
   # hyp <- gsub("(^|(?<!\\d))(\\.[0-9]+)", "0\\2", hyp, perl = TRUE)
