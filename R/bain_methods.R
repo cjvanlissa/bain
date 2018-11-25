@@ -332,7 +332,7 @@ bain.default <- function(x,
 
   cl <- match.call()
   Args <- as.list(cl[-1])
-  seed <- 100#sample(1:2^15, 1)
+  seed <- sample(1:2^15, 1)
 
   estimate <- rename_estimate(x)
   n_estimates <- length(estimate)
