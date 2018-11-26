@@ -1,6 +1,6 @@
 #' Bayes factors for informative hypotheses
 #'
-#' HERBERT TEST PUSH NAAR GITHUB This function computes approximated adjusted fractional Bayes factors
+#' This function computes approximated adjusted fractional Bayes factors
 #' (AAFBFs) for equality, inequality, and about equality constrained
 #' hypotheses. The function can also be used for computing the AAFBF in the
 #' case of multiple groups.
