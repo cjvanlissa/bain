@@ -1,66 +1,78 @@
 #' Bayes factors for informative hypotheses
 #'
-#' This function computes approximated adjusted fractional Bayes factors
-#' (AAFBFs) for equality, inequality, and about equality constrained
-#' hypotheses. The function can also be used for computing the AAFBF in the
-#' case of multiple groups.
+#' \code{bain} is an acronym for "Bayesian informative hypothesis evaluation". It uses the Bayes factor to
+#' evaluate hypotheses specified using equality and inequality constraints among (linear combinations of)
+#' parameters in a wide range of statistical models. An introduction is given in Hoijtink, Mulder, van Lissa,
+#' and Gu (2018) retrievable from the Psychological Methods website \url{https://www.apa.org/pubs/journals/met/}
+#' or the bain website \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
 #'
-#' The vector "estimate" and the matrix (or list) "Sigma" should be obtained
-#' before evaluating hypotheses in Bain. For examples, see Gu, Mulder, and
-#' Hoijtink (2017) and Hoijtink, Gu, and Mulder (unpublished) and under the
-#' MGBain button at http://informative-hypotheses.sites.uu.nl/ were also the
-#' papers and other information can be found.
-#'
-#' The length of "estimate" should be equal to grouppara * P + jointpara, where
-#' P denotes the number of groups or the length of list "Sigma".
-#'
-#' "ERr" is used to specify equality constraints, and "IRr" is used to specify
-#' inequality constraints. The general form of the constraints is ER * t^T = r
-#' and IR * t^T = r where t is a vector containing the estimates, ER is a
-#' length of t by number of equality constraints matrix, IR is a length of t by
-#' number of inequality constraints matrix, and r (used with ER) has a length
-#' equal to the number of equality constraints, and r (used with IR) has a
-#' length equal to the number of inequality constraints. ER, IR, and r contain
-#' real numbers.
-#'
-#' %%For example, an equality constraint t1=t2+1 can be specified as
-#' ER*(t1,t2)^T = r, where ER = (1,-1), and r = 1. %%Then ERr = (ER,r) =
-#' (1,-1,1), which is provided to Bain using the command
-#' ERr<-matrix(c(1,-1,1),nrow=1,ncol=3%%,byrow = TRUE).
-#'
-#' %%Another example, if the inequality constraints are t1 > t2 and t2 > t3
-#' then IR * (t1,t2,t3)^T = r where IR= \cr %%1 -1 0 \cr %%0 \sspace 1 -1 \cr
-#' %%and r = (0 0). %%Then IRr =\cr %%1 -1 0 0 \cr %%0 1 -1 0 \cr %%which is
-#' provided to Bain using the command:\cr
-#' %%IRr<-matrix(c(1,-1,0,0,0,1,-1,0),nrow=2,ncol=4,byrow = TRUE)
-#'
-#' @param x An object used to select a method for computing Bayes factors.
-#' Currently, methods are available for:
+#' @param x An R object containing the outcome of a statistical analysis. Currently, the following
+#' objects can be processed:
 #' \itemize{
-#' \item Named vectors of estimates
-#' \item lm objects
+#' \item \code{lm()} objects (anova, ancova, multiple regression)
+#' \item \code{t.test()} objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test)
+#' \item A named vector containing the estimates resulting from a statistical analysis.
+#' Note that, named means that each estimate has to be labelled such that it can be referred to
+#' in \code{hypotheses}.
 #' }
-#' @param hypothesis A character string, containing a Bain hypothesis (see Details).
-#' @param ... Arguments passed to and from other functions.
-#' @details Informative hypotheses should adhere to the following simple syntax:
+#' @param hypotheses	A character string containing the informative hypotheses to evaluate (see Details).
+#' @param ... Additional arguments (see Details).
+#'
+#' @details
+#' ========== Using \code{bain} with an \link{lm} or \link{t.test} object ==========
+#'
+#' The following steps need to be executed:
+#' \enumerate{
+#' \item \code{x <- lm()} or \code{x <- t.test()}. Execute an analysis with \link{lm} or \link{t.test}.
+#' See Examples for a complete elaboration of analyses that can and cannot be processed by \code{bain}.
+#' \item \code{get_estimates(x)}.	Displays the estimates and the name attached to each estimate. These names are
+#' used to specify \code{hypotheses}.
+#' \item \code{label_estimates(x,labels)}. Note that, \code{labels} is a character vector containing new labels
+#' for the estimates in \code{x}, in order to obtain meaningful and easy to use names. Note that, each name has
+#' to start with a letter, and may consist of "letters", "numbers", ".", and "_".
+#' \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer number to create a repeatable
+#' random number sequence.
+#' \item \code{bain(x,hypotheses)} or \code{bain(x,hypotheses,standardize = TRUE)}. The first call to \code{bain}
+#' is used in case of \code{lm} implementations of anova, ancova, and t.test. The second call to \code{bain} is used in
+#' case of \code{lm} implementations of multiple regression. With \code{standardize = TRUE} hypotheses with respect to
+#' standardized regression coefficients are evaluated. With \code{standarize = FALSE} hypotheses with respect to
+#' unstandardized regression coefficients are evaluated.
+#' }
+#'
+#' ========== Using \code{bain} with a named vector ==========
+#'
+#' The following steps need to be executed:
+#' \enumerate{
+#' \item Execute a statistical analysis. Collect the estimates of interest in a vector. Assign names to the estimates
+#' using \code{names(estimates)<-labels}. Note that, \code{labels} is a character vector containing new labels
+#' for the estimates in \code{estimates}, in order to obtain meaningful and easy to use names. Note that,
+#' each name has to start with a letter, and may consist of "letters", "numbers", ".", and "_".
+#' \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer number to create a repeatable
+#' random number sequence.
+#' \item \code{bain(estimates,hypotheses,n=.,Sigma=.,group_parameters=0,joint_parameters=2)}. Execute \code{bain} with
+#' arguments as elaborated next:
 #' \itemize{
-#' \item Competing hypotheses are separated by ";".  Thus, "a=b;a>b" means that
-#' H1: a=b, and H2: a>b.
-#' \item Each individual hypothesis consists of a (series of) (in)equality
-#' constraint(s). Every single (in)equality constraint is of the form "R1*mu1 +
-#' R2*mu2+... = r", where capital Rs refer to numeric scaling constants, must
-#' refer to the names of parameters in the model, and the lower case r refers
-#' to a constant. Standard mathematical simplification rules apply; thus,
-#' "R1*mu1 = R2*mu2" is equivalent to "R1*mu1 - R2*mu2 = 0".
-#' \item Multiple unrelated constraints within one hypothesis can be chained by
-#' "&". Thus, "a=b&c=d" means that H1: a=b AND c=d.
-#' \item Multiple related constraints within one hypothesis can be chained by
-#' repeating the (in)equality operators "=", "<", or ">". Thus, "a<b<c" means
-#' that H1: a < b AND b < c.
-#' \item Parameters can be grouped by placing them in a parenthesized, comma
-#' separated list. Thus, "(a,b)>c" means that H1: a > c AND b > c.  Similarly,
-#' "(a,b)>(c,d)" means that H1: a > c AND b > c AND b > c AND b > d.
+#' \item \code{estimates} A named vector with parameter estimates.
+#' \item \code{hypotheses} A character string containing the informative hypotheses to evaluate (the specification
+#' is elaborated in the next subsection).
+#' \item \code{n} A vector containing the sample size of each group in the analysis. SOMS SINGLE NUMBER SOMS NIET
+#' \item{Sigma} A list containing per group, the covariance matrix of the parameters (the size of this matrix is
+#' groups+joint_parameters x groups+joint_parameters) SOMS LIST SOMS NIET
+#' \item \code{group_parameters} In case of one group group_parameters = 0. In case of two or more groups,
+#' the number of group specific parameters.
+#' In, for example, an ANOVA with three group, and joint_parameters = 0,  est will contain three
+#' parameters and group_parameters = 1
+#' because each group is characterized by one mean. In, for example, an ANCOVA with  three groups and
+#' two covariates, est will contain
+#' five parameters (three adjusted means and the regression coefficients of two covariates),
+#' group_parameters = 1 because each group is
+#' characterized by one adjusted mean, and joint_parameters = 2 because there are two regression
+#' coefficients that apply to each group.
+#' \item \code{joint_parameters} In case of one group the number of parameters in est. In case of two or more groups, the number of parameters in est
+#' shared by the groups.
 #' }
+#' }
+#'
 #' @return Returns a list that contains hypothesis testing results (i.e., Bayes
 #' factors (BFs), relative fit (f), relative complexity (c), posterior model
 #' probabilities (PMPs)), the approximated posterior and prior covariance
