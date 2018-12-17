@@ -17,15 +17,39 @@ Note that, named means that each estimate has to be labelled such that it can be
 in \code{hypotheses}.
 }}
 
-\item{...}{Additional arguments (see Details).}
+\item{hypothesis}{A character string containing the informative hypotheses to evaluate (see Details).}
 
-\item{hypotheses}{A character string containing the informative hypotheses to evaluate (see Details).}
+\item{...}{Additional arguments (see Details).}
 }
 \value{
-Returns a list that contains hypothesis testing results (i.e., Bayes
-factors (BFs), relative fit (f), relative complexity (c), posterior model
-probabilities (PMPs)), the approximated posterior and prior covariance
-matrices, the approximated posteriors means, and the fraction (b).
+The commands \code{bain()} or \code{results<-bain()} followed by \code{results} or \code{print(results)} will
+render the default (most important) output from \code{bain}. These concern for each hypothesis specified in \code{hypothesis}
+the fit, complexity, Bayes factor versus its complement, posterior model probability (based on equal prior model probabilities)
+excluding the unconstrained hypothesis, and posterior model probability including the unconstrained hypothesis. In Hoijtink, Mulder,
+van Lissa, and Gu (2018) it is elaborated how these quantities (and the outer output presented below) should be interpreted.
+Additionally a descriptives matrix is provided
+in which for each estimate, the label, the value, and a 95% central credibility interval is presented.
+The following commands can be used to retrieve the default and additional information from the \code{bain} output object:
+\enumerate{
+\item \code{results$fit} renders the default output, \code{results$fit$Fit} contains only the column containing the fit of each
+hypothesis. In the last command \code{Fit} can be replaced by \code{Com}, \code{BF}, \code{PMPa}, \code{PMPb} to obtain the information in the
+corresponding columns of the
+default output.
+\item \code{results$BFmatrix} contains the matrix containing the mutual Bayes factors of the hypotheses specified in hypotheses.
+\item \code{results$b} contains for each of the groups in the analysis the fraction of information of the data in the group.
+at hand used to specify the covariance matrix of the prior distribution.
+\item \code{results$prior} contains the covariance matrix of the prior distribution.
+\item \code{results$posterior} contains the covariance matrix of the posterior distribution.
+\item \code{results$call} displays the call to \code{bain}.
+\item \code{results$model} displays the named vector or the call to the R function rendering the R object that is input to \code{bain}.
+\item \code{results$n} displays the sample sizes per group.
+\item \code{results$independent_restrictions} displays the number of independent constraints in the set of hypotheses under
+consideration.
+\item \code{results$fit$Fit_eq} displays the fit of the equality constrained part of each hypothesis. Replacing \code{Fit_eq} by
+\code{Fit_in}, renders the fit of the inequality constrained part of an hypothesis #' conditional on the fit of the
+equality constrained part. \code{Com_eq}, and \code{Com_in}, repectively, are the complexity counterparts of \code{Fit_eq}, and
+\code{Fit_in}.
+}
 }
 \description{
 \code{bain} is an acronym for "Bayesian informative hypothesis evaluation". It uses the Bayes factor to
@@ -59,10 +83,11 @@ unstandardized regression coefficients are evaluated.
 
 The following steps need to be executed:
 \enumerate{
-\item Execute a statistical analysis. Collect the estimates of interest in a vector. Assign names to the estimates
+\item Execute a statistical analysis. Collect the estimates of interest in a vector (e.g. \code{estimates}).
+Assign names to the estimates
 using \code{names(estimates)<-labels}. Note that, \code{labels} is a character vector containing new labels
-for the estimates in \code{estimates}, in order to obtain meaningful and easy to use names. Note that,
-each name has to start with a letter, and may consist of "letters", "numbers", ".", and "_".
+for the estimates in \code{estimates}. Each label has to start with a letter, and may consist of "letters",
+"numbers", ".", and "_". These labels are used to specify \code{hypotheses} (see below).
 \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer number to create a repeatable
 random number sequence.
 \item \code{bain(estimates,hypotheses,n=.,Sigma=.,group_parameters=0,joint_parameters=2)}. Execute \code{bain} with
@@ -70,96 +95,164 @@ arguments as elaborated next:
 \itemize{
 \item \code{estimates} A named vector with parameter estimates.
 \item \code{hypotheses} A character string containing the informative hypotheses to evaluate (the specification
-is elaborated in the next subsection).
-\item \code{n} A vector containing the sample size of each group in the analysis. SOMS SINGLE NUMBER SOMS NIET
-\item{Sigma} A list containing per group, the covariance matrix of the parameters (the size of this matrix is
-groups+joint_parameters x groups+joint_parameters) SOMS LIST SOMS NIET
-\item \code{group_parameters} In case of one group group_parameters = 0. In case of two or more groups,
-the number of group specific parameters.
-In, for example, an ANOVA with three group, and joint_parameters = 0,  est will contain three
-parameters and group_parameters = 1
+is elaborated below).
+\item \code{n} A vector containing the sample size of each group in the analysis. See, Hoijtink, Gu, and
+Mulder (2018), for an elaboration of the difference between one and multiple group analyses. A multiple group
+analysis is required when group specific parameters are used to formulate \code{hypotheses}. Examples are the
+Student's and Welch's t-test, ANOVA, and ANCOVA. See the Examples section for elaborations of the specification
+of multiple group analyses when a named vector is input for \code{bain}.
+\item{Sigma} In case of a single group analysis (specified using \code{group_parameters = 0}) the
+covariance matrix of the parameters. In case of \code{joint_parameters = 3} this is a 3 x 3 matrix. In case
+of a multiple group analysis a list containing for each group the covariance matrix of the parameters.
+If, for example, \code{group_parameters = 2}), there are 3 groups, and \code{joint_parameters = 4}, this is,
+a list containing 3 matrices with dimensions 6 x 6.
+\item \code{group_parameters} In case of one group \code{group_parameters = 0}. In case of two or more groups,
+the number of group specific parameters. In, for example, an ANOVA with three groups, and
+\code{joint_parameters = 0},  \code{estimates} will contain three sample means and \code{group_parameters = 1}
 because each group is characterized by one mean. In, for example, an ANCOVA with  three groups and
-two covariates, est will contain
-five parameters (three adjusted means and the regression coefficients of two covariates),
-group_parameters = 1 because each group is
-characterized by one adjusted mean, and joint_parameters = 2 because there are two regression
+two covariates, \code{estimates} will contain five parameters (three adjusted means and the regression
+coefficients of two covariates), \code{group_parameters = 1} because each group is
+characterized by one adjusted mean, and \code{joint_parameters = 2} because there are two regression
 coefficients that apply to each group.
-\item \code{joint_parameters} In case of one group the number of parameters in est. In case of two or more groups, the number of parameters in est
-shared by the groups.
+\item \code{joint_parameters} In case of one group the number of parameters in \code{estimates}.
+In case of two or more groups, the number of parameters in \code{estimates} shared by the groups.
 }
 }
+
+========== The specification of \code{hypotheses} ==========
+
+\code{hypotheses} is a character string that specifies which informative hypotheses
+have to be evaluated. A simple example is \code{hypotheses <- "a > b > c; a = b = c;"}.
+
+The hypotheses specified have to adhere to the following rules:
+\enumerate{
+\item Parameters are referred to using the names specified in \code{label_estimates()} or \code{names()}.
+\item Linear combinations of parameters can be specified using numbers, +, -, and *. For example, \code{3 * a + 5} or
+\code{a + 2 * b + 3 * c}.
+\item (Linear combinations of) parameters can be constrained using <, >, and =. For example, \code{a > 0} or
+\code{a > b = 0} or \code{2 * a < b + c > 5}.
+\item The ampersand & can be used to combine different parts of a hypothesis. For example, \code{a > b & b > c} which
+is equivalent to \code{a > b > c} or \code{a > 0 & b > 0 & c > 0}.
+\item Sets of (linear combinations of) parameters subjected to the same constraints can be specified using (). For
+example, \code{a > (b,c)} which is equivalent to \code{a > b & a > c}.
+\item The specification of a hypothesis is completed by typing ; For example, \code{hypotheses <- "a > b > c; a = b = c;"},
+specifies two hypotheses.
+\item Hypotheses have to be compatible, non-redundant and possible. what these terms mean will be elaborated below.
+}
+
+\emph{The set of hypotheses has to be compatible}. For the statistical background of this requirement see Gu, Mulder,
+Hoijtink (2018). Usually the sets of hypotheses specified by researchers are compatible, and if not, \code{bain} will return an
+error message. The following steps can be used to determine if a set of hypotheses is compatible:
+\enumerate{
+\item	Replace a range constraint, e.g., \code{1 < a1 < 3}, by an equality constraint in which the parameter involved is equated
+to the midpoint of the range, that is, \code{a1 = 2}.
+\item Replace in each hypothesis the < and > by =. For example, \code{a1 = a2 > a3 > a4} becomes \code{a1 = a2 = a3 = a4}.
+\item The hypotheses are compatible if there is at least one solution to the resulting set of equations. For the two
+hypotheses considered under 1. and 2., the solution is a1 = a2 = a3 = a4 = 2. An example of two non-compatible hypotheses
+is \code{hypotheses <- "a = 0; a > 2;"} because there is no solution to the equations \code{a=0} and \code{a=2}.
+}
+
+\emph{Each hypothesis in a set of hypotheses has to be non-redundant.} A hypothesis is redundant if it can also be specified with
+fewer constraints. For example, \code{a = b & a > 0 & b > 0} is redundant because it can also be specified as \code{a = b & a > 0}.
+\code{bain} will work correctly if hypotheses specified using only < and > are redundant. \code{bain} will return an error message
+if hypotheses specified using at least one = are redundant.
+
+\emph{Each hypothesis in a set of hypotheses has to be possible.} An hypothesis is impossible if estimates in agreement with the
+hypothesis do not exist. For example: values for \code{a} in agreement with \code{a = 0 & a > 2} do not exist. It is the
+responsibility of the user to ensure that the hypotheses specified are possible. If not, \code{bain} will either return an error
+message or render an output table containing many \code{NA}'s.
 }
 \examples{
+
+\\run{x <- 12
+print(x)}
+
 \dontrun{
-#One group:
-#Example 1:
-#Hypothesis
-#H1: theta1>theta2>theta3   #coefficients in regression model
-
-#Input
-estimate<-c(3,2,1)  #estimates of coefficients
-Sigma<-matrix(c(3,0,0,0,2,0,0,0,1),3,3,byrow = TRUE) #covariance matrix of coefficients
-
-n<-50 #samples size
-
-#H1
-ERr<-NULL
-IRr<-matrix(c(1,-1,0,0,0,1,-1,0),nrow=2,ncol=4,byrow = TRUE)
-
-res<-Bain(estimate=estimate,grouppara=0,jointpara=3,Sigma=Sigma,n=n,ERr,IRr) #run
-#Results are printed.
-#Results for fit, complexity, Bayes factor, and PMPs are saved in "res":
-
-plot(res)
-#Results for PMPs are plotted.
-
-
-#Multiple groups
-#Example 2
-#t test:
-#Hypotheses:
-#H1: theta1=theta2   #group means
-#H2: theta1>theta2
-#H3: theta1<theta2
-
-#Input
-estimate<-c(0,0)         #Estimates of group means theta1 and theta2.
-
-cov1<-matrix(c(.5),1,1)
-cov2<-matrix(c(.1),1,1)
-Sigma<-list(cov1,cov2) #List of variances of group means
-
-n<-c(22,37)           #samplesize
-
-#H1:
-ERr1<-matrix(c(1,-1,0),nrow=1,ncol=3,byrow = TRUE)
-IRr1<-NULL
-
-#H2
-ERr2<-NULL
-IRr2<-matrix(c(1,-1,0),nrow=1,ncol=3,byrow = TRUE)
-
-#H3
-ERr3<-NULL
-IRr3<-matrix(c(-1,1,0),nrow=1,ncol=3,byrow = TRUE)
-
-res<-Bain(estimate,Sigma,grouppara=1,jointpara=0,n=n,ERr1,IRr1,ERr2,IRr2,ERr3,IRr3) #run
-#Results are printed.
-#Results for fit, complexity, Bayes factor, and PMPs are also saved in "res":
-
-plot(res)
-#Results for PMPs are plotted.
+# ===============================================================================
+# An example of Student's t-test (equal within group variances)
+# ===============================================================================
+# load the bain package which includes the simulated sesamesim.txt data set
+library(bain)
+# read the data file
+sesamesim <- read.table("sesamesim.txt", header=TRUE)
+# collect the data for the boys in the vector x and for the girs in the vector y
+x<-sesamesim$postnumb[which(sesamesim$sex==1)]
+y<-sesamesim$postnumb[which(sesamesim$sex==2)]
+# execute student's t-test
+ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
+# inspect the estimates of the group means
+get_estimates(ttest)
+ # assign names to the estimates
+ttest <- label_estimates(ttest, c("boy","girl"))
+# set a seed value
+set.seed(100)
+# test hypotheses with bain
+results <- bain(ttest, "boy=girl; boy>girl; boy<girl")
+# display the results
+print(results)
+# obtain the descriptives table
+descriptives(results, ci = 0.95)
 }
+
+
 }
 \references{
-Gu, X., Mulder, J., and Hoijtink, H. (2017). Approximated
-adjusted fractional Bayes factors: A general method for testing informative
-hypotheses. British Journal of Mathematical and Statistical Psychology.
+All references are retrievable via or from \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
 
-Hoijtink, H., Gu, X., and Mulder, J. (unpublished). Multiple group Bayesian
-evaluation of informative hypotheses.
+Bosman, M. and Hoijtink, H. (unpublished). Robust Bayes factors for Bayesian Anova: overcoming
+overcoming adverse effect of non-normality and outliers.
+
+Gu, X., Mulder, J., and Hoijtink, H. (2018). Approximate adjusted fractional Bayes factors:
+A general method for testing informative hypotheses. \emph{British Journal of Mathematical
+and Statistical Psychology, 71,} 229-261. DOI: 10.1111/bmsp.12110
+
+Gu, X., Hoijtink, H., Mulder, J., and Rosseel, Y. (unpublished). Bain: A program for Bayesian
+testing of order constrained hypotheses in structural equation models.
+
+Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2018). A tutorial on testing hypotheses
+using the Bayes factor. \emph{Psychological Methods.} DOI: 10.1037/met0000201
+
+Hoijtink, H., Gu, X., and Mulder, J. (2018). Bayesian evaluation of informative hypotheses for
+multiple populations. \emph{British Journal of Mathematical and Statistical Psychology.}
+DOI: 10.1111/bmsp.12145
+
+Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (in press). Computing Bayes Factors
+from Data with Missing Values. \emph{Psychological Methods.} DOI: 10.1037/met0000187
+}
+\seealso{
+The bain website at \url{https://informative-hypotheses.sites.uu.nl/software/bain/} contains downloadable legacy
+versions of bain (Bain-0.0.1 until Bain-0.1.2). Furthermore, it contains contact information, messages, and announcements
+of upcoming workshops. A part of bain (Bayesian t-tests, ANOVA, ANCOVA, and multiple regression) is implemented in
+JASP \url{http://jasp-stats.org/}. JASP provides a user-friendly interface and is suited for students and researchers
+that are not familiar with the R package.
+
+========== Example Data Set Build in to \code{bain} ==========
+
+Unless indicated otherwise, the examples that follow below use a simulated data set inspired by the Sesame Street data set from:
+Stevens, J. P. (1996). Applied Multivariate Statistics for the Social Sciences. Mahwah NJ: Lawrence Erlbaum. This data set
+is included in the bain package. The variables contained in sesamesim.txt are subsequently:
+\itemize{
+\item sex (1 = boy, 2 = girl) of the child
+\item site (1 = disadvantaged inner city, 2 = advantaged suburban , 3 = advantaged rural,
+4 = disadvantaged rural, 5 = disadvantaged Spanish speaking) from which the child originates
+\item setting (1 = at home, 2 = at school) in which the child watches sesame street
+\item age (in months) of the child
+\item viewenc (0 = no, 1 = yes), whether or not the child is encouraged to watch Sesame Street
+\item peabody (mental age) score of the child (hihger score is higher mental age)
+\item prenumb (score on a numbers test before watching Sesame Street for a year)
+\item postnumb (score on a numbers test after watching Sesame Street for a year)
+\item funumb (follow up numbers test score measured one year after postnumb).
+}
+
+Subsequently, the following examples will be provided:
+\itemize{
+\item Student's t-test (equal within group variances)
+}
 }
 \author{
-Caspar van Lissa, Xin Gu, Herbert Hoijtink, Joris Mulder
+The main authors of the bain package are Xin Gu (computational core of the code, statistical underpinings),
+Caspar van Lissa (user interface and maintainer), Herbert Hoijtink (statistical underpinnings) and Joris Mulder
+(statistical underpinnings). Contributions were made by Marlyne Bosman (robust Bayes factors) and Camiel van Zundert
+(\code{bain} for structural equation models). Contact information can be found on the bain website at
+\url{https://informative-hypotheses.sites.uu.nl/software/bain/}
 }
-\keyword{htest}
