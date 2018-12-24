@@ -237,6 +237,11 @@ message or render an output table containing many \code{NA}'s.
 # + Bayesian multiple regression with missing data
 # + Bayesian structural equation modelling
 
+# ADDITIONAL EXAMPLES CONTAINED IN BFTutorial.R DOWNLOADABLE FROM
+# the bain website at \\url{https://informative-hypotheses.sites.uu.nl/software/bain/}
+# + Executing a sensitivity analysis with bain
+# + Executing Bayesian updating with bain
+
 # ===============================================================================
 # An example of Student's t-test (equal within group variances)
 # ===============================================================================
