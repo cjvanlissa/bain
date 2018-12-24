@@ -10,8 +10,9 @@ bain(x, hypothesis, ...)
 \item{x}{An R object containing the outcome of a statistical analysis. Currently, the following
 objects can be processed:
 \itemize{
-\item \code{lm()} objects (anova, ancova, multiple regression)
-\item \code{t.test()} objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test)
+\item \code{lm()} objects (anova, ancova, multiple regression). In the Example section it is
+elaborated which calls to \code{lm} can be processed by \code{bain} (other calls cannot be processed).
+\item \code{t.test()} objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test, equivalence test).
 \item A named vector containing the estimates resulting from a statistical analysis.
 Note that, named means that each estimate has to be labelled such that it can be referred to
 in \code{hypotheses}.
@@ -52,11 +53,12 @@ equality constrained part. \code{Com_eq}, and \code{Com_in}, repectively, are th
 }
 }
 \description{
-\code{bain} is an acronym for "Bayesian informative hypothesis evaluation". It uses the Bayes factor to
+\code{bain} is an acronym for "Bayesian informative hypotheses evaluation". It uses the Bayes factor to
 evaluate hypotheses specified using equality and inequality constraints among (linear combinations of)
-parameters in a wide range of statistical models. An introduction is given in Hoijtink, Mulder, van Lissa,
-and Gu (2018) retrievable from the Psychological Methods website \url{https://www.apa.org/pubs/journals/met/}
-or the bain website \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
+parameters in a wide range of statistical models. A tutorial is provided by Hoijtink, Mulder, van Lissa,
+and Gu (2018) retrievable from the Psychological Methods website at \url{https://www.apa.org/pubs/journals/met/}
+or the bain website at \url{https://informative-hypotheses.sites.uu.nl/software/bain/} Users are advised to read
+this tutorial before using \code{bain}.
 }
 \details{
 ========== Using \code{bain} with an \link{lm} or \link{t.test} object ==========
@@ -64,34 +66,44 @@ or the bain website \url{https://informative-hypotheses.sites.uu.nl/software/bai
 The following steps need to be executed:
 \enumerate{
 \item \code{x <- lm()} or \code{x <- t.test()}. Execute an analysis with \link{lm} or \link{t.test}.
-See Examples for a complete elaboration of analyses that can and cannot be processed by \code{bain}.
-\item \code{get_estimates(x)}.	Displays the estimates and the name attached to each estimate. These names are
-used to specify \code{hypotheses}.
+See Examples for a complete elaboration of the calls to \code{lm} and \code{t.test}
+that can be processed by \code{bain}.
+\item \code{get_estimates(x)}.	Displays the estimates. In the next step new names are attached to the
+estimates. These names are used to specify \code{hypotheses}.
 \item \code{label_estimates(x,labels)}. Note that, \code{labels} is a character vector containing new labels
-for the estimates in \code{x}, in order to obtain meaningful and easy to use names. Note that, each name has
+for the estimates in \code{x}. Each label has
 to start with a letter, and may consist of "letters", "numbers", ".", and "_".
 \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer number to create a repeatable
 random number sequence.
-\item \code{bain(x,hypotheses)} or \code{bain(x,hypotheses,standardize = TRUE)}. The first call to \code{bain}
-is used in case of \code{lm} implementations of anova, ancova, and t.test. The second call to \code{bain} is used in
+\item \code{results <- bain(x,hypotheses)} or \code{bain(x,hypotheses,standardize = TRUE)}. The first call to \code{bain}
+is used in case of \code{lm} implementations of anova, ancova, and \code{t.test}. The second call to \code{bain} is used in
 case of \code{lm} implementations of multiple regression. With \code{standardize = TRUE} hypotheses with respect to
 standardized regression coefficients are evaluated. With \code{standarize = FALSE} hypotheses with respect to
 unstandardized regression coefficients are evaluated.
+\item \code{print(results)} Print the results of an analysis wity \code{bain}.
+\item \code{descriptives(results)} Present descriptives for the parameters used to
+specify \code{hypotheses}.
 }
 
 ========== Using \code{bain} with a named vector ==========
 
 The following steps need to be executed:
 \enumerate{
-\item Execute a statistical analysis. Collect the estimates of interest in a vector (e.g. \code{estimates}).
-Assign names to the estimates
+\item Execute a statistical analysis. In case of a single group analysis, the following information has to be
+extracted from the statistical analysis and supplied to \code{bain}: 1) a vector containing
+estimates of the parameters used to specify \code{hypotheses}; 2) the covariance matrix of these parameters; and, 3)
+the sample size. In case of a multiple group analysis, the following information has to be extracted from the
+statistical analysis and supplied to \code{bain}: 1) a vector containing estimates of the parameters used to
+specify \code{hypotheses} possibly augmented with the estimates of other parameters; per group the covariance
+matrix of the parameters corresponding to the group at hand and, possibly, the augmented parameters; and, per group the sample size.
+\item Assign names to the estimates
 using \code{names(estimates)<-labels}. Note that, \code{labels} is a character vector containing new labels
 for the estimates in \code{estimates}. Each label has to start with a letter, and may consist of "letters",
 "numbers", ".", and "_". These labels are used to specify \code{hypotheses} (see below).
 \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer number to create a repeatable
 random number sequence.
-\item \code{bain(estimates,hypotheses,n=.,Sigma=.,group_parameters=0,joint_parameters=2)}. Execute \code{bain} with
-arguments as elaborated next:
+\item \code{results <- bain(estimates,hypotheses,n=.,Sigma=.,group_parameters=0,joint_parameters=2)} executes \code{bain} with
+the followiong arguments:
 \itemize{
 \item \code{estimates} A named vector with parameter estimates.
 \item \code{hypotheses} A character string containing the informative hypotheses to evaluate (the specification
@@ -101,11 +113,11 @@ Mulder (2018), for an elaboration of the difference between one and multiple gro
 analysis is required when group specific parameters are used to formulate \code{hypotheses}. Examples are the
 Student's and Welch's t-test, ANOVA, and ANCOVA. See the Examples section for elaborations of the specification
 of multiple group analyses when a named vector is input for \code{bain}.
-\item{Sigma} In case of a single group analysis (specified using \code{group_parameters = 0}) the
-covariance matrix of the parameters. In case of \code{joint_parameters = 3} this is a 3 x 3 matrix. In case
+\item \code{Sigma} In case of a single group analysis (specified using \code{group_parameters = 0}) the
+covariance matrix of the parameters. If for a single group analysis \code{joint_parameters = 3} this is a 3 x 3 matrix. In case
 of a multiple group analysis a list containing for each group the covariance matrix of the parameters.
-If, for example, \code{group_parameters = 2}), there are 3 groups, and \code{joint_parameters = 4}, this is,
-a list containing 3 matrices with dimensions 6 x 6.
+If, for example, \code{group_parameters = 1}), there are 3 groups, and \code{joint_parameters = 4}, this is,
+a list containing 3 matrices with dimensions 5 x 5.
 \item \code{group_parameters} In case of one group \code{group_parameters = 0}. In case of two or more groups,
 the number of group specific parameters. In, for example, an ANOVA with three groups, and
 \code{joint_parameters = 0},  \code{estimates} will contain three sample means and \code{group_parameters = 1}
@@ -113,10 +125,18 @@ because each group is characterized by one mean. In, for example, an ANCOVA with
 two covariates, \code{estimates} will contain five parameters (three adjusted means and the regression
 coefficients of two covariates), \code{group_parameters = 1} because each group is
 characterized by one adjusted mean, and \code{joint_parameters = 2} because there are two regression
-coefficients that apply to each group.
+coefficients that apply to each group. In, for example, a repeated measures design with four repeated measures
+and two groups (a between facor with two levels and a  within factor with four levels) \code{estimates} will contain
+eight means (four for each group), \code{group_parameters = 4} because
+each group is characterized by four means and \code{joint_parameters = 0} because there are no parameters
+that apply to each of the groups.
 \item \code{joint_parameters} In case of one group the number of parameters in \code{estimates}.
-In case of two or more groups, the number of parameters in \code{estimates} shared by the groups.
+In case of two or more groups, the number of parameters in \code{estimates} shared by the groups. In, for example,
+an ANCOVA, the number of \code{joint_parameters} equals the number of covariates.
 }
+\item \code{print(results)} Print the results of an analysis wity \code{bain}.
+\item \code{descriptives(results)} Present descriptives for the parameters used to
+specify \code{hypotheses}.
 }
 
 ========== The specification of \code{hypotheses} ==========
@@ -163,9 +183,6 @@ responsibility of the user to ensure that the hypotheses specified are possible.
 message or render an output table containing many \code{NA}'s.
 }
 \examples{
-
-\\run{x <- 12
-print(x)}
 
 \dontrun{
 # ===============================================================================
