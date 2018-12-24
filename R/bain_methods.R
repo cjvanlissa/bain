@@ -102,7 +102,9 @@
 #' ========== The specification of \code{hypotheses} ==========
 #'
 #' \code{hypotheses} is a character string that specifies which informative hypotheses
-#' have to be evaluated. A simple example is \code{hypotheses <- "a > b > c; a = b = c;"}.
+#' have to be evaluated. A simple example is \code{hypotheses <- "a > b > c; a = b = c;"} which
+#' specifies two hypotheses corresponding
+#' to a named vector containing three estimates with names "a", "b", and "c", respectively.
 #'
 #' The hypotheses specified have to adhere to the following rules:
 #' \enumerate{
@@ -117,7 +119,7 @@
 #' example, \code{a > (b,c)} which is equivalent to \code{a > b & a > c}.
 #' \item The specification of a hypothesis is completed by typing ; For example, \code{hypotheses <- "a > b > c; a = b = c;"},
 #' specifies two hypotheses.
-#' \item Hypotheses have to be compatible, non-redundant and possible. what these terms mean will be elaborated below.
+#' \item Hypotheses have to be compatible, non-redundant and possible. What these terms mean will be elaborated below.
 #' }
 #'
 #' \emph{The set of hypotheses has to be compatible}. For the statistical background of this requirement see Gu, Mulder,
@@ -148,15 +150,15 @@
 #' excluding the unconstrained hypothesis, and posterior model probability including the unconstrained hypothesis. In Hoijtink, Mulder,
 #' van Lissa, and Gu (2018) it is elaborated how these quantities (and the outer output presented below) should be interpreted.
 #' Additionally a descriptives matrix is provided
-#' in which for each estimate, the label, the value, and a 95% central credibility interval is presented.
+#' in which for each estimate, the label, the value, and a 95\% central credibility interval is presented.
 #' The following commands can be used to retrieve the default and additional information from the \code{bain} output object:
 #' \enumerate{
 #' \item \code{results$fit} renders the default output, \code{results$fit$Fit} contains only the column containing the fit of each
 #' hypothesis. In the last command \code{Fit} can be replaced by \code{Com}, \code{BF}, \code{PMPa}, \code{PMPb} to obtain the information in the
 #' corresponding columns of the
 #' default output.
-#' \item \code{results$BFmatrix} contains the matrix containing the mutual Bayes factors of the hypotheses specified in hypotheses.
-#' \item \code{results$b} contains for each of the groups in the analysis the fraction of information of the data in the group.
+#' \item \code{results$BFmatrix} contains the matrix containing the mutual Bayes factors of the hypotheses specified in \code{hypotheses}.
+#' \item \code{results$b} contains for each of the groups in the analysis the fraction of information of the data in the group
 #' at hand used to specify the covariance matrix of the prior distribution.
 #' \item \code{results$prior} contains the covariance matrix of the prior distribution.
 #' \item \code{results$posterior} contains the covariance matrix of the posterior distribution.
@@ -166,7 +168,7 @@
 #' \item \code{results$independent_restrictions} displays the number of independent constraints in the set of hypotheses under
 #' consideration.
 #' \item \code{results$fit$Fit_eq} displays the fit of the equality constrained part of each hypothesis. Replacing \code{Fit_eq} by
-#' \code{Fit_in}, renders the fit of the inequality constrained part of an hypothesis #' conditional on the fit of the
+#' \code{Fit_in}, renders the fit of the inequality constrained part of an hypothesis conditional on the fit of the
 #' equality constrained part. \code{Com_eq}, and \code{Com_in}, repectively, are the complexity counterparts of \code{Fit_eq}, and
 #' \code{Fit_in}.
 #' }
@@ -206,32 +208,59 @@
 #' JASP \url{http://jasp-stats.org/}. JASP provides a user-friendly interface and is suited for students and researchers
 #' that are not familiar with the R package.
 #'
-#' ========== Example Data Set Build in to \code{bain} ==========
-#'
-#' Unless indicated otherwise, the examples that follow below use a simulated data set inspired by the Sesame Street data set from:
-#' Stevens, J. P. (1996). Applied Multivariate Statistics for the Social Sciences. Mahwah NJ: Lawrence Erlbaum. This data set
-#' is included in the bain package. The variables contained in sesamesim.txt are subsequently:
-#' \itemize{
-#' \item sex (1 = boy, 2 = girl) of the child
-#' \item site (1 = disadvantaged inner city, 2 = advantaged suburban , 3 = advantaged rural,
-#' 4 = disadvantaged rural, 5 = disadvantaged Spanish speaking) from which the child originates
-#' \item setting (1 = at home, 2 = at school) in which the child watches sesame street
-#' \item age (in months) of the child
-#' \item viewenc (0 = no, 1 = yes), whether or not the child is encouraged to watch Sesame Street
-#' \item peabody (mental age) score of the child (hihger score is higher mental age)
-#' \item prenumb (score on a numbers test before watching Sesame Street for a year)
-#' \item postnumb (score on a numbers test after watching Sesame Street for a year)
-#' \item funumb (follow up numbers test score measured one year after postnumb).
-#' }
-#'
-#' Subsequently, the following examples will be provided:
-#' \itemize{
-#' \item Student's t-test (equal within group variances)
-#' }
-#'
 #' @examples
 #'
 #' \dontrun{
+#' # ==============================================================
+#' # Example Data Set Build into bain
+#' # ==============================================================
+#'
+#' # Unless indicated otherwise, the examples that follow below use a simulated data set inspired by the Sesame Street data set from:
+#' # Stevens, J. P. (1996). Applied Multivariate Statistics for the Social Sciences. Mahwah NJ: Lawrence Erlbaum. This data set
+#' # is included in the bain package. The variables contained in sesamesim.txt are subsequently:
+#'
+#' # + sex (1 = boy, 2 = girl) of the child
+#' # + site (1 = disadvantaged inner city, 2 = advantaged suburban , 3 = advantaged rural,
+#' #   4 = disadvantaged rural, 5 = disadvantaged Spanish speaking) from which the child originates
+#' # + setting (1 = at home, 2 = at school) in which the child watches sesame street
+#' # + age (in months) of the child
+#' # + viewenc (0 = no, 1 = yes), whether or not the child is encouraged to watch Sesame Street
+#' # + peabody (mental age) score of the child (higher score is higher mental age)
+#' # + prenumb (score on a numbers test before watching Sesame Street for a year)
+#' # + postnumb (score on a numbers test after watching Sesame Street for a year)
+#' # + funumb (follow up numbers test score measured one year after postnumb).
+#'
+#' # =================================================================
+#' # The examples that follow below are organized in three categories:
+#' # Running bain with a t.test object; running bain with a lm object;
+#' # and, running bain with a named vector. The ANOVA and ANCOVA
+#' # examples are provided using both an lm object and a named vector
+#' # as input for bain. Below you will find the following examples:
+#' # =================================================================
+#' #
+#' # EXAMPLES USING A T.TEST OBJECT
+#' # + BayesianStudent's t-test (equal within group variances)
+#' # + Bayesian Welch's t-test (unequal within group variances
+#' # + Bayesian paired samples t-test
+#' # + Bayesian one group t-test
+#' # + Bayesian Equivalence test
+#' #
+#' # EXAMPLES USING A LM OBJECT
+#' # + Bayesian ANOVA
+#' # + Bayesian ANCOVA
+#' # + Bayesian multiple regression
+#' #
+#' # EXAMPLES USING A NAMED VECTOR
+#' # + Bayesian ANOVA
+#' # + Bayesian ANCOVA
+#' # + Bayesian repeated measures analysis (one within factor)
+#' # + Bayesian repeated measures analysis (within between design)
+#' # + Bayesian one group logistic regression (counterpart of multiple regression)
+#' # + Bayesian multiple group logistic regression (counterpart of ANCOVA)
+#' # + Bayesian robust ANOVA
+#' # + Bayesian multiple regression with missing data
+#' # + Bayesian structural equation modelling
+#'
 #' # ===============================================================================
 #' # An example of Student's t-test (equal within group variances)
 #' # ===============================================================================
