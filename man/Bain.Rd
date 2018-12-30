@@ -28,7 +28,7 @@ render the default (most important) output from \code{bain}. These concern for e
 the fit, complexity, Bayes factor versus its complement, posterior model probability (based on equal prior model probabilities)
 excluding the unconstrained hypothesis, and posterior model probability including the unconstrained hypothesis. In Hoijtink, Mulder,
 van Lissa, and Gu (2018) it is elaborated how these quantities (and the outer output presented below) should be interpreted.
-Additionally a descriptives matrix is provided
+Additionally, using \code{descriptives(results, ci=0.95)}, a descriptives matrix can be obtained
 in which for each estimate, the label, the value, and a 95\% central credibility interval is presented.
 The following commands can be used to retrieve the default and additional information from the \code{bain} output object:
 \enumerate{
@@ -67,22 +67,24 @@ The following steps need to be executed:
 \enumerate{
 \item \code{x <- lm()} or \code{x <- t.test()}. Execute an analysis with \link{lm} or \link{t.test}.
 See Examples for a complete elaboration of the calls to \code{lm} and \code{t.test}
-that can be processed by \code{bain}.
+that can be processed by \code{bain}. Note that, \code{lm} and \code{t.test} will apply list-wise deletion
+if there are cases with missing values in the variables used.
 \item Displays the estimates such that in the next step new names can be given to the  estimates.
 These names are used to specify \code{hypotheses}. For \code{lm()}, \code{coef(x)} will display the
 estimates. For \code{t.test()}, \code{print(x)} will display the estimates.
 \item \code{label_estimates(x,labels)}. Note that, \code{labels} is a character vector containing new labels
 for the estimates in \code{x}. Each label has
 to start with a letter, and may consist of "letters", "numbers", ".", and "_".
+An example is \code{labels <- c("a", "b", "c")}.
 \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer number to create a repeatable
 random number sequence.
-\item \code{results <- bain(x,hypotheses)} or \code{bain(x,hypotheses,standardize = TRUE)}. The first call to \code{bain}
+\item \code{results <- bain(x,hypotheses)} or \code{results <- bain(x,hypotheses,standardize = TRUE)}. The first call to \code{bain}
 is used in case of \code{lm} implementations of anova, ancova, and \code{t.test}. The second call to \code{bain} is used in
 case of \code{lm} implementations of multiple regression. With \code{standardize = TRUE} hypotheses with respect to
 standardized regression coefficients are evaluated. With \code{standarize = FALSE} hypotheses with respect to
 unstandardized regression coefficients are evaluated.
 \item \code{print(results)} Print the results of an analysis wity \code{bain}.
-\item \code{descriptives(results)} Present descriptives for the parameters used to
+\item \code{descriptives(results, ci=0.95)} Present descriptives for the parameters used to
 specify \code{hypotheses}.
 }
 
@@ -92,18 +94,19 @@ The following steps need to be executed:
 \enumerate{
 \item Execute a statistical analysis. In case of a single group analysis, the following information has to be
 extracted from the statistical analysis and supplied to \code{bain}: 1) a vector containing
-estimates of the parameters used to specify \code{hypotheses}; 2) the covariance matrix of these parameters; and, 3)
+estimates of the parameters used to specify \code{hypotheses}; 2) a list containing the covariance matrix of these parameters; and, 3)
 the sample size. In case of a multiple group analysis, the following information has to be extracted from the
 statistical analysis and supplied to \code{bain}: 1) a vector containing estimates of the parameters used to
-specify \code{hypotheses} possibly augmented with the estimates of other parameters; per group the covariance
+specify \code{hypotheses} possibly augmented with the estimates of other parameters; a list containing per group the covariance
 matrix of the parameters corresponding to the group at hand and, possibly, the augmented parameters; and, per group the sample size.
 \item Assign names to the estimates
 using \code{names(estimates)<-labels}. Note that, \code{labels} is a character vector containing new labels
 for the estimates in \code{estimates}. Each label has to start with a letter, and may consist of "letters",
-"numbers", ".", and "_". These labels are used to specify \code{hypotheses} (see below).
+"numbers", ".", and "_". These labels are used to specify \code{hypotheses} (see below). An example is
+\code{labels <- c("a", "b", "c")}.
 \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer number to create a repeatable
 random number sequence.
-\item \code{results <- bain(estimates,hypotheses,n=.,Sigma=.,group_parameters=0,joint_parameters=2)} executes \code{bain} with
+\item \code{results <- bain(estimates,hypotheses,n=.,Sigma=.,group_parameters=2,joint_parameters=0)} executes \code{bain} with
 the followiong arguments:
 \itemize{
 \item \code{estimates} A named vector with parameter estimates.
@@ -114,29 +117,27 @@ Mulder (2018), for an elaboration of the difference between one and multiple gro
 analysis is required when group specific parameters are used to formulate \code{hypotheses}. Examples are the
 Student's and Welch's t-test, ANOVA, and ANCOVA. See the Examples section for elaborations of the specification
 of multiple group analyses when a named vector is input for \code{bain}.
-\item \code{Sigma} In case of a single group analysis (specified using \code{group_parameters = 0}) the
-covariance matrix of the parameters. If for a single group analysis \code{joint_parameters = 3} this is a 3 x 3 matrix. In case
-of a multiple group analysis a list containing for each group the covariance matrix of the parameters.
-If, for example, \code{group_parameters = 1}), there are 3 groups, and \code{joint_parameters = 4}, this is,
-a list containing 3 matrices with dimensions 5 x 5.
-\item \code{group_parameters} In case of one group \code{group_parameters = 0}. In case of two or more groups,
-the number of group specific parameters. In, for example, an ANOVA with three groups, and
-\code{joint_parameters = 0},  \code{estimates} will contain three sample means and \code{group_parameters = 1}
-because each group is characterized by one mean. In, for example, an ANCOVA with  three groups and
+\item \code{Sigma} A list of covariance matrices. In case of one group analyses the list contains one
+covariance matrix. In case of multiple group analyses the list contains one covariance matrix for each group.
+See the Example section and Hoijtink, Gu, and Mulder (2018) for further instructions.
+\item \code{group_parameters} The number of group specific parameters.  In, for example, an ANOVA with three groups,
+\code{estimates} will contain three sample means, \code{group_parameters = 1}
+because each group is characterized by one mean, and \code{joint_parameters = 0} because there are no parameters
+that apply to each of the groups.. In, for example, an ANCOVA with  three groups and
 two covariates, \code{estimates} will contain five parameters (three adjusted means and the regression
 coefficients of two covariates), \code{group_parameters = 1} because each group is
 characterized by one adjusted mean, and \code{joint_parameters = 2} because there are two regression
 coefficients that apply to each group. In, for example, a repeated measures design with four repeated measures
-and two groups (a between facor with two levels and a  within factor with four levels) \code{estimates} will contain
+and two groups (a between factor with two levels and a  within factor with four levels) \code{estimates} will contain
 eight means (four for each group), \code{group_parameters = 4} because
 each group is characterized by four means and \code{joint_parameters = 0} because there are no parameters
 that apply to each of the groups.
-\item \code{joint_parameters} In case of one group the number of parameters in \code{estimates}.
+\item \code{joint_parameters} In case of one group \code{joint_parameters = 0}.
 In case of two or more groups, the number of parameters in \code{estimates} shared by the groups. In, for example,
 an ANCOVA, the number of \code{joint_parameters} equals the number of covariates.
 }
 \item \code{print(results)} Print the results of an analysis wity \code{bain}.
-\item \code{descriptives(results)} Present descriptives for the parameters used to
+\item \code{descriptives(results, ci=0.95)} Present descriptives for the parameters used to
 specify \code{hypotheses}.
 }
 
@@ -144,14 +145,17 @@ specify \code{hypotheses}.
 
 \code{hypotheses} is a character string that specifies which informative hypotheses
 have to be evaluated. A simple example is \code{hypotheses <- "a > b > c; a = b = c;"} which
-specifies two hypotheses corresponding
-to a named vector containing three estimates with names "a", "b", and "c", respectively.
+specifies two hypotheses using three estimates with names "a", "b", and "c", respectively.
 
 The hypotheses specified have to adhere to the following rules:
 \enumerate{
 \item Parameters are referred to using the names specified in \code{label_estimates()} or \code{names()}.
-\item Linear combinations of parameters can be specified using numbers, +, -, and *. For example, \code{3 * a + 5} or
-\code{a + 2 * b + 3 * c}.
+\item Linear combinations of parameters must be specified adhering to the following rules:
+        \enumerate{ \item Each parameter name is used at most once.
+                    \item Each parameter name may or may not be pre-multiplied with a number.
+                    \item A constant may be added or subtracted from each parameter name.
+                    \item A linear combination can also be a single number.}
+Examples are: \code{3 * a + 5}; \code{a + 2 * b + 3 * c - 2}; \code{a - b}; and \code{5}.
 \item (Linear combinations of) parameters can be constrained using <, >, and =. For example, \code{a > 0} or
 \code{a > b = 0} or \code{2 * a < b + c > 5}.
 \item The ampersand & can be used to combine different parts of a hypothesis. For example, \code{a > b & b > c} which
@@ -183,11 +187,15 @@ if hypotheses specified using at least one = are redundant.
 \emph{Each hypothesis in a set of hypotheses has to be possible.} An hypothesis is impossible if estimates in agreement with the
 hypothesis do not exist. For example: values for \code{a} in agreement with \code{a = 0 & a > 2} do not exist. It is the
 responsibility of the user to ensure that the hypotheses specified are possible. If not, \code{bain} will either return an error
-message or render an output table containing many \code{NA}'s.
+message or render an output table containing \code{Inf}'s.
 }
 \examples{
 
 \dontrun{
+# Note that, each of the examples given below can be run by copy pasting them into the
+# Source screen of RStudio. An Examples.R file can also be downloaded from the baij website at
+# \\url{https://informative-hypotheses.sites.uu.nl/software/bain/}
+
 # ==============================================================
 # Example Data Set Build into bain
 # ==============================================================
@@ -223,8 +231,14 @@ message or render an output table containing many \code{NA}'s.
 # + Bayesian Equivalence test
 #
 # EXAMPLES USING A LM OBJECT
-# + Bayesian ANOVA
-# + Bayesian ANCOVA
+# Note that, ONLY the type of calls to LM presented in the examples can be processed by bain. Calls structured in a
+# different manner will either render an error message, or results that are meaningless.
+# + Bayesian ANOVA. The example concerns a one-way ANOVA. Two-way or higher
+#   order ANOVA's can only be handled by recoding all factors into one factor. If, for example,
+#   there is a factor sex with levels man and woman, and a factor age with levels young and old, these
+#   have to be recoded in a new factor sexage with levels manyoung, manold, womanyoung, womanold
+# + Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher
+#   order ANCOVA's can only be handled by recoding all factors into one factor.
 # + Bayesian multiple regression
 #
 # EXAMPLES USING A NAMED VECTOR
@@ -402,7 +416,7 @@ descriptives(results, ci = 0.95)
 library(bain)
 # make a factor of variable site
 sesamesim$site <- as.factor(sesamesim$site)
-# Center the covariate. If centered the get_estimates() command below displays the adjusted means.
+# Center the covariate. If centered the coef() command below displays the adjusted means.
 # If not centered the intercepts are displayed.
 sesamesim$prenumb <- sesamesim$prenumb - mean(sesamesim$prenumb)
 # execute an analysis of covariance using lm() which, due to the -1, returns
@@ -507,7 +521,7 @@ descriptives(results, ci = 0.95)
 library(bain)
 # make a factor of variable site
 sesamesim$site <- as.factor(sesamesim$site)
-# center the covariate. If centered the get_estimates() command below displays the adjusted means.
+# center the covariate. If centered the coef() command below displays the adjusted means.
 # If not centered the intercepts are displayed.
 sesamesim$prenumb <- sesamesim$prenumb - mean(sesamesim$prenumb)
 # execute an analysis of covariance using lm() which, due to the -1, returns
@@ -584,12 +598,12 @@ names(estimate) <- c("pre", "post", "fu")
 # compute the sample size
 ngroup <- nrow(sesamesim)
 # compute the covariance matrix of the three means
-covmatr <- vcov(within)
+covmatr <- list(vcov(within))
 # set a seed value
 set.seed(100)
 # test hypotheses with bain. Note that there is one group, therefore group_parameters=0.
 # Note that there are three means, therefore, joint_parameters=3.
-results <- bain(estimate,"pre = post = fu; pre < post < fu", n=ngroup, Sigma=covmatr, group_parameters=0, joint_parameters = 3)
+results <- bain(estimate,"pre = post = fu; pre < post < fu", n=ngroup, Sigma=covmatr, group_parameters=3, joint_parameters = 0)
 # display the results
 print(results)
 # obtain the descriptives table
@@ -663,12 +677,12 @@ names(estimate) <- c("int", "age", "peab" ,"pre" )
 # compute the sample size. NOte that, this is an analysis with ONE group
 ngroup <- nrow(sesamesim)
 # compute the covariance matrix of the intercept and regression coefficients
-covmatr <- vcov(logreg)
+covmatr <- list(vcov(logreg))
 # set a seed value
 set.seed(100)
 # test hypotheses with bain. Note that there is one group, therefore group_parameters=0.
 # Note that there are one intercept and three regression coefficients, therefore, joint_parameters=4.
-results <- bain(estimate, "age = peab = pre; age > pre > peab", n=ngroup, Sigma=covmatr, group_parameters=0, joint_parameters = 4)
+results <- bain(estimate, "age = peab = pre; age > pre > peab", n=ngroup, Sigma=covmatr, group_parameters=4, joint_parameters = 0)
 # display the results
 print(results)
 # obtain the descriptives table
@@ -763,7 +777,7 @@ descriptives(results, ci = 0.95)
 # ===============================================================================
 # USING BAIN WITH A NAMED VECTOR: EXAMPLE VII
 # An example of the Bayesian robust ANOVA with unequal within group variances. Robust
-# ANOVA is elaborate in Bosman and Hoijtink (unpublished).
+# ANOVA is elaborated in Bosman and Hoijtink (unpublished).
 # ===============================================================================
 # load the bain package which includes the simulated sesamesim.txt data set
 library(bain)
@@ -886,10 +900,11 @@ nuobs<-(nucom+1)/(nucom+3)*nucom*(1-lam)
 nu<- nuold*nuobs/(nuold+nuobs)
 fracmis <- (nu+1)/(nu+3)*lam + 2/(nu+3)
 neff<-samp-samp*fracmis
+covariance <- list(covariance)
 # set the seed
 set.seed(100)
 # test hypotheses with bain
-results <- bain(estimates,"prenumb=postnumb=0",n=neff,Sigma=covariance,group_parameters=0,joint_parameters = 2)
+results <- bain(estimates,"prenumb=postnumb=0",n=neff,Sigma=covariance,group_parameters=2,joint_parameters = 0)
 # display the results
 print(results)
 # obtain the descriptives table
@@ -898,8 +913,8 @@ descriptives(results, ci = 0.95)
 #
 # ===============================================================================
 # USING BAIN WITH A NAMED VECTOR: EXAMPLE IX
-# An example of the Bayesian structural equation modelling. This topic additional
-# examples are further elaborated in Gu, Hoijtink, Mulder, and Rosseel (unpublished).
+# An example of the Bayesian structural equation modelling. For this topic additional
+# examples are elaborated in Gu, Hoijtink, Mulder, and Rosseel (unpublished).
 # ===============================================================================
 # load the bain package
 library(bain)
@@ -925,11 +940,11 @@ names(estimate) <- c("textual","visual")
 # determine the covariance matrix of the estimates
 # typing lavInspect(fit, "vcov.std.all") in the console pane shows that the estimates can be
 # found in the rows 10 and 11 crossed with columns 10 and 11
-covariance<-lavInspect(fit, "vcov.std.all")[10:11,10:11]
+covariance<-list(lavInspect(fit, "vcov.std.all")[10:11,10:11])
 # set a seed value
 set.seed(100)
 # test hypotheses with bain
-results <- bain(estimate,"visual=textual=0; visual > textual > 0",n=ngroup,Sigma=covariance,group_parameters=0,joint_parameters = 2)
+results <- bain(estimate,"visual=textual=0; visual > textual > 0",n=ngroup,Sigma=covariance,group_parameters=2,joint_parameters = 0)
 # display the results
 print(results)
 # obtain the descriptives table
@@ -970,7 +985,7 @@ that are not familiar with the R package.
 }
 \author{
 The main authors of the bain package are Xin Gu (computational core of the code, statistical underpinings),
-Caspar van Lissa (user interface and maintainer), Herbert Hoijtink (statistical underpinnings) and Joris Mulder
+Caspar van Lissa (creation of CRAN package, user interface and maintainer), Herbert Hoijtink (statistical underpinnings) and Joris Mulder
 (statistical underpinnings). Contributions were made by Marlyne Bosman (robust Bayes factors) and Camiel van Zundert
 (\code{bain} for structural equation models). Contact information can be found on the bain website at
 \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
