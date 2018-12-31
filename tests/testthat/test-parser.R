@@ -3,7 +3,7 @@
 # 1) COMBINATIONS OF number * par + number FOR MULTIPLE PARAMETERS
 # 2) USE & TO COMBINE DIFFERENT PARTS OF AN HYPOTHESIS
 # 3) USE (,) TO CREATE SET OF COMBINATIONS
-# BELOW ONLY THESE OPTIONS ARE DEBUGGED, AT THE END OF THIS FILE OTHER TEST FOR 
+# BELOW ONLY THESE OPTIONS ARE DEBUGGED, AT THE END OF THIS FILE OTHER TEST FOR
 # SYNTAX THAT MAY OR MAY NOT WORK IS COMMENTED OUT
 
 library(bain)
@@ -135,7 +135,7 @@ test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(1, -1,  0,  0,  0, 
                                                              0,  0,  0,  0,  1, -1, 0))})
 test_that("parser", {expect_equal(as.vector(x$n_constraints), c(4,1))})
 
-# HYPOTHESES SPECIFIED USING (,) 
+# HYPOTHESES SPECIFIED USING (,)
 # 1) STRAIGHTFORWARD
 # 2) WITH INAPPROPRIATE USED OF () RENDERING THE CORRECT RESULTS
 # 3) LIKE 2)
@@ -211,98 +211,3 @@ test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(1,0,0,0 ,-1,0,0.0,
                                                              0,0, -1,0,2,1,0.0,
                                                              0,0 ,-1,1,1,1,0.0))})
 test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,8,17,18))})
-
-
-
-# # testing multiplyer after parameter name
-# 
-# varnames = "a.2"
-# hyp1 = "a.2*30>1"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(30,1))})
-# test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,1))})
-# 
-# varnames = "a.2"
-# hyp1 = "a.2*30<1"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(-30,-1))})
-# test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,1))})
-# 
-# varnames = "a.2"
-# hyp1 = "39*a.2>1"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(39,1))})
-# test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,1))})
-# 
-# varnames = "a.2"
-# hyp1 = "333*a.2<1"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(-333,-1))})
-# test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,1))})
-# 
-# # met alleen multiplyers geplakt aan een parameter gaat het helemaal prima
-# 
-# varnames <- c("a","b", "c")
-# hyp1 <- "4 * a - 3 * a + 3 * c + 5 - 2 * b + a + 8 * b + 7 = -2"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# 
-# # met complexe splitsingen gaat het ALLEMAAL NIET GOED ZOALS HIERONDER TE ZIEN VALT
-# 
-# varnames <- c("a","b", "c")
-# hyp1 <- "2*1.5*a + .5 + .5 > 4*.5*b -1 + 1> c -1.5 -.5; 3*a + 1 > 2*b > c -2"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# 
-# # can two numbers be multiplied: YES VOOR DE TWEEDE, NO VOOR DE EERSTE
-# 
-# varnames <- c("boy","girl")
-# hyp1 <- "boy - girl > -.1 * 2.52 & boy - girl < .1 * 2.52"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# 
-# varnames <- c("a","b")
-# hyp1 <- "a-b > -.2 * 24 & a-b < .2 * 24"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# # check use of double - - and + + signs. NOTE  the order - + does not work!
-# 
-# varnames <- c("a.1","b.1")
-# hyp1 <- "a.1 - - b.1 = 8; a.1 + + b.1 = 8; a.1 + - b.1 = 8; a.1 - b.1< 8"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(1 ,  1,  8,
-#                                                              1 ,  1 , 8,
-#                                                              1 , -1,  8,
-#                                                              -1,   1, -8))})
-# test_that("parser", {expect_equal(as.vector(x$n_constraints), c(1, 0, 1, 0, 1, 0, 0, 1))})
-#  
-# # multiple occurances of the same parameter name 
-# 
-# varnames <- c("a_1","b", "c.1")
-# hyp1 <- " a_1 > a_1 + b > c.1 -a_1 -b; (a_1+a_1+b+a_1,c.1+c.1+c.1)>b+b; b+b+b=0; (b+b+b) < 5"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(0, -1,   0,  0,
-#                                                              2,  2,  -1,  0,
-#                                                              3, -1,   0,  0,
-#                                                              0, -2,   3,  0,
-#                                                              0,  3,   0,  0,
-#                                                              0, -3,   0, -5))})
-# test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0, 2, 0, 2 ,1, 0, 0, 1))})
-# # ====================================================================================================
-# # BOUW IN JASP EN BAIN FOUTMELDING IN VOOR "gewoon gebruik van haakjes" en nonlinear constraints!!!!!
-# # ====================================================================================================
-# 
-# varnames <- c("a","b","c","d","e","f")
-# hyp1 <- "(a,b)>(c,d,e);(a,b)=(c,d,f); (a-b)-(c-d)=0"
-# x<-bain:::parse_hypothesis(varnames, hyp1)
-# test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(1,  0, -1,  0,  0,  0, 0,
-#                                                              0,  1, -1,  0,  0,  0, 0,
-#                                                              1,  0,  0, -1,  0,  0, 0,
-#                                                              0,  1,  0, -1,  0,  0, 0,
-#                                                              1,  0,  0,  0, -1,  0, 0,
-#                                                              0,  1,  0,  0, -1,  0, 0,
-#                                                              1,  0, -1,  0,  0,  0, 0,
-#                                                              0,  1, -1,  0,  0,  0, 0,
-#                                                              1,  0,  0, -1,  0,  0, 0,
-#                                                              0,  1,  0, -1,  0,  0, 0,
-#                                                              1,  0,  0,  0,  0, -1, 0,
-#                                                              0,  1,  0,  0,  0, -1, 0,
-#                                                              1, -1, -1,  1,  0,  0, 0))})
-# test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0, 6, 6, 0, 1, 0))})
-
