@@ -248,7 +248,7 @@ message or render an output table containing \code{Inf}'s.
 # + Bayesian repeated measures analysis (within between design)
 # + Bayesian one group logistic regression (counterpart of multiple regression)
 # + Bayesian multiple group logistic regression (counterpart of ANCOVA)
-# + Bayesian robust ANOVA
+# + Bayesian robust ANOVA (unequal within groups variances)
 # + Bayesian multiple regression with missing data
 # + Bayesian structural equation modelling
 
