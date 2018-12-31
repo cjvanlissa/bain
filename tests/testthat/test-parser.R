@@ -116,8 +116,8 @@ test_that("parser", {expect_equal(as.vector(x$n_constraints), c(2, 0, 1, 2))})
 varnames <- c("a","b","c","d","e","f")
 hyp1 <- "a=b&c=d"
 x<-bain:::parse_hypothesis(varnames, hyp1)
-test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(0, 1, -1, 0, 0, 0, 0))})
-test_that("parser", {expect_equal(as.vector(x$n_constraints), c(1,0))})
+test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(1,-1,0,0,0,0,0,0,0,1,-1,0,0,0))})
+test_that("parser", {expect_equal(as.vector(x$n_constraints), c(2,0))})
 
 varnames <- c("a","b","c","d","e","f")
 hyp1 <- "a&b=c&d"

@@ -1,6 +1,6 @@
 # This R code contains a number of tests of the bain default function
 
-#============================================================================================== 
+#==============================================================================================
 # compute c and f for an about equality constrained hypothesis with bain and with R")
 #==============================================================================================
 
@@ -13,7 +13,7 @@ x <- rnorm(20,-.3,.7)
 y <- rnorm(40,.2,1.3)
 
 #estimate of parameters
-estimate<-c(mean(x),mean(y))  
+estimate<-c(mean(x),mean(y))
 names(estimate)<-c("a","b")
 sampN<-c(20,40)
 cov1<-matrix(c(sd(x)^2/20),1,1)
@@ -35,7 +35,7 @@ for (i in 1:100000){
 
 test_that("bain default", {expect_equal(y$fit$Com[1],mean(sampc), tolerance = .004)})
 
-# x-y has posterior mean -.289637 and posterior variance .039 and sd .19728 
+# x-y has posterior mean -.289637 and posterior variance .039 and sd .19728
 
 sampf <- rnorm(100000,-.289637,.19728)
 for (i in 1:100000){
@@ -44,7 +44,7 @@ for (i in 1:100000){
 
 test_that("bain default", {expect_equal(y$fit$Fit[1], mean(sampf), tolerance = .004)})
 
-#==============================================================================================") 
+#==============================================================================================")
 # compute c and f for a range constrained hypothesis with bain and with R - a variation of the previous test")
 #==============================================================================================")
 
@@ -63,7 +63,7 @@ for (i in 1:50000){
 
 test_that("bain default", {expect_equal(z$fit$Com[1], mean(sampcc), tolerance = .004)})
 
-# x-y has posterior mean -.292 and posterior variance .039 and sd .1975 
+# x-y has posterior mean -.292 and posterior variance .039 and sd .1975
 
 sampff <- rnorm(50000,-.29,.1975)
 for (i in 1:50000){
@@ -72,7 +72,7 @@ for (i in 1:50000){
 
 test_that("bain default", {expect_equal(z$fit$Fit[1], mean(sampff), tolerance = .004)})
 
-#==============================================================================================") 
+#==============================================================================================")
 # compute c and f for a range constrained hypothesis where range is determined by another parameter")
 #==============================================================================================")
 
@@ -81,7 +81,7 @@ library(bain)
 library(testthat)
 
 #estimate of parameters
-estimate<-c(2,4)  
+estimate<-c(2,4)
 names(estimate)<-c("a","b")
 sampN<-c(20,40)
 cov1<-matrix(1,1,1)
@@ -321,7 +321,7 @@ library(bain)
 library(testthat)
 
 estimate<-c(0,0,0,0,0,0,0)
-names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2") 
+names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2")
 
 cov1 <- matrix(c(3,0,0,
                  0,3,0,
@@ -367,8 +367,8 @@ test_that("bain default", {expect_equal(invcov[3,3], in3[1,1])})
 test_that("bain default", {expect_equal(invcov[4,4], in4[1,1])})
 test_that("bain default", {expect_equal(invcov[5,5], in5[1,1])})
 
-invcov77 <- in1[3,3] + in2[3,3] + in3[3,3] + in4[3,3] + in5[3,3]  
-invcov67 <- in1[2,3] + in2[2,3] + in3[2,3] + in4[2,3] + in5[2,3]  
+invcov77 <- in1[3,3] + in2[3,3] + in3[3,3] + in4[3,3] + in5[3,3]
+invcov67 <- in1[2,3] + in2[2,3] + in3[2,3] + in4[2,3] + in5[2,3]
 invcov57 <- in5[1,3]
 
 test_that("bain default", {expect_equal(invcov[7,7], invcov77)})
@@ -384,7 +384,7 @@ library(bain)
 library(testthat)
 
 estimate<-c(0,0,0,0,0,0,0)
-names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2") 
+names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2")
 
 cov1 <- matrix(c(3,.5,0,
                  .5,3,0,
@@ -432,8 +432,8 @@ test_that("bain default", {expect_equal(invcov[3,3], in3[1,1])})
 test_that("bain default", {expect_equal(invcov[4,4], in4[1,1])})
 test_that("bain default", {expect_equal(invcov[5,5], in5[1,1])})
 
-invcov77 <- in1[3,3] + in2[3,3] + in3[3,3] + in4[3,3] + in5[3,3]  
-invcov67 <- in1[2,3] + in2[2,3] + in3[2,3] + in4[2,3] + in5[2,3]  
+invcov77 <- in1[3,3] + in2[3,3] + in3[3,3] + in4[3,3] + in5[3,3]
+invcov67 <- in1[2,3] + in2[2,3] + in3[2,3] + in4[2,3] + in5[2,3]
 invcov57 <- in5[1,3]
 
 test_that("bain default", {expect_equal(invcov[7,7], invcov77)})
@@ -456,7 +456,7 @@ library(testthat)
 library(mvtnorm)
 
 estimate<-c(0,0,0)
-names(estimate) <- c("a", "b", "c") 
+names(estimate) <- c("a", "b", "c")
 sampN <- 100
 covariance <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 
@@ -495,13 +495,12 @@ library(testthat)
 library(mvtnorm)
 
 estimate<-c(0,1,2)
-names(estimate) <- c("a", "b", "c") 
+names(estimate) <- c("a", "b", "c")
 sampN <- 100
 covariance <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 
 set.seed(199)
 y<-bain(estimate,"3*a +1 > 2*b > c -2",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
-print(y)
 
 a <- rnorm(100000,0,1)
 b <- rnorm(100000,1,1)
@@ -532,13 +531,12 @@ library(testthat)
 library(mvtnorm)
 
 estimate<-c(0,1,2)
-names(estimate) <- c("a", "b", "c") 
+names(estimate) <- c("a", "b", "c")
 sampN <- 100
 covariance <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 
 set.seed(199)
 y<-bain(estimate,"3*a + .5 + .5 > 2*b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
-print(y)
 
 a <- rnorm(100000,0,1)
 b <- rnorm(100000,1,1)
