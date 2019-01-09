@@ -20,4 +20,5 @@ Depends:
     methods
 Suggests: 
     MASS,
-    testthat
+    testthat,
+    mvtnorm
