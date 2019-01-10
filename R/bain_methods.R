@@ -1213,7 +1213,7 @@ bain.lm <-
              ancovafm <-  lm(as.formula(paste0(names(df)[1], "~ -1 + .")), df)
 
              Args$x <- ancovafm$coefficients
-             names(Args$x) <- gsub(names(df)[var_factor], "", names(Args$x))
+             names(Args$x) <- gsub(paste0("^", names(df)[var_factor]), "", names(Args$x))
              resvar <- summary(ancovafm)$sigma**2
              Args$Sigma <- by(cbind(1, df[, var_numeric]), df[[var_factor]], function(x){
                resvar * solve(t(as.matrix(x)) %*% as.matrix(x))
@@ -1340,7 +1340,6 @@ bain.default <- function(x,
 
   cl <- match.call()
   Args <- as.list(cl[-1])
-  seed <- sample(1:2^15, 1)
 
   estimate <- rename_estimate(x)
   n_estimates <- length(estimate)
@@ -1590,7 +1589,7 @@ bain.default <- function(x,
           transR,
           f_or_c = as.double(0),
           Numfc = as.integer(0),
-          as.integer(seed)
+          sample.int(1e10, 1)
         )
         return(c(forc$f_or_c, forc$Numfc))
       }
@@ -1606,7 +1605,7 @@ bain.default <- function(x,
         transR,
         f_or_c = as.double(0),
         Numfc = as.integer(0),
-        as.integer(seed)
+        sample.int(1e10, 1)
       )
 
       forc_prior <- .Fortran(
@@ -1621,7 +1620,7 @@ bain.default <- function(x,
         transR,
         f_or_c = as.double(0),
         Numfc = as.integer(0),
-        as.integer(seed)
+        sample.int(1e10, 1)
       )
 
       fitin[h] <- forc_post$f_or_c

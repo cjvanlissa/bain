@@ -1,10 +1,8 @@
 rm(list=ls())
-library(testthat)
-library(bain)
 
 regr <- lm(postnumb ~ prenumb + funumb + peabody, sesamesim)
-regr <- label_estimates(regr, c("i", "pre", "fu","pea"))
-
+regr <- label_estimates(regr, labels = c("i", "pre", "fu","pea"))
+regr$call$formula
 # UNSTANDARDIZED REGRESSION USING AN LM OBJECT
 
 set.seed(100)

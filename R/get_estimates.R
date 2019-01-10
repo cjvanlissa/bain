@@ -111,19 +111,43 @@ label_estimates <- function(x, labels, ...){
 #' @method label_estimates lm
 #' @export
 label_estimates.lm <- function(x, labels, ...){
-  names_coefs <- names(x$coefficients)
-  if(length(names_coefs) != length(labels)) stop("The length of the vector of 'labels' must be equal to the length of the vector of coefficients in the model. To view the vector of coefficients, use 'get_estimates()'.")
+  if(length(x$coefficients) != length(labels)) stop("The length of the vector of 'labels' must be equal to the length of the vector of coefficients in the model. To view the vector of coefficients, use 'get_estimates()'.")
+  if(grepl("^\\(?Intercept\\)?$", names(x$coefficients)[1])){
+    current_label <- 2
+  } else {
+    current_label <- 1
+  }
+
+  names(x$coefficients) <- labels
+  # Now, process the data
+
   variable_types <- sapply(x$model, class)
 
-  if (any(variable_types[-1] == "factor")) {
-    for (fac_name in names(x$model)[-1][variable_types[-1] == "factor"]) {
-      fac_levels <- levels(x$model[[fac_name]])
-      which_coef <- match(paste0(fac_name, fac_levels), names_coefs)
-      fac_levels[which(!is.na(which_coef))] <- labels[which_coef[!is.na(which_coef)]]
-      x$model[[fac_name]] <- ordered(x$model[[fac_name]], labels = fac_levels)
+  for(thisvar in 2:length(variable_types)){
+    if(variable_types[thisvar] == "factor"){
+      x$model[[thisvar]] <- ordered(x$model[[thisvar]], labels = labels[current_label:(current_label+length(levels(x$model[[thisvar]]))-1)])
+      current_label <- current_label + length(levels(x$model[[thisvar]]))
+      #fac_name <- names(x$model)[thisvar]
+      #fac_levels <- levels(x$model[[thisvar]])
+      #which_coef <- match(paste0(fac_name, fac_levels), names(x$coefficients))
+      #fac_levels[which(!is.na(which_coef))] <- labels[which_coef[!is.na(which_coef)]]
+      #x$model[[fac_name]] <- ordered(x$model[[fac_name]], labels = fac_levels)
+
+    } else {
+      #x$call$formula[3] <- gsub(paste0("\\b", names(x$model)[thisvar], "\\b"), labels[current_label], x$call$formula[3])
+
+      #substitute(x$call$formula, list(names(x$model)[thisvar] = labels[current_label]))
+
+      x$call$formula <- do.call("substitute", list(x$call$formula,
+                                                   setNames(list(as.name(labels[current_label])), names(x$model)[thisvar])
+                                                        )
+                                                   )
+
+      names(x$model)[thisvar] <- labels[current_label]
+      current_label <- current_label+1
     }
   }
-  names(x$coefficients) <- labels
+
   invisible(get_estimates(x))
   x
 }

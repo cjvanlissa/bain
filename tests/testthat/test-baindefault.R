@@ -33,7 +33,7 @@ for (i in 1:100000){
   if (sampc[i] < .5 & sampc[i] > -.5) {sampc[i] <-1} else {sampc[i]<- 0}
 }
 
-test_that("bain default", {expect_equal(y$fit$Com[1],mean(sampc), tolerance = .004)})
+test_that("bain default", {expect_equal(y$fit$Com[1],mean(sampc), tolerance = .01)})
 
 # x-y has posterior mean -.289637 and posterior variance .039 and sd .19728
 
@@ -194,9 +194,6 @@ test_that("bain default", {expect_equal(y$fit$Com_in[1], .5, tolerance = .004)})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
-library(mvtnorm)
 
 estimate <- c(0,0,0,0,0,0)
 names(estimate)<-c("a", "b","c", "d", "e", "f")
@@ -256,8 +253,8 @@ cov <- matrix(c(1,0,0,0,1,0,0,0,1), nrow=3,ncol=3)
 set.seed(10)
 y<-bain(estimate,"a > b & b > 0 & a > 0; a > b & b > 0",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
-test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.125,NA),tolerance = .0001)})
-test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .0001)})
+test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.125,NA),tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .01)})
 
 #========================================================================================")
 # a test of the t-test using bain default shows that b per group is correctly")
@@ -451,9 +448,6 @@ test_that("bain default", {expect_equal(invcov[5,7], invcov57)})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
-library(mvtnorm)
 
 estimate<-c(0,0,0)
 names(estimate) <- c("a", "b", "c")
@@ -464,8 +458,8 @@ set.seed(10)
 y<-bain(estimate,"a>0 & b>0 & c>0; a>b>c;a>b & b>0; a=b=c=0",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
 
 # check fit ERr4 via dnorm(0,0,1)*dnorm(0,0,1)*dnorm(0,0,1)
-test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.166,.125,dnorm(0,0,1)*dnorm(0,0,1)*dnorm(0,0,1),NA), tolerance = .0005)})
-test_that("bain default", {expect_equal(y$fit$Com, c(.125,.166,.125,dnorm(0,0,5.77)*dnorm(0,0,5.77)*dnorm(0,0,5.77),NA),tolerance = .0005)})
+test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.166,.125,dnorm(0,0,1)*dnorm(0,0,1)*dnorm(0,0,1),NA), tolerance = .005)})
+test_that("bain default", {expect_equal(y$fit$Com, c(.125,.166,.125,dnorm(0,0,5.77)*dnorm(0,0,5.77)*dnorm(0,0,5.77),NA),tolerance = .01)})
 
 # tweede check elke par gelijk aan nul
 

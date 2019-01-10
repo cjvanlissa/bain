@@ -6,11 +6,7 @@ ancov <- lm(postnumb ~ sex + prenumb + peabody -1, data = sesamesim)
 coef(ancov)
 ancov <- label_estimates(ancov, c("a", "b","pre", "pea"))
 set.seed(100)
-expect_error(z<-bain(ancov, " pre > 0 &  pea > 0"))
-z<-bain(ancov, " a = b & prenumb > 0 &  peabody > 0")
-
-# bij de onderstaande ancova werkt het niet als label_estimates met site1, site2 etc. werkt,
-# dwz, de namen die lm default geeft, maar voor andere labels werkt het prima!
+z<-bain(ancov, " pre > 0 &  pea > 0")
 
 
 sesamesim$site <- as.factor(sesamesim$site)
@@ -19,14 +15,14 @@ ancov <- lm(postnumb~site+prenumb-1,sesamesim)
 coef(ancov)
 ancov <- label_estimates(ancov, c("site1", "site2", "site3","site4","site5","pre"))
 set.seed(100)
-expect_error(results <- bain(ancov, "site1=site2=site3=site4=site5; site2>site5>site1>site3>site4"))
+results <- bain(ancov, "site1=site2=site3=site4=site5; site2>site5>site1>site3>site4")
 
 # de standardize regression werkt niet
 regr <- lm(postnumb ~ prenumb + peabody, sesamesim)
 get_estimates(regr)
 regr <- label_estimates(regr, c("i", "num", "pea"))
 set.seed(100)
-expect_error(z<-bain(regr,"num=pea", standardize = TRUE))
+z<-bain(regr,"num=pea", standardize = TRUE)
 
 # de t.test met formule invoer, dwz, postnumb~sex, werkt de label estimates niet en mogelijk bain ook niet
 # This is because bain overwrites only t.test.default. t.test.formula calls t.test, which is found within the package environment
