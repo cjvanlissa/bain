@@ -4,7 +4,15 @@ rm(list=ls())
 
 sesamesim$site <- as.factor(sesamesim$site)
 ancov <- lm(postnumb ~ site + prenumb + peabody -1, data = sesamesim)
+
+# Here, an error is expected and appropriate, because the factor levels are '1', '2', etc.
+# Bain cannot process these factor levels. You must stick to the normal syntax rules:
+# variables start with a letter
+test_that("get_estimates throws error when factor levels are numeric", expect_error(get_estimates(ancov)))
 ancov <- label_estimates(ancov, c("v.1", "v.2", "v.3","v.4", "v.5", "pre", "pea"))
+test_that("get_estimates works after label_estimates",
+          expect_identical(names(get_estimates(ancov)), c("v.1", "v.2", "v.3","v.4", "v.5", "pre", "pea")))
+
 set.seed(100)
 y<-bain(ancov, "v.1=v.2=v.3=v.4=v.5;v.2 > v.5 > v.3 > v.1 >v.4;")
 
