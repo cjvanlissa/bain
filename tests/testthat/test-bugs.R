@@ -20,18 +20,16 @@ results <- bain(ancov, "site1=site2=site3=site4=site5; site2>site5>site1>site3>s
 # de standardize regression werkt niet
 regr <- lm(postnumb ~ prenumb + peabody, sesamesim)
 get_estimates(regr)
-regr <- label_estimates(regr, c("i", "num", "pea"))
 set.seed(100)
-z<-bain(regr,"num=pea", standardize = TRUE)
+z<-bain(x = regr, hypothesis = "pre=pea", standardize = TRUE)
 
 # de t.test met formule invoer, dwz, postnumb~sex, werkt de label estimates niet en mogelijk bain ook niet
 # This is because bain overwrites only t.test.default. t.test.formula calls t.test, which is found within the package environment
 sesamesim$sex<-as.factor(sesamesim$sex)
 #ttest <- t.test(sesamesim$postnumb[sesamesim$sex==1],sesamesim$postnumb[sesamesim$sex==2],paired = FALSE, var.equal = FALSE)
 ttest <- t.test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = FALSE)
-expect_error(ttest <- label_estimates(ttest, c("m1","m2")))
 set.seed(100)
-expect_error(z <- bain(ttest, "m1=m2; m1>m2; m1<m2"))
+expect_equal(bain(ttest, "group1=group2; group1>group2; group1<group2")$fit$PMPb, c(0.79431786, 0.10642553, 0.03069590, 0.06856071), tolerance = .01)
 
 #===========================================================================
 # DESCRIPTIVE THE T-TEST
@@ -49,10 +47,9 @@ rm(list=ls())
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
-ttest <- label_estimates(ttest, c("boy","girl"))
 set.seed(100)
-results <- bain(ttest, "boy = girl; boy > girl; boy < girl")
-des1 <- descriptives(results, ci = 0.95)
+results <- bain(ttest, "x = y; x > y; x < y")
+des1 <- summary(results, ci = 0.95)
 
 test_that("descriptives", {expect_equal(des1$Estimate , as.numeric(results$estimates))})
 test_that("descriptives", {expect_equal(des1$n , as.numeric(results$n))})
@@ -61,7 +58,7 @@ test_that("descriptives", {expect_equal(des1$lb , lbd)})
 ubd <- as.vector(results$estimates + qnorm(.975) * c(sqrt(results$posterior[1,1]),sqrt(results$posterior[2,2])))
 test_that("descriptives", {expect_equal(des1$ub , ubd)})
 
-des2 <- descriptives(results, ci = 0.98)
+des2 <- summary(results, ci = 0.98)
 
 test_that("descriptives", {expect_equal(des2$Estimate , as.numeric(results$estimates))})
 test_that("descriptives", {expect_equal(des2$n , as.numeric(results$n))})
@@ -77,8 +74,8 @@ test_that("descriptives", {expect_equal(des2$ub , ubd)})
 rm(list=ls())
 
 ttest <- t.test(sesamesim$postnumb)
-ttest <- label_estimates(ttest, c("post"))
+
 set.seed(100)
-results <- bain(ttest, "post=30; post>30; post<30")
-des1 <- descriptives(results, ci = 0.95)
+results<- bain(ttest, "x=30; x>30; x<30")
+des1 <- summary(results, ci = 0.95)
 

@@ -21,10 +21,12 @@ that coefficients are properly extracted, note how their names will be parsed
 by bain, and inspect their values.
 }
 \examples{
+\dontrun{
 # Example 1
 m_tt <- t.test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
 get_estimates(m_tt)
 # Example 2
 m_lm <- lm(Sepal.Length ~., iris)
 get_estimates(m_lm)
+}
 }

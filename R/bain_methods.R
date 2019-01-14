@@ -41,10 +41,6 @@
 #' These names are used to specify \code{hypotheses}. For \code{lm()},
 #' \code{coef(x)} will display the
 #' estimates. For \code{t.test()}, \code{print(x)} will display the estimates.
-#' \item \code{label_estimates(x,labels)}. Note that, \code{labels} is a
-#' character vector containing new labels for the estimates in \code{x}. Each
-#' label has to start with a letter, and may consist of "letters", "numbers",
-#' ".", and "_". An example is \code{labels <- c("a", "b", "c")}.
 #' \item \link{set.seed}\code{(seed)}. Set \code{seed} equal to an integer
 #' number to create a repeatable random number sequence.
 #' \item \code{results <- bain(x,hypotheses)} or \code{results <-
@@ -57,7 +53,7 @@
 #' are evaluated.
 #' \item \code{print(results)} Print the results of an analysis wity
 #' \code{bain}.
-#' \item \code{descriptives(results, ci=0.95)} Present descriptives for the
+#' \item \code{summary(results, ci=0.95)} Present descriptives for the
 #' parameters used to specify \code{hypotheses}.
 #' }
 #'
@@ -124,7 +120,7 @@
 #' }
 #' \item \code{print(results)} Print the results of an analysis wity
 #' \code{bain}.
-#' \item \code{descriptives(results, ci=0.95)} Present descriptives for the
+#' \item \code{summary(results, ci=0.95)} Present descriptives for the
 #' parameters used to specify \code{hypotheses}.
 #' }
 #'
@@ -137,8 +133,7 @@
 #'
 #' The hypotheses specified have to adhere to the following rules:
 #' \enumerate{
-#' \item Parameters are referred to using the names specified in
-#' \code{label_estimates()} or \code{names()}.
+#' \item Parameters are referred to using the names specified in \code{names()}.
 #' \item Linear combinations of parameters must be specified adhering to the
 #' following rules:
 #'         \enumerate{ \item Each parameter name is used at most once.
@@ -206,7 +201,7 @@
 #' probability including the unconstrained hypothesis. In Hoijtink, Mulder,
 #' van Lissa, and Gu (2018) it is elaborated how these quantities (and the outer
 #' output presented below) should be interpreted. Additionally, using
-#' \code{descriptives(results, ci=0.95)}, a descriptives matrix can be obtained
+#' \code{summary(results, ci=0.95)}, a descriptives matrix can be obtained
 #' in which for each estimate, the label, the value, and a 95\% central
 #' credibility interval is presented. The following commands can be used to
 #' retrieve the default and additional information from the \code{bain} output
@@ -382,16 +377,16 @@
 #' ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
 #' # inspect the estimates of the group means
 #' print(ttest)
-#' # assign names to the estimates
-#' ttest <- label_estimates(ttest, c("boy","girl"))
+#' # Check the labels of the estimates
+#' coef(ttest)
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses with bain
-#' results <- bain(ttest, "boy = girl; boy > girl; boy < girl")
+#' results <- bain(ttest, "x = y; x > y; x < y")
 #' # display the results
-#' print(results)
+#' results
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -408,16 +403,16 @@
 #' ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
 #' # inspect the estimates of the group means
 #' print(ttest)
-#' # assign names to the estimates
-#' ttest <- label_estimates(ttest, c("boy","girl"))
+#' # Check the names of the coefficients
+#' coef(ttest)
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses with bain
-#' results <- bain(ttest, "boy = girl; boy > girl; boy < girl")
+#' results <- bain(ttest, "x = y; x > y; x < y")
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -430,8 +425,8 @@
 #' ttest <- t.test(sesamesim$prenumb,sesamesim$postnumb,paired = TRUE)
 #' # inspect the estimates of the group means
 #' print(ttest)
-#' # assign names to the estimates
-#' ttest <- label_estimates(ttest, c("difference"))
+#' # Check name of the coefficient
+#' coef(ttest)
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses with bain
@@ -439,7 +434,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #'
 #' # ===========================================================================
@@ -452,16 +447,16 @@
 #' ttest <- t.test(sesamesim$postnumb)
 #' # inspect the estimate of the mean
 #' print(ttest)
-#' # assign a name to the estimate
-#' ttest <- label_estimates(ttest, c("post"))
+#' # Check name of estimate
+#' coef(ttest)
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses with bain versus the reference value 30
-#' results <- bain(ttest, "post=30; post>30; post<30")
+#' results <- bain(ttest, "x=30; x>30; x<30")
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -478,6 +473,8 @@
 #' ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
 #' # inspect the estimates of the group means
 #' print(ttest)
+#' # Check the labels of the estimates
+#' coef(ttest)
 #' # compute the pooled within standard deviation using the variance of x
 #' # (ttest$v[1]) and y (ttest$v[2])
 #' pwsd <- sqrt(((length(x) -1) * ttest$v[1] + (length(y)-1) * ttest$v[2])/
@@ -485,19 +482,19 @@
 #' # print pwsd in order to be able to include it in the hypothesis. Its value
 #' # is 12.60
 #' print(pwsd)
-#' # assign names to the estimates
-#' ttest <- label_estimates(ttest, c("boy","girl"))
+#' # Get names of the estimates
+#' coef(pwsd)
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses (the means of boy and girl differ less than .2 * pwsd =
 #' # 2.52 VERSUS the means differ more than .2 * pwsd = 2.52) with bain
 #' # note that, .2 is a value for Cohen's d reflecting a "small" effect, that
 #' # is, the means differ less or more than .2 pwsd.
-#' results <- bain(ttest, "boy - girl > -2.52 & boy - girl < 2.52")
+#' results <- bain(ttest, "x - y > -2.52 & x - y < 2.52")
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -513,8 +510,6 @@
 #' anov <- lm(postnumb~site-1,sesamesim)
 #' # take a look at the estimated means and their names
 #' coef(anov)
-#' # choose convenient names for the estimated means
-#' anov <- label_estimates(anov, c("site1", "site2", "site3","site4","site5"))
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses with bain
@@ -523,7 +518,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -544,16 +539,15 @@
 #' # take a look at the estimated adjusted means, the regression coefficient
 #' # of the covariate and their names
 #' coef(ancov)
-#' # choose convenient names for the estimated means
-#' ancov <- label_estimates(ancov, c("s1", "s2", "s3","s4","s5","pre"))
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses with bain
-#' results <- bain(ancov, "s1=s2=s3=s4=s5; s2>s5>s1>s3>s4")
+#' results <- bain(ancov, "site1=site2=site3=site4=site5;
+#'                         site2>site5>site1>site3>site4")
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -566,8 +560,6 @@
 #' regr <- lm(postnumb ~ age + peabody + prenumb,sesamesim)
 #' # take a look at the estimated regression coefficients and their names
 #' coef(regr)
-#' # choose convenient names for the estimated means
-#' regr <- label_estimates(regr, c("int", "age", "peab", "pre"))
 #' # set a seed value
 #' set.seed(100)
 #' # test hypotheses with bain. Note that standardized = FALSE denotes that the
@@ -577,7 +569,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' # Since it is only meaningful to compare regression coefficients if they are
 #' # measured on the same scale, bain can also evaluate standardized regression
 #' # coefficients (based on the seBeta function by Jeff Jones and Niels Waller):
@@ -590,7 +582,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -636,7 +628,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -704,7 +696,7 @@
 #' # display the results
 #' print(results2)
 #' # obtain the descriptives table
-#' descriptives(results2, ci = 0.95)
+#' summary(results2, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -740,7 +732,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -788,7 +780,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -830,7 +822,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #'
 #' # ===========================================================================
 #' # USING BAIN WITH A NAMED VECTOR: EXAMPLE VI
@@ -931,7 +923,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -980,7 +972,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #' #
 #' # ===========================================================================
@@ -1091,7 +1083,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' #
 #'
 #' # ===========================================================================
@@ -1138,7 +1130,7 @@
 #' # display the results
 #' print(results)
 #' # obtain the descriptives table
-#' descriptives(results, ci = 0.95)
+#' summary(results, ci = 0.95)
 #' }
 #'
 #'
@@ -1172,7 +1164,8 @@ bain.lm <-
         if(ncol(x$model) == 2){
           "ANOVA"
         } else {
-          if(sum(factor_variables) == 1){
+          if(sum(factor_variables) == 1 & # If there's only one factor
+             !grepl(":", paste(names(x$coefficients), collapse = ""))){ # AND no interactions between that factor and continuous predictors
             "ANCOVA"
           } else {
             "mixed_predictors"
@@ -1193,7 +1186,7 @@ bain.lm <-
              n <- table(x$model[, 2])
              anovafm <- lm(x$model[, 1] ~ -1 + x$model[, 2])
              Args$x <- anovafm$coefficients
-             names(Args$x) <- levels(x$model[, 2])
+             names(Args$x) <- paste0(names(x$model)[2], levels(x$model[, 2]))
              Args$Sigma <- lapply((1/n * summary.lm(anovafm)$sigma**2), matrix)
              Args$group_parameters <- 1
              Args$joint_parameters <- 0
@@ -1213,7 +1206,6 @@ bain.lm <-
              ancovafm <-  lm(as.formula(paste0(names(df)[1], "~ -1 + .")), df)
 
              Args$x <- ancovafm$coefficients
-             names(Args$x) <- gsub(paste0("^", names(df)[var_factor]), "", names(Args$x))
              resvar <- summary(ancovafm)$sigma**2
              Args$Sigma <- by(cbind(1, df[, var_numeric]), df[[var_factor]], function(x){
                resvar * solve(t(as.matrix(x)) %*% as.matrix(x))
@@ -1227,20 +1219,28 @@ bain.lm <-
              dependent <- x$model[, 1]
              predictor <- model.matrix(as.formula(x$call[2]), x$model)
 
-             predictor_names <- names(x$coefficients) # If (Intercept) must be dropped, drop it BY NAME, don't drop first column
+             hyp_params <- params_in_hyp(hypothesis)
 
-             if(any(factor_variables)){
-               predictor_names <- gsub(paste0("^(",
-                                              paste(names(x$model)[-1][factor_variables], sep = "|"),
-                                              ")"), "", predictor_names)
+             # Partial matching implemented here
+             coef_in_hyp <- charmatch(rename_function(hyp_params),
+                                   rename_function(names(x$coefficients)))
+
+             if(anyNA(coef_in_hyp)){
+               stop("Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' did not match any parameters in 'x': ",
+                    paste(hyp_params[is.na(coef_in_hyp)], collapse = ", "),
+                    "\n  The parameters in object 'x' are named: ",
+                    paste(names(x$coefficients), collapse = ", "))
+             }
+             if(any(coef_in_hyp == 0)){
+               stop("Some of the parameters referred to in the 'hypothesis' matched multiple parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' matched multiple parameters in 'x': ",
+                    paste(hyp_params[coef_in_hyp == 0], collapse = ", "),
+                    "\n  The parameters in object 'x' are named: ",
+                    paste(names(x$coefficients), collapse = ", "))
              }
 
-             covariates_hypo <-
-               predictor_names[sapply(predictor_names, grepl, x = hypothesis)]
-
              if (!standardize) {
-               estimate <- coef(x)[covariates_hypo]
-               Sigma <- vcov(x)[covariates_hypo, covariates_hypo]
+               estimate <- coef(x)[coef_in_hyp]
+               Sigma <- vcov(x)[coef_in_hyp, coef_in_hyp]
              } else{
                # Hier moeten even de juiste namen meegegeven worden!!!
                ses <- seBeta(
@@ -1250,17 +1250,16 @@ bain.lm <-
                  alpha = .05,
                  estimator = 'Normal'
                )
-               select_parameters <- which(names(x$model)[-1] %in% covariates_hypo)
+               select_parameters <- match(names(x$model)[-1], names(x$coefficients)[coef_in_hyp])
                estimate <- ses$CIs$estimate[select_parameters]
                # Check even of dit lekker loopt!
                names(estimate) <- names(x$model)[-1][select_parameters]
                Sigma <- ses$cov.mat[select_parameters, select_parameters]
              }
-
              Args$x <- estimate
              Args$Sigma <- Sigma
              Args$group_parameters <- 0
-             Args$joint_parameters <- length(covariates_hypo)
+             Args$joint_parameters <- length(coef_in_hyp)
              Args$n <- nrow(x$model)
            }
            )
@@ -1340,14 +1339,12 @@ bain.default <- function(x,
 
   cl <- match.call()
   Args <- as.list(cl[-1])
-
-  estimate <- rename_estimate(x)
-  n_estimates <- length(estimate)
+  n_estimates <- length(x)
 
 
 # Parse hypotheses --------------------------------------------------------
-
-  parsed_hyp <- parse_hypothesis(names(estimate), hypothesis)
+  #ren_estimate <- rename_estimate(x)
+  parsed_hyp <- parse_hypothesis(names(x), hypothesis)
   hyp_mat <- parsed_hyp$hyp_mat
   n_hyp <- length(parsed_hyp$original_hypothesis)
   n_constraints <- parsed_hyp$n_constraints
@@ -1520,7 +1517,7 @@ bain.default <- function(x,
     }
 
     #parameter transformation for the estimates of theta
-    thetar <- c(estimate, -1)
+    thetar <- c(x, -1)
     betapost <- Rr[1:(n_constraints[2 * h - 1] + rowrank), 1:(n_estimates + 1)] %*%
       thetar
 
@@ -1661,7 +1658,7 @@ bain.default <- function(x,
     posterior = thetacovpost,
     call = cl,
     model = x,
-    hypotheses = parsed_hyp$original_hypothesis,
+    hypotheses = gsub("___X___", ":", parsed_hyp$original_hypothesis),
     independent_restrictions = rank_hyp,
     estimates = x,
     n = n

@@ -1,14 +1,11 @@
 # TESTING ANOVA VIA LM AND DEFAULT VERSUS EACH OTHER
 
-# ANOVA VIA LM OBJECT 
+# ANOVA VIA LM OBJECT
 
 rm(list=ls())
-library(testthat)
-library(bain)
 
 sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(sesamesim$postnumb~sesamesim$site-1)
-anov <- label_estimates(anov, c("site1", "site2", "site3","site4","site5"))
 set.seed(100)
 z<-bain(anov, "site1=site2=site3=site4=site5;
       site2>site5>site1>site3=site4;
@@ -19,20 +16,20 @@ z<-bain(anov, "site1=site2=site3=site4=site5;
      (site1,site2,site5)>(site3,site4);
      site2>(site1,site3,site4,site5)")
 
-# ANOVA VIA BAIN_DEFAULT 
+# ANOVA VIA BAIN_DEFAULT
 
 prepSesame <- lm(postnumb~site-1,sesamesim)
 est <- coef(prepSesame)
 
 samp <- table(sesamesim$site)
 
-var <- summary(prepSesame)$sigma**2   
+var <- summary(prepSesame)$sigma**2
 
-cov1 <- var/samp[1]   
-cov2 <- var/samp[2]  
-cov3 <- var/samp[3]  
-cov4 <- var/samp[4]  
-cov5 <- var/samp[5]  
+cov1 <- var/samp[1]
+cov2 <- var/samp[2]
+cov3 <- var/samp[3]
+cov4 <- var/samp[4]
+cov5 <- var/samp[5]
 
 cov1 <- matrix(cov1, nrow=1, ncol=1)
 cov2 <- matrix(cov2, nrow=1, ncol=1)

@@ -14,11 +14,14 @@ LazyData: true
 URL: https://informative-hypotheses.sites.uu.nl/software/bain/
 NeedsCompilation: yes
 RoxygenNote: 6.1.1
-Depends: 
+Depends:
     R (>= 3.0.0),
     stats,
     methods
-Suggests: 
+Suggests:
     MASS,
     testthat,
-    mvtnorm
+    mvtnorm,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

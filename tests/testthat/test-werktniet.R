@@ -8,9 +8,8 @@ rm(list=ls())
 df <- sesamesim
 df$site <- as.factor(df$site)
 model <- lm(postnumb~site+prenumb+peabody-1, df)
-model <- label_estimates(model, c("v.1", "v.2", "v.3", "v.4", "v.5", "pre", "pea"))
 set.seed(100)
-y <- bain(model, "v.1 = 19.35 & v.2 = 29.33;v.1>19.35&v.2>29.33")
+y <- bain(model, "site1 = 19.35 & site2 = 29.33;site1>19.35&site2>29.33")
 test_that("Bain mutual", {expect_equal(y$fit$Com[1], 0.0007, tolerance = .0005)})
 
 
@@ -76,11 +75,10 @@ test_that("Bain mutual", {expect_equal(y$fit$Com[1], 0.0007, tolerance = .0005)}
 
   sesamesim$site <- as.factor(sesamesim$site)
   ancov <- lm(postnumb ~ site + prenumb -1, data = sesamesim)
-  ancov <- label_estimates(ancov, c("v.1", "v.2", "v.3","v.4", "v.5", "pre"))
   #hyp<-"v.1=19.35 & v.2 = 29.33; v.1>19.35 & v.2 > 29.33;"
   set.seed(100)
 
-  y <- bain(ancov, "v.1=19.35 & v.2 = 29.33; v.1>19.35 & v.2 > 29.33")
+  y <- bain(ancov, "site1=19.35 & site2 = 29.33; site1>19.35 & site2 > 29.33")
 
   sesamesim$prenumb <- sesamesim$prenumb-mean(sesamesim$prenumb)
 

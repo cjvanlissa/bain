@@ -299,10 +299,9 @@ regrdata$peabody = regrdata$peabody - mean(regrdata$peabody)
 regrdata$site <- factor(regrdata$site)
 
 anal <-  lm(postnumb ~ site + prenumb + peabody -1, data=regrdata)
-anal<-label_estimates(anal,c("a", "b", "c", "d", "e", "c1", "c2"))
 
 set.seed(100)
-y<-bain(anal, "a=b=c=d=e")
+y<-bain(anal, "site1=site2=site3=site4=site5")
 
 # the reconstructed covariance matrix is the same as the matrix rendered by vcov(anal)
 
