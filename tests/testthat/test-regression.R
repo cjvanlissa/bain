@@ -1,12 +1,8 @@
 rm(list=ls())
-library(testthat)
-library(bain)
 
 regr <- lm(postnumb ~ prenumb + funumb + peabody, sesamesim)
-regr <- label_estimates(regr, c("i", "pre", "fu","pea"))
-
+regr$call$formula
 # UNSTANDARDIZED REGRESSION USING AN LM OBJECT
-
 set.seed(100)
 z<-bain(regr,"pre=fu=pea;pea > fu > pre; pre>fu>pea", standardize = FALSE)
 
@@ -89,9 +85,8 @@ library(bain)
 
 regr <- lm(postnumb ~ prenumb + peabody, sesamesim)
 coef(regr)
-regr <- label_estimates(regr, c("i", "num","pea"))
 set.seed(100)
-sz<-bain(regr,"i=5 & num > pea", standardize = FALSE)
+sz<-bain(regr,"Int=5 & pre > pea", standardize = FALSE)
 
 samp <- dim(sesamesim)[1]
 regr <- lm(postnumb ~ prenumb + peabody, data = sesamesim)
@@ -123,9 +118,8 @@ library(bain)
 samp <- dim(sesamesim)[1]
 regr <- lm(postnumb ~ prenumb * peabody, sesamesim)
 coef(regr)
-regr <- label_estimates(regr, c("i", "num","pea", "int"))
 set.seed(100)
-sz<-bain(regr,"num >0 ", standardize = FALSE)
+sz<-bain(regr,hypothesis = "prenumb >0 ", standardize = FALSE)
 
 regr <- lm(postnumb ~ prenumb * peabody, data = sesamesim)
 est <- coef(regr)

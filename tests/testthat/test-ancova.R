@@ -4,9 +4,14 @@ rm(list=ls())
 
 sesamesim$site <- as.factor(sesamesim$site)
 ancov <- lm(postnumb ~ site + prenumb + peabody -1, data = sesamesim)
-ancov <- label_estimates(ancov, c("v.1", "v.2", "v.3","v.4", "v.5", "pre", "pea"))
+
+# NOW REDUDANT: Here, an error is expected and appropriate, because the factor levels are '1', '2', etc.
+# Bain cannot process these factor levels. You must stick to the normal syntax rules:
+# variables start with a letter
+#test_that("get_estimates throws error when factor levels are numeric", expect_error(get_estimates(ancov)))
+
 set.seed(100)
-y<-bain(ancov, "v.1=v.2=v.3=v.4=v.5;v.2 > v.5 > v.3 > v.1 >v.4;")
+y<-bain(ancov, "site1=site2=site3=site4=site5;site2 > site5 > site3 > site1 >site4;")
 
 # ANCOVA VIA BAIN_DEFAULT
 
@@ -75,10 +80,8 @@ rm(list=ls())
 sesamesim$sex <- as.factor(sesamesim$sex)
 ancov <- lm(postnumb ~ sex + prenumb + peabody -1, data = sesamesim)
 coef(ancov)
-ancov <- label_estimates(ancov, c("a", "b","pre", "pea"))
 set.seed(100)
-# z<-bain(ancov, " pre > 0 &  pea > 0")
-z<-bain(ancov, " a = b & prenumb > 0 &  peabody > 0")
+z<-bain(ancov, " sex1 = sex2 & pre > 0 &  pea > 0")
 
 sesamesim$prenumb <- sesamesim$prenumb-mean(sesamesim$prenumb)
 sesamesim$peabody <- sesamesim$peabody-mean(sesamesim$peabody)

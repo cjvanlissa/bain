@@ -7,4 +7,4 @@
 *.dll
 R/oud/
 binary/
-.dll
+inst/doc

@@ -10,14 +10,13 @@ library(bain)
 
 x<-sesamesim$postnumb
 ttest <- t.test(x)
-ttest <- label_estimates(ttest, c("m1"))
 set.seed(100)
-z <- bain(ttest, "m1=30; m1>30; m1<30")
+z <- bain(ttest, "x=30; x>30; x<30")
 
 # THE ONE SAMPLE T-TEST WITH BAIN DEFAULT
 
 cov1<-list(matrix(c(sd(x)^2/length(x)),1,1))
-estimate<-mean(x) 
+estimate<-mean(x)
 names(estimate)<-c("m1")
 set.seed(100)
 zd <-bain(estimate,"m1=30;m1>30;m1<30",n=length(x),Sigma=cov1,group_parameters=1,joint_parameters = 0)
@@ -44,14 +43,13 @@ library(bain)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
-ttest <- label_estimates(ttest, c("m1","m2"))
 set.seed(100)
-z <- bain(ttest, "m1=m2; m1>m2; m1<m2")
+z <- bain(ttest, "x=y; x>y; x<y")
 
 # THE INDEPENDENT GROUPS WELCH TEST WITH BAIN DEFAULT
 
 cov1<-list(matrix(c(sd(x)^2/length(x)),1,1),matrix(c(sd(y)^2/length(y)),1,1))
-estimate<-c(mean(x),mean(y)) 
+estimate<-c(mean(x),mean(y))
 samp <- c(length(x),length(y))
 names(estimate)<-c("m1","m2")
 set.seed(100)
@@ -82,15 +80,14 @@ x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 
 ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
-ttest <- label_estimates(ttest, c("m1","m2"))
 set.seed(100)
-z <- bain(ttest, "m1=m2; m1>m2; m1<m2")
+z <- bain(ttest, "x=y; x>y; x<y")
 
 # THE INDEPENDENT GROUPS T-TEST WITH BAIN DEFAULT
 
 pooled <- ((length(x)-1)*sd(x)^2+(length(y)-1)*sd(y)^2)/(length(x)-1+length(y)-1)
 cov1<-list(matrix(c(pooled),1,1)/length(x),matrix(c(pooled),1,1)/length(y))
-estimate<-c(mean(x),mean(y)) 
+estimate<-c(mean(x),mean(y))
 samp <- c(length(x),length(y))
 names(estimate)<-c("m1","m2")
 set.seed(100)
@@ -121,15 +118,14 @@ x<-sesamesim$prenumb
 y<-sesamesim$postnumb
 
 ttest <- t.test(x,y,paired = TRUE)
-ttest <- label_estimates(ttest, c("d"))
 set.seed(100)
-z <- bain(ttest, "d=0; d>0; d<0")
+z <- bain(ttest, "difference=0; difference>0; difference<0")
 
 # THE PAIRED SAMPLES T-TEST WITH BAIN DEFAULT
 
 d <- x - y
 cov1<-list(matrix(c(sd(d)^2/length(d)),1,1))
-estimate<-mean(d) 
+estimate<-mean(d)
 names(estimate)<-c("dd")
 set.seed(100)
 zd <-bain(estimate,"dd=0;dd>0;dd<0",n=length(d),Sigma=cov1,group_parameters=1,joint_parameters = 0)
@@ -158,15 +154,14 @@ x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 
 ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
-ttest <- label_estimates(ttest, c("m1","m2"))
 set.seed(100)
-z <- bain(ttest, "m1 - m2 > -1 & m1 - m2 < 1")
+z <- bain(ttest, "x - y > -1 & x - y < 1")
 
 # THE INDEPENDENT GROUPS T-TEST WITH BAIN DEFAULT
 
 pooled <- ((length(x)-1)*sd(x)^2+(length(y)-1)*sd(y)^2)/(length(x)-1+length(y)-1)
 cov1<-list(matrix(c(pooled),1,1)/length(x),matrix(c(pooled),1,1)/length(y))
-estimate<-c(mean(x),mean(y)) 
+estimate<-c(mean(x),mean(y))
 samp <- c(length(x),length(y))
 names(estimate)<-c("m1","m2")
 set.seed(100)
@@ -196,16 +191,14 @@ sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE,alternative = c("less"))
-ttest <- label_estimates(ttest, c("m1","m2"))
 set.seed(100)
-z1 <- bain(ttest, "m1=m2; m1>m2; m1<m2")
+z1 <- bain(ttest, "x=y; x>y; x<y")
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
 get_estimates(ttest)
-ttest <- label_estimates(ttest, c("m1","m2"))
 set.seed(100)
-z2 <- bain(ttest, "m1=m2; m1>m2; m1<m2")
+z2 <- bain(ttest, "x=y; x>y; x<y")
 
 # TESTING BAIN T.TEST AND T.TEST WITH ALTERNATIVE OPTION VERSUS EACH OTHER
 
@@ -228,17 +221,15 @@ sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE,mu=50)
-ttest <- label_estimates(ttest, c("m1","m2"))
 set.seed(100)
-z1 <- bain(ttest, "m1=m2; m1>m2; m1<m2")
+z1 <- bain(ttest, "x=y; x>y; x<y")
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
 get_estimates(ttest)
-ttest <- label_estimates(ttest, c("m1","m2"))
 set.seed(100)
-z2 <- bain(ttest, "m1=m2; m1>m2; m1<m2")
+z2 <- bain(ttest, "x=y; x>y; x<y")
 
 # TESTING BAIN T.TEST AND T.TEST WITH MU OPTION VERSUS EACH OTHER
 

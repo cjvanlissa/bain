@@ -1,29 +1,51 @@
 parse_hypothesis <- function(varnames, hyp){
-  # Check if varnames occur in hyp.
-  #params_in_hyp <- trimws(unique(strsplit(hyp, split = "(?<![a-zA-Z\\._])[ =<>;\\*0-9+-]+", perl = TRUE)[[1]]))
-  # This works for single characters
-  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>,\\(\\);&\\*+-]+", perl = TRUE)[[1]]))
-  params_in_hyp <- params_in_hyp[!sapply(params_in_hyp, grepl, pattern = "^[0-9]*\\.?[0-9]+$")]
-  params_in_hyp <- params_in_hyp[grepl("^[a-zA-Z]", params_in_hyp)]
+  names_est <- varnames
+  # Clean varnames and hyp, to turn parameter names into legal object names
+  # Might be better to do this elsewhere
+  hyp <- rename_function(hyp)
+  varnames <- rename_function(varnames)
 
-  if(any(!params_in_hyp %in% varnames)){
-    stop(
-         "Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  Your hypothesis is: ",
-         hyp,
-         "\n  The parameters of your model are: ",
-         paste(varnames, collapse = ", "),
-         ".\nPlease use these parameter names in your hypothesis."
-       )
+  # Check if varnames occur in hyp.
+  hyp_params <- params_in_hyp(hyp)
+
+  # Find full varnames using partial matching
+  match_names <- charmatch(hyp_params, varnames)
+  # Any varnames that do not match?
+  if(anyNA(match_names)){
+    stop("Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' did not match any parameters in 'x': ",
+         paste(hyp_params[is.na(match_names)], collapse = ", "),
+         "\n  The parameters in object 'x' are named: ",
+         paste(varnames, collapse = ", "))
   }
+  if(any(match_names == 0)){
+    stop("Some of the parameters referred to in the 'hypothesis' matched multiple parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' matched multiple parameters in 'x': ",
+         paste(hyp_params[match_names == 0], collapse = ", "),
+         "\n  The parameters in object 'x' are named: ",
+         paste(varnames, collapse = ", "))
+  }
+  # Substitute partial names in hypothesis with full names
+  for(par in 1:length(hyp_params)){
+    hyp <- gsub(hyp_params[par], varnames[match_names[par]], hyp)
+  }
+  # Substitute parameter names with full names
+  hyp_params <- varnames[match_names]
+
+  # Start parsing hypothesis here
+
+  legal_varnames <- sapply(hyp_params, grepl, pattern = "^[a-zA-Z\\.][a-zA-Z0-9\\._]{0,}$")
+  if(!all(legal_varnames)){
+    stop("Could not parse the names of the 'estimates' supplied to bain(). Estimate names must start with a letter or period (.), and can be a combination of letters, digits, period and underscore (_).\nThe estimates violating these rules were originally named: ", paste("'", names_est[!legal_varnames], "'", sep = "", collapse = ", "), ".\nAfter parsing by bain, these parameters are named: ", paste("'", hyp_params[!legal_varnames], "'", sep = "", collapse = ", "), call. = FALSE)
+  }
+
   # Currently disabled: Is it a problem if there are parameters that don't occur in the hypothesis?
-  if(FALSE & any(!varnames %in% params_in_hyp)){
-    message(
-      "Some of the parameters in your model are not referred to in the 'hypothesis'. Make sure that this is what you intended.\n  Your hypothesis is: ",
-      hyp,
-      "\n  The parameters that are not mentioned are: ",
-      paste(varnames[which(!varnames %in% params_in_hyp)], collapse = ", ")
-    )
-  }
+  # if(FALSE & any(!varnames %in% hyp_params)){
+  #   message(
+  #     "Some of the parameters in your model are not referred to in the 'hypothesis'. Make sure that this is what you intended.\n  Your hypothesis is: ",
+  #     hyp,
+  #     "\n  The parameters that are not mentioned are: ",
+  #     paste(varnames[which(!varnames %in% hyp_params)], collapse = ", ")
+  #   )
+  # }
   # Ultimately, it would be best to check the reverse as well. This would also
   # allow us to make a string like "(a|b|c)" with the varnames, and insert it
   # into the regular expressions below. That would be faster than the complex
@@ -64,7 +86,6 @@ parse_hypothesis <- function(varnames, hyp){
 
   list(hyp_mat = hyp_mat, n_constraints = n_constraints, original_hypothesis = original_hypothesis)
 }
-
 
 #' Create Bain (in)equality constraint matrices
 #'
@@ -426,4 +447,10 @@ constraint_to_row <- function(varnames, hyp){
     e[[x]] <- 0
     constant
   }), equal_to)
+}
+
+params_in_hyp <- function(hyp){
+  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>,\\(\\);&\\*+-]+", perl = TRUE)[[1]]))
+  params_in_hyp <- params_in_hyp[!sapply(params_in_hyp, grepl, pattern = "^[0-9]*\\.?[0-9]+$")]
+  params_in_hyp[grepl("^[a-zA-Z]", params_in_hyp)]
 }
