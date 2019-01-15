@@ -1,5 +1,4 @@
 rm(list=ls())
 library(testthat)
 library(bain)
-library(mvtnorm)
 test_check("bain")

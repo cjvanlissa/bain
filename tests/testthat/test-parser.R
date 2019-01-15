@@ -3,11 +3,8 @@
 # 1) COMBINATIONS OF number * par + number FOR MULTIPLE PARAMETERS
 # 2) USE & TO COMBINE DIFFERENT PARTS OF AN HYPOTHESIS
 # 3) USE (,) TO CREATE SET OF COMBINATIONS
-# BELOW ONLY THESE OPTIONS ARE DEBUGGED, AT THE END OF THIS FILE OTHER TEST FOR
-# SYNTAX THAT MAY OR MAY NOT WORK IS COMMENTED OUT
 
-library(bain)
-library(testthat)
+rm(list=ls())
 
 # TESTING THE NAMING OF THE PARAMETERS
 # 1) USE OF LETTERS, . AND _
@@ -32,6 +29,16 @@ test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,2))})
 # 4) TESTS PROVIDED BY CASPAR
 # 5) SERIES OF =, <, > IN ONE HYPOTHESIS
 # 6) A SIMPLE EXAMPLE
+
+varnames <- c("a", "b", "c")
+hyp1 <- "a > 5 > c"
+x<-bain:::parse_hypothesis(varnames, hyp1)
+
+test_that("parser", {expect_equal(as.vector(t(x$hyp_mat)), c(1,0,0,5,0,0,-1,-5))})
+test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,2))})
+
+
+
 
 varnames <- c("a", "b", "c")
 hyp1 <- "20<-21*a<4.5; a>b> c; 4a > 7; 4 + 7 > a - 4* b  + 8"
