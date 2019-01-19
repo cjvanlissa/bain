@@ -5,8 +5,6 @@
 #==============================================================================================
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 set.seed(124)
 x <- rnorm(20,-.3,.7)
@@ -77,8 +75,6 @@ test_that("bain default", {expect_equal(z$fit$Fit[1], mean(sampff), tolerance = 
 #==============================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 #estimate of parameters
 estimate<-c(2,4)
@@ -119,8 +115,6 @@ test_that("bain default", {expect_equal(y$fit$Fit[1], countf, tolerance = .004)}
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 estimate <- c(1,1)
 names(estimate)<-c("a", "b")
@@ -156,8 +150,6 @@ test_that("bain default", {expect_equal(y$fit$Com_in[1], .5, tolerance = .004)})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 estimate <- c(0,4)
 names(estimate)<-c("a", "b")
@@ -213,7 +205,7 @@ sigmaz <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 z <- c(0,0,0)
 meanz <- c(0,0,0)
 
-test_that("bain default", {expect_equal(y$fit$Fit_eq, c(dmvnorm(x,meanx,sigmax),dmvnorm(z,meanz,sigmaz),1,NA))})
+test_that("bain default", {expect_equal(y$fit$Fit_eq, c(0.004031442,0.06349364,1,NA))})
 test_that("bain default", {expect_equal(y$fit$Fit_in, c(1,.125,.015625,NA))})
 test_that("bain default", {expect_equal(y$fit$Com_in, c(1,.125,.015625,NA))})
 
@@ -222,8 +214,6 @@ test_that("bain default", {expect_equal(y$fit$Com_in, c(1,.125,.015625,NA))})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 estimate <- c(-1,0,1)
 names(estimate)<-c("a", "b","c")
@@ -242,8 +232,6 @@ test_that("bain default", {expect_equal(y$fit$Com[1], .167, tolerance = .004)})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 estimate <- c(0, 0, 0)
 names(estimate)<-c("a", "b","c")
@@ -253,8 +241,8 @@ cov <- matrix(c(1,0,0,0,1,0,0,0,1), nrow=3,ncol=3)
 set.seed(10)
 y<-bain(estimate,"a > b & b > 0 & a > 0; a > b & b > 0",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
-test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.125,NA),tolerance = .01)})
-test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.125,NA),tolerance = .005)})
+test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .005)})
 
 #========================================================================================")
 # a test of the t-test using bain default shows that b per group is correctly")
@@ -262,8 +250,6 @@ test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 estimate <- c(.2,0)
 names(estimate)<-c("a", "b")
@@ -283,8 +269,6 @@ test_that("bain default", {expect_equal(as.vector(y$prior), c(4,0,0,8))})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 # select the appropriate columns from the data file sesame.txt and center the covariates
 
@@ -313,8 +297,6 @@ test_that("bain default", {expect_equal(as.vector(y$posterior), as.vector(vcov(a
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 estimate<-c(0,0,0,0,0,0,0)
 names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2")
@@ -376,8 +358,6 @@ test_that("bain default", {expect_equal(invcov[5,7], invcov57)})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
 
 estimate<-c(0,0,0,0,0,0,0)
 names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2")
@@ -474,18 +454,14 @@ set.seed(10)
 x<-bain(estimate,"a=0&b=0&c=0",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
 sigma <- matrix(c(1,.95, .95, .95, 1, .95, .95, .95, 1), ncol=3)
 mean <- c(0,0,0)
-test_that("bain default", {expect_equal(x$fit$Fit, c(dmvnorm(mean,mean,sigma),NA),tolerance = .00001)})
-sigma <- x$prior
-test_that("bain default", {expect_equal(x$fit$Com, c(dmvnorm(mean,mean,sigma),NA),tolerance = .00005)})
-
+test_that("bain default", {expect_equal(x$fit$Fit, c(0.7456949,NA),tolerance = .00001)})
+sigma2 <- x$prior
+test_that("bain default", {expect_equal(x$fit$Com, c(0.003874745,NA),tolerance = .00005)})
 #========================================================================================")
 # using stylized tests to check the use of scalar multiplyers and additive constants")
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
-library(mvtnorm)
 
 estimate<-c(0,1,2)
 names(estimate) <- c("a", "b", "c")
@@ -519,9 +495,6 @@ test_that("bain default", {expect_equal(y$fit$Com[1], propc,tolerance = .005)})
 #========================================================================================")
 
 rm(list=ls())
-library(bain)
-library(testthat)
-library(mvtnorm)
 
 estimate<-c(0,1,2)
 names(estimate) <- c("a", "b", "c")

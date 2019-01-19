@@ -5,8 +5,6 @@
 # THE ONE SAMPLE T-TEST WITH A T.TEST OBJECT
 
 rm(list=ls())
-library(testthat)
-library(bain)
 
 x<-sesamesim$postnumb
 ttest <- t.test(x)
@@ -37,8 +35,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 # THE INDEPENDENT GROUPS WELCH TEST WITH A T.TEST OBJECT
 
 rm(list=ls())
-library(testthat)
-library(bain)
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -73,8 +69,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 # THE INDEPENDENT GROUPS T-TEST WITH A T.TEST OBJECT
 
 rm(list=ls())
-library(testthat)
-library(bain)
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -93,7 +87,6 @@ names(estimate)<-c("m1","m2")
 set.seed(100)
 zd <-bain(estimate,"m1=m2; m1>m2; m1<m2",n=samp,Sigma=cov1,group_parameters=1,joint_parameters = 0)
 
-
 # TESTING BAIN T.TEST AND DEFAULT VERSUS EACH OTHER
 
 test_that("Bain mutual", {expect_equal(zd$fit$Fit , z$fit$Fit)})
@@ -106,13 +99,29 @@ test_that("Bain mutual", {expect_equal(zd$fit$BF,z$fit$BF)})
 test_that("Bain mutual", {expect_equal(zd$fit$PMPb , z$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$BFmatrix)))})
 
+sesamesim$sex<-as.factor(sesamesim$sex)
+ttest <- t.test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = FALSE)
+set.seed(100)
+zh<-bain(ttest, "group1=group2; group1>group2; group1<group2")
+
+test_that("Bain mutual", {expect_equal(zd$fit$Fit , zh$fit$Fit)})
+test_that("Bain mutual", {expect_equal(zd$fit$Com , zh$fit$Com)})
+test_that("Bain mutual", {expect_equal(zd$b, zh$b)})
+test_that("Bain mutual", {expect_equal(zd$independent_restrictions, zh$independent_restrictions)})
+test_that("Bain mutual", {expect_equal(as.vector(zd$posterior), as.vector(zh$posterior))})
+test_that("Bain mutual", {expect_equal(as.vector(zd$prior), as.vector(zh$prior))})
+test_that("Bain mutual", {expect_equal(zd$fit$BF,zh$fit$BF)})
+test_that("Bain mutual", {expect_equal(zd$fit$PMPb , zh$fit$PMPb)})
+test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(zh$BFmatrix)))})
+
+
+
+
 # =================================================================================================
 
 # THE PAIRED SAMPLES T-TEST WITH A T.TEST OBJECT
 
 rm(list=ls())
-library(testthat)
-library(bain)
 
 x<-sesamesim$prenumb
 y<-sesamesim$postnumb
@@ -147,8 +156,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 # THE EQUIVALENCE TEST WITH A T.TEST OBJECT
 
 rm(list=ls())
-library(testthat)
-library(bain)
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -185,8 +192,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 # T.TEST VARIATIONS: T.TEST WITH AN ACTIVE ALTERNATIVE OPTION
 
 rm(list=ls())
-library(testthat)
-library(bain)
+
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -196,7 +202,6 @@ z1 <- bain(ttest, "x=y; x>y; x<y")
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
-get_estimates(ttest)
 set.seed(100)
 z2 <- bain(ttest, "x=y; x>y; x<y")
 
@@ -215,8 +220,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(z1$BFmatrix)), as.vector(t(z2
 # T.TEST VARIATIONS: T.TEST WITH AN ACTIVE MU OPTION
 
 rm(list=ls())
-library(testthat)
-library(bain)
+
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -227,7 +231,6 @@ z1 <- bain(ttest, "x=y; x>y; x<y")
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
-get_estimates(ttest)
 set.seed(100)
 z2 <- bain(ttest, "x=y; x>y; x<y")
 
