@@ -100,7 +100,7 @@ test_that("Bain mutual", {expect_equal(zd$fit$PMPb , z$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$BFmatrix)))})
 
 sesamesim$sex<-as.factor(sesamesim$sex)
-ttest <- t.test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = FALSE)
+ttest <- t.test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = TRUE)
 set.seed(100)
 zh<-bain(ttest, "group1=group2; group1>group2; group1<group2")
 

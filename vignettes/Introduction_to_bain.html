@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Xin Gu" />
+
+<meta name="date" content="2019-01-18" />
+
+<title>Introduction to bain</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to bain</h1>
+<h4 class="author"><em>Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Xin Gu</em></h4>
+<h4 class="date"><em>2019-01-18</em></h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p><code>bain</code> is an acronym for “Bayesian informative hypotheses evaluation”. It uses the Bayes factor to evaluate hypotheses specified using equality and inequality constraints among (linear combinations of) parameters in a wide range of statistical models.</p>
+<p>A tutorial is provided by Hoijtink, Mulder, van Lissa, and Gu (2018) retrievable from the Psychological Methods website at <a href="https://www.apa.org/pubs/journals/met/" class="uri">https://www.apa.org/pubs/journals/met/</a> or the bain website at <a href="https://informative-hypotheses.sites.uu.nl/software/bain/" class="uri">https://informative-hypotheses.sites.uu.nl/software/bain/</a></p>
+<p><strong>Users are advised to read the tutorial and this vignette before using <code>bain</code></strong>.</p>
+<p>The full <code>bain</code> reference list (all retrievable from the <code>bain</code> website) is</p>
+<p>Bosman, M. and Hoijtink, H. (unpublished). Robust Bayes factors for Bayesian Anova: overcoming overcoming adverse effect of non-normality and outliers.</p>
+<p>Gu, X., Mulder, J., and Hoijtink, H. (2018). Approximate adjusted fractional Bayes factors: A general method for testing informative hypotheses. British Journal of Mathematical and Statistical Psychology, 71, 229-261. DOI: 10.1111/bmsp.12110</p>
+<p>Gu, X., Hoijtink, H., Mulder, J., and Rosseel, Y. (unpublished). Bain: A program for Bayesian testing of order constrained hypotheses in structural equation models.</p>
+<p>Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2018). A tutorial on testing hypotheses using the Bayes factor. Psychological Methods. DOI: 10.1037/met0000201</p>
+<p>Hoijtink, H., Gu, X., and Mulder, J. (2018). Bayesian evaluation of informative hypotheses for multiple populations. British Journal of Mathematical and Statistical Psychology. DOI: 10.1111/bmsp.12145</p>
+<p>Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (2018). Computing Bayes Factors from Data with Missing Values. Psychological Methods. DOI: 10.1037/met0000187</p>
+</div>
+<div id="usage" class="section level2">
+<h2>Usage</h2>
+<p><code>bain(x, hypothesis, ...)</code></p>
+</div>
+<div id="arguments" class="section level2">
+<h2>Arguments</h2>
+<p><code>x</code> An R object containing the outcome of a statistical analysis. Currently, the following objects can be processed:</p>
+<ol style="list-style-type: decimal">
+<li><code>t.test()</code> objects (Student’s t-test, Welch’s t-test, paired samples t-test, one-group t-test, equivalence test).</li>
+<li><code>lm()</code> objects (anova, ancova, multiple regression). <strong>In the Examples section it is elaborated which calls to lm can be processed by bain (other calls cannot be processed).</strong></li>
+<li>A named vector containing the estimates resulting from a statistical analysis. Note that, named means that each estimate has to be nameled such that it can be referred to in hypotheses.</li>
+</ol>
+<p><code>hypothesis</code> A character string containing the informative hypotheses to evaluate (see Details).</p>
+<p><code>...</code> Additional arguments (see below).</p>
+</div>
+<div id="using-bain-with-an-lm-or-t.test-object" class="section level2">
+<h2>Using <code>bain</code> with an <code>lm</code> or <code>t.test</code> object</h2>
+<p>The following steps need to be executed:</p>
+<ol style="list-style-type: decimal">
+<li><code>x &lt;- lm()</code> or <code>x &lt;- t.test()</code>. Execute an analysis with <code>lm</code> or <code>t.test</code>. See the Examples section below for a complete elaboration of the calls to <code>lm</code> and <code>t.test</code> that can be processed by <code>bain</code>. Note that, <code>lm</code> and <code>t.test</code> will apply list-wise deletion if there are cases with missing values in the variables used.</li>
+<li>Display the estimates and their names using the command <code>coef(x)</code>. (Unique abbreviations of) the names will be used to specify <code>hypotheses</code>.</li>
+<li><code>set.seed(seed)</code>. Set <code>seed</code> equal to an integer number to create a repeatable random number sequence.</li>
+<li><code>results &lt;- bain(x,hypotheses)</code> or <code>results &lt;- bain(x,hypotheses,standardize = TRUE)</code>. The first call to <code>bain</code> is used in case of <code>lm</code> implementations of anova, ancova, and <code>t.test</code>. The second call to <code>bain</code> is used in case of <code>lm</code> implementations of multiple regression. With <code>standardize = TRUE</code> hypotheses with respect to standardized regression coefficients are evaluated. With <code>standarize = FALSE</code> hypotheses with respect to unstandardized regression coefficients are evaluated.</li>
+<li><code>print(results)</code> Print the results of an analysis wity <code>bain</code>.</li>
+<li><code>summary(results, ci=0.95)</code> Present descriptives for the parameters used to specify <code>hypotheses</code>. <code>ci</code> can be used to specify the confidence level of the credibility intervals.</li>
+</ol>
+</div>
+<div id="using-bain-with-a-named-vector" class="section level2">
+<h2>Using <code>bain</code> with a named vector</h2>
+<p>The following steps need to be executed:</p>
+<ol style="list-style-type: decimal">
+<li>Execute a statistical analysis.</li>
+</ol>
+<p>In case of a single group analysis, the following information has to be extracted from the statistical analysis and supplied to <code>bain</code>:</p>
+<ol style="list-style-type: lower-alpha">
+<li>A vector containing estimates of the parameters used to specify <code>hypotheses</code>;</li>
+<li>A list containing the covariance matrix of these parameters; and,</li>
+<li>the sample size.</li>
+</ol>
+<p>In case of a multiple group analysis, the following information has to be extracted from the statistical analysis and supplied to <code>bain</code>:</p>
+<ol style="list-style-type: lower-alpha">
+<li>A vector containing estimates of the parameters used to specify <code>hypotheses</code> possibly augmented with the estimates of other parameters;</li>
+<li>A list containing, per group, the covariance matrix of the parameters corresponding to the group at hand and, possibly, the augmented parameters;</li>
+<li>per group the sample size.</li>
+</ol>
+<ol start="2" style="list-style-type: decimal">
+<li>Assign names to the estimates using <code>names(estimates)&lt;-names</code>. Note that, <code>names</code> is a character vector containing new names for the estimates in <code>estimates</code>. Each name has to start with a letter, and may consist of “letters”, “numbers”, “.”, and “_“. These names are used to specify <code>hypotheses</code> (see below). An example is <code>names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)</code>.</li>
+<li><code>set.seed(seed)</code>. Set <code>seed</code> equal to an integer number to create a repeatable random number sequence.</li>
+<li><code>results &lt;- bain(estimates, hypotheses, n=., Sigma=., group_parameters = 2, joint_parameters = 0)</code> executes <code>bain</code> with the followiong arguments:</li>
+</ol>
+<ol style="list-style-type: lower-alpha">
+<li><code>estimates</code> A named vector with parameter estimates.</li>
+<li><code>hypotheses</code> A character string containing the informative hypotheses to evaluate (the specification is elaborated below).</li>
+<li><code>n</code> A vector containing the sample size of each group in the analysis. See, Hoijtink, Gu, and Mulder (2018), for an elaboration of the difference between one and multiple group analyses. A multiple group analysis is required when group specific parameters are used to formulate <code>hypotheses</code>. Examples are the Student’s and Welch’s t-test, ANOVA, and ANCOVA. See the Examples section for elaborations of the specification of multiple group analyses when a named vector is input for <code>bain</code>.</li>
+<li><code>Sigma</code> A list of covariance matrices. In case of one group analyses the list contains one covariance matrix. In case of multiple group analyses the list contains one covariance matrix for each group. See the Examples section and Hoijtink, Gu, and Mulder (2018) for further instructions.</li>
+<li><code>group_parameters</code> The number of group specific parameters. In, for example, an ANOVA with three groups, <code>estimates</code> will contain three sample means, <code>group_parameters = 1</code> because each group is characterized by one mean, and <code>joint_parameters = 0</code> because there are no parameters that apply to each of the groups. In, for example, an ANCOVA with three groups and two covariates, <code>estimates</code> will contain five parameters (three adjusted means and the regression coefficients of two covariates), <code>group_parameters = 1</code> because each group is characterized by one adjusted mean, and <code>joint_parameters = 2</code> because there are two regression coefficients that apply to each group. In, for example, a repeated measures design with four repeated measures and two groups (a between factor with two levels and a within factor with four levels) <code>estimates</code> will contain eight means (four for each group), <code>group_parameters = 4</code> because each group is characterized by four means and <code>joint_parameters = 0</code> because there are no parameters that apply to each of the groups.</li>
+<li><code>joint_parameters</code> In case of one group <code>joint_parameters = 0</code>. In case of two or more groups, the number of parameters in <code>estimates</code> shared by the groups. In, for example, an ANCOVA, the number of <code>joint_parameters</code> equals the number of covariates.</li>
+</ol>
+<ol start="5" style="list-style-type: decimal">
+<li><code>print(results)</code> Print the results of an analysis wity <code>bain</code>.</li>
+<li><code>summary(results, ci=0.95)</code> Present descriptives for the parameters used to specify <code>hypotheses</code>. <code>ci</code> can be used the specify the confidence level of the credibility intervals.</li>
+</ol>
+</div>
+<div id="the-specification-of-hypotheses" class="section level2">
+<h2>The specification of <code>hypotheses</code></h2>
+<p><code>hypotheses</code> is a character string that specifies which informative hypotheses have to be evaluated. A simple example is <code>hypotheses &lt;- &quot;a &gt; b &gt; c; a = b = c;&quot;</code> which specifies two hypotheses using three estimates with names “a”, “b”, and “c”, respectively.</p>
+<p>The hypotheses specified have to adhere to the following rules <strong><code>bain</code> may still run if you deviate from the rules, however, the output will be nonsense</strong>:</p>
+<ul>
+<li>When using <code>bain</code> with a <code>lm</code> or <code>t.test</code> object, (unique abbreviations of) the names displayed by <code>coef(x)</code> have to be used. If, for example, the names are <code>cat</code> and <code>dog</code>, <code>c</code> and <code>d</code> would be unique abreviations. If, for example, the names are <code>cato</code> and <code>cata</code> the whole names have to be used.</li>
+<li>When using <code>bain</code> with a named vector, parameters are referred to using the names specified in <code>names()</code>.</li>
+<li>Linear combinations of parameters must be specified adhering to the following rules:</li>
+</ul>
+<ol style="list-style-type: lower-alpha">
+<li>Each parameter name is used at most once.</li>
+<li>Each parameter name may or may not be pre-multiplied with a number.</li>
+<li>A constant may be added or subtracted from each parameter name.</li>
+<li><p>A linear combination can also be a single number.</p>
+<p>Examples are: <code>3 * a + 5</code>; <code>a + 2 * b + 3 * c - 2</code>; <code>a - b</code>; and <code>5</code>.</p></li>
+</ol>
+<ul>
+<li>(Linear combinations of) parameters can be constrained using &lt;, &gt;, and =. For example, <code>a &gt; 0</code> or <code>a &gt; b = 0</code> or <code>2 * a &lt; b + c &gt; 5</code>.</li>
+<li>The ampersand <code>&amp;</code> can be used to combine different parts of a hypothesis. For example, <code>a &gt; b &amp; b &gt; c</code> which is equivalent to <code>a &gt; b &gt; c</code> or <code>a &gt; 0 &amp; b &gt; 0 &amp; c &gt; 0</code>.</li>
+<li>Sets of (linear combinations of) parameters subjected to the same constraints can be specified using (). For example, <code>a &gt; (b,c)</code> which is equivalent to <code>a &gt; b &amp; a &gt; c</code>.</li>
+<li>The specification of a hypothesis is completed by typing ; For example, <code>hypotheses &lt;- &quot;a &gt; b &gt; c; a = b = c;&quot;</code>, specifies two hypotheses.</li>
+<li>Hypotheses have to be compatible, non-redundant and possible. What these terms mean will be elaborated below.</li>
+</ul>
+<p><strong>The set of hypotheses has to be compatible.</strong> For the statistical background of this requirement see Gu, Mulder, Hoijtink (2018). Usually the sets of hypotheses specified by researchers are compatible, and if not, <code>bain</code> will return an error message. The following steps can be used to determine if a set of hypotheses is compatible:</p>
+<ol style="list-style-type: decimal">
+<li>Replace a range constraint, e.g., <code>1 &lt; a1 &lt; 3</code>, by an equality constraint in which the parameter involved is equated to the midpoint of the range, that is, <code>a1 = 2</code>.</li>
+<li>Replace in each hypothesis the &lt; and &gt; by =. For example, <code>a1 = a2 &gt; a3 &gt; a4</code> becomes <code>a1 = a2 = a3 = a4</code>.</li>
+<li>The hypotheses are compatible if there is at least one solution to the resulting set of equations. For the two hypotheses considered under 1. and 2., the solution is a1 = a2 = a3 = a4 = 2. An example of two non-compatible hypotheses is <code>hypotheses &lt;- &quot;a = 0; a &gt; 2;&quot;</code> because there is no solution to the equations <code>a=0</code> and <code>a=2</code>.</li>
+</ol>
+<p><strong>Each hypothesis in a set of hypotheses has to be non-redundant.</strong> A hypothesis is redundant if it can also be specified with fewer constraints. For example, <code>a = b &amp; a &gt; 0 &amp; b &gt; 0</code> is redundant because it can also be specified as <code>a = b &amp; a &gt; 0</code>. <code>bain</code> will work correctly if hypotheses specified using only &lt; and &gt; are redundant. <code>bain</code> will return an error message if hypotheses specified using at least one = are redundant.</p>
+<p><strong>Each hypothesis in a set of hypotheses has to be possible.</strong> An hypothesis is impossible if estimates in agreement with the hypothesis do not exist. For example: values for <code>a</code> in agreement with <code>a = 0 &amp; a &gt; 2</code> do not exist. It is the responsibility of the user to ensure that the hypotheses specified are possible. If not, <code>bain</code> will either return an error message or render an output table containing <code>Inf</code>’s.</p>
+</div>
+<div id="output-from-an-analysis-with-bain" class="section level2">
+<h2>Output from an analysis with <code>bain</code></h2>
+<p>The commands <code>bain()</code> or <code>results&lt;-bain()</code> followed by <code>results</code> or <code>print(results)</code> will render the default (most important) output from <code>bain</code>. These concern for each hypothesis specified in <code>hypothesis</code> the fit, complexity, Bayes factor versus its complement, posterior model probability (based on equal prior model probabilities) excluding the unconstrained hypothesis, and posterior model probability including the unconstrained hypothesis. In Hoijtink, Mulder, van Lissa, and Gu (2018) it is elaborated how these quantities (and the other output presented below) should be interpreted. Additionally, using <code>summary(results, ci=0.95)</code>, a descriptives matrix can be obtained in which for each estimate, the name, the value, and a 95% central credibility interval is presented.</p>
+<p>The following commands can be used to retrieve the default and additional information from the <code>bain</code> output object:</p>
+<ul>
+<li><code>results$fit</code> renders the default output, <code>results$fit$Fit</code> contains only the column containing the fit of each hypothesis. In the last command <code>Fit</code> can be replaced by <code>Com</code>, <code>BF</code>, <code>PMPa</code>, <code>PMPb</code> to obtain the information in the corresponding columns of the default output.</li>
+<li><code>results$BFmatrix</code> contains the matrix containing the mutual Bayes factors of the hypotheses specified in <code>hypotheses</code>.</li>
+<li><code>results$b</code> contains for each of the groups in the analysis the fraction of information of the data in the group at hand used to specify the covariance matrix of the prior distribution.</li>
+<li><code>results$prior</code> contains the covariance matrix of the prior distribution.</li>
+<li><code>results$posterior</code> contains the covariance matrix of the posterior distribution.</li>
+<li><code>results$call</code> displays the call to <code>bain</code>.</li>
+<li><code>results$model</code> displays the named vector or the call to the R function rendering the R object that is input to <code>bain</code>.</li>
+<li><code>results$n</code> displays the sample sizes per group.</li>
+<li><code>results$independent_restrictions</code> displays the number of independent constraints in the set of hypotheses under consideration.</li>
+<li><code>results$fit$Fit_eq</code> displays the fit of the equality constrained part of each hypothesis. Replacing <code>Fit_eq</code> by <code>Fit_in</code>, renders the fit of the inequality constrained part of an hypothesis conditional on the fit of the equality constrained part. <code>Com_eq</code>, and <code>Com_in</code>, repectively, are the complexity counterparts of <code>Fit_eq</code>, and <code>Fit_in</code>.</li>
+</ul>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>Note that, each of the examples given below can be run by copy pasting them into the Source screen of <code>RStudio</code>. An <code>Examples.R</code> file can also be downloaded from the <code>bain</code> website at <a href="https://informative-hypotheses.sites.uu.nl/software/bain/" class="uri">https://informative-hypotheses.sites.uu.nl/software/bain/</a></p>
+<p>Unless indicated otherwise, the examples that follow below use a simulated data set inspired by the Sesame Street data set from: Stevens, J. P. (1996). Applied Multivariate Statistics for the Social Sciences. Mahwah NJ: Lawrence Erlbaum. This data set is included in the bain package. The variables contained in sesamesim are subsequently:</p>
+<ul>
+<li>sex (1 = boy, 2 = girl) of the child</li>
+<li>site (1 = disadvantaged inner city, 2 = advantaged suburban , 3 = advantaged rural, 4 = disadvantaged rural, 5 = disadvantaged Spanish speaking) from which the child originates</li>
+<li>setting (1 = at home, 2 = at school) in which the child watches sesame street</li>
+<li>age (in months) of the child</li>
+<li>viewenc (0 = no, 1 = yes), whether or not the child is encouraged to watch Sesame Street</li>
+<li>peabody (mental age) score of the child (higher score is higher mental age)</li>
+<li>prenumb (score on a numbers test before watching Sesame Street for a year)</li>
+<li>postnumb (score on a numbers test after watching Sesame Street for a year)</li>
+<li>funumb (follow up numbers test score measured one year after postnumb).</li>
+</ul>
+<p>The examples that follow below are organized in three categories:</p>
+<ol style="list-style-type: decimal">
+<li>Running <code>bain</code> with a <code>t.test</code> object;</li>
+<li>running <code>bain</code> with a <code>lm object</code>; and,</li>
+<li>running bain with a named vector.</li>
+</ol>
+<p>The ANOVA and ANCOVA examples are provided using both a <code>lm</code> object and a named vector as input for <code>bain</code>. Below you will find the following examples:</p>
+<p><strong>1. Examples Using a <code>t.test</code> Object</strong></p>
+<ol style="list-style-type: lower-alpha">
+<li>BayesianStudent’s t-test (equal within group variances)</li>
+<li>Bayesian Welch’s t-test (unequal within group variances</li>
+<li>Bayesian paired samples t-test</li>
+<li>Bayesian one group t-test</li>
+<li>Bayesian Equivalence test</li>
+</ol>
+<p><strong>2. Examples Using a <code>lm</code> Object</strong></p>
+<p>Note that, ONLY the type of calls to LM presented in the examples can be processed by bain. Calls structured in a different manner will either render an error message, or results that are meaningless.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Bayesian ANOVA. The example concerns a one-way ANOVA. Two-way or higher order ANOVA’s can only be handled by recoding all factors into one factor. If, for example, there is a factor <code>sex</code> with levels <code>man</code> and <code>woman</code>, and a factor <code>age</code> with levels <code>young</code> and <code>old</code>, these have to be recoded in a new factor <code>sexage</code> with levels <code>manyoung</code>, <code>manold</code>, <code>womanyoung</code>, <code>womanold</code></li>
+<li>Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher order ANCOVA’s can only be handled by recoding all factors into one factor.</li>
+<li>Bayesian multiple regression</li>
+</ol>
+<p><strong>3. Examples Using a Named Vector</strong></p>
+<ol style="list-style-type: lower-alpha">
+<li>Bayesian ANOVA</li>
+<li>Bayesian ANCOVA</li>
+<li>Bayesian repeated measures analysis (one within factor)</li>
+<li>Bayesian repeated measures analysis (within between design)</li>
+<li>Bayesian one group logistic regression (counterpart of multiple regression)</li>
+<li>Bayesian multiple group logistic regression (counterpart of ANCOVA)</li>
+<li>Bayesian robust ANOVA (unequal within groups variances)</li>
+<li>Bayesian multiple regression with missing data</li>
+<li>Bayesian structural equation modelling</li>
+</ol>
+<p>Additional examples are available in <code>BFTutorial.R</code> downloadable from the bain website at <a href="https://informative-hypotheses.sites.uu.nl/software/bain/" class="uri">https://informative-hypotheses.sites.uu.nl/software/bain/</a>.</p>
+<ul>
+<li>Executing a sensitivity analysis with <code>bain</code></li>
+<li>Executing Bayesian updating with <code>bain</code></li>
+</ul>
+<p><strong>1. Examples Using a <code>t.test</code> Object</strong></p>
+<ol style="list-style-type: lower-alpha">
+<li>An example of the Bayesian Student’s t-test (equal within group variances):</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># collect the data for the boys in the vector x and for the girls in the</span>
+<span class="co"># vector y</span>
+x&lt;-sesamesim<span class="op">$</span>postnumb[<span class="kw">which</span>(sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">1</span>)]
+y&lt;-sesamesim<span class="op">$</span>postnumb[<span class="kw">which</span>(sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">2</span>)]
+<span class="co"># execute student's t-test</span>
+ttest &lt;-<span class="st"> </span><span class="kw">t.test</span>(x,y,<span class="dt">paired =</span> <span class="ot">FALSE</span>, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)
+<span class="co"># Check the names of the estimates</span>
+<span class="kw">coef</span>(ttest)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(ttest, <span class="st">&quot;x = y; x &gt; y; x &lt; y&quot;</span>)
+<span class="co"># display the results</span>
+results
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian Welch’s t-test (unequal within group variances):</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># collect the data for the boys in the vector x and for the girs in the</span>
+<span class="co"># vector y</span>
+x&lt;-sesamesim<span class="op">$</span>postnumb[<span class="kw">which</span>(sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">1</span>)]
+y&lt;-sesamesim<span class="op">$</span>postnumb[<span class="kw">which</span>(sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">2</span>)]
+<span class="co"># execute student's t-test</span>
+ttest &lt;-<span class="st"> </span><span class="kw">t.test</span>(x,y,<span class="dt">paired =</span> <span class="ot">FALSE</span>, <span class="dt">var.equal =</span> <span class="ot">FALSE</span>)
+<span class="co"># Check the names of the coefficients</span>
+<span class="kw">coef</span>(ttest)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(ttest, <span class="st">&quot;x = y; x &gt; y; x &lt; y&quot;</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian paired samples t-test:</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># compare the pre with the post measurements</span>
+ttest &lt;-<span class="st"> </span><span class="kw">t.test</span>(sesamesim<span class="op">$</span>prenumb,sesamesim<span class="op">$</span>postnumb,<span class="dt">paired =</span> <span class="ot">TRUE</span>)
+<span class="co"># Check name of the coefficient</span>
+<span class="kw">coef</span>(ttest)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(ttest, <span class="st">&quot;difference=0; difference&gt;0; difference&lt;0&quot;</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian one group t-test:</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data se</span>
+<span class="kw">library</span>(bain)
+<span class="co"># compare post measurements with the reference value 30</span>
+ttest &lt;-<span class="st"> </span><span class="kw">t.test</span>(sesamesim<span class="op">$</span>postnumb)
+<span class="co"># Check name of estimate</span>
+<span class="kw">coef</span>(ttest)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain versus the reference value 30</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(ttest, <span class="st">&quot;x=30; x&gt;30; x&lt;30&quot;</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian equivalence test</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># collect the data for the boys in the vector x and for the girs in the</span>
+<span class="co"># vector y</span>
+x&lt;-sesamesim<span class="op">$</span>postnumb[<span class="kw">which</span>(sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">1</span>)]
+y&lt;-sesamesim<span class="op">$</span>postnumb[<span class="kw">which</span>(sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">2</span>)]
+<span class="co"># execute student's t-test</span>
+ttest &lt;-<span class="st"> </span><span class="kw">t.test</span>(x,y,<span class="dt">paired =</span> <span class="ot">FALSE</span>, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)
+<span class="co"># Check the names of the estimates</span>
+<span class="kw">coef</span>(ttest)
+<span class="co"># compute the pooled within standard deviation using the variance of x</span>
+<span class="co"># (ttest$v[1]) and y (ttest$v[2])</span>
+pwsd &lt;-<span class="st"> </span><span class="kw">sqrt</span>(((<span class="kw">length</span>(x) <span class="op">-</span><span class="dv">1</span>) <span class="op">*</span><span class="st"> </span>ttest<span class="op">$</span>v[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>(<span class="kw">length</span>(y)<span class="op">-</span><span class="dv">1</span>) <span class="op">*</span><span class="st"> </span>ttest<span class="op">$</span>v[<span class="dv">2</span>])<span class="op">/</span>
+((<span class="kw">length</span>(x) <span class="op">-</span><span class="dv">1</span>) <span class="op">+</span><span class="st"> </span>(<span class="kw">length</span>(y) <span class="op">-</span><span class="dv">1</span>)))
+<span class="co"># print pwsd in order to be able to include it in the hypothesis. Its value</span>
+<span class="co"># is 12.60</span>
+<span class="kw">print</span>(pwsd)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses (the means of boy and girl differ less than .2 * pwsd =</span>
+<span class="co"># 2.52 VERSUS the means differ more than .2 * pwsd = 2.52) with bain</span>
+<span class="co"># note that, .2 is a value for Cohen's d reflecting a &quot;small&quot; effect, that</span>
+<span class="co"># is, the means differ less or more than .2 pwsd.</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(ttest, <span class="st">&quot;x - y &gt; -2.52 &amp; x - y &lt; 2.52&quot;</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<p><strong>2. Examples Using a <code>lm</code> Object</strong></p>
+<ol style="list-style-type: lower-alpha">
+<li>An example of the Bayesian ANOVA</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># make a factor of variable site</span>
+sesamesim<span class="op">$</span>site &lt;-<span class="st"> </span><span class="kw">as.factor</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># execute an analysis of variance using lm() which, due to the -1, returns</span>
+<span class="co"># estimates of the means per group</span>
+anov &lt;-<span class="st"> </span><span class="kw">lm</span>(postnumb<span class="op">~</span>site<span class="op">-</span><span class="dv">1</span>,sesamesim)
+<span class="co"># take a look at the estimated means and their names</span>
+<span class="kw">coef</span>(anov)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(anov, <span class="st">&quot;site1=site2=site3=site4=site5; site2&gt;site5&gt;site1&gt;</span>
+<span class="st">site3&gt;site4&quot;</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian ANCOVA</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data se</span>
+<span class="kw">library</span>(bain)
+<span class="co"># make a factor of variable site</span>
+sesamesim<span class="op">$</span>site &lt;-<span class="st"> </span><span class="kw">as.factor</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># Center the covariate. If centered the coef() command below displays the</span>
+<span class="co"># adjusted means. If not centered the intercepts are displayed.</span>
+sesamesim<span class="op">$</span>prenumb &lt;-<span class="st"> </span>sesamesim<span class="op">$</span>prenumb <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(sesamesim<span class="op">$</span>prenumb)
+<span class="co"># execute an analysis of covariance using lm() which, due to the -1, returns</span>
+<span class="co"># estimates of the adjusted means per group</span>
+ancov &lt;-<span class="st"> </span><span class="kw">lm</span>(postnumb<span class="op">~</span>site<span class="op">+</span>prenumb<span class="op">-</span><span class="dv">1</span>,sesamesim)
+<span class="co"># take a look at the estimated adjusted means, the regression coefficient</span>
+<span class="co"># of the covariate and their names</span>
+<span class="kw">coef</span>(ancov)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(ancov, <span class="st">&quot;site1=site2=site3=site4=site5;</span>
+<span class="st">                        site2&gt;site5&gt;site1&gt;site3&gt;site4&quot;</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian multiple regression</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># execute a multiple regression using lm()</span>
+regr &lt;-<span class="st"> </span><span class="kw">lm</span>(postnumb <span class="op">~</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>peabody <span class="op">+</span><span class="st"> </span>prenumb,sesamesim)
+<span class="co"># take a look at the estimated regression coefficients and their names</span>
+<span class="kw">coef</span>(regr)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that standardized = FALSE denotes that the</span>
+<span class="co"># hypotheses are in terms of unstandardized regression coefficients</span>
+results&lt;-<span class="kw">bain</span>(regr, <span class="st">&quot;age = 0 &amp; peab=0 &amp; pre=0 ; age &gt; 0 &amp; peab &gt; 0 &amp; pre &gt; 0&quot;</span>
+, <span class="dt">standardize =</span> <span class="ot">FALSE</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)
+<span class="co"># Since it is only meaningful to compare regression coefficients if they are</span>
+<span class="co"># measured on the same scale, bain can also evaluate standardized regression</span>
+<span class="co"># coefficients (based on the seBeta function by Jeff Jones and Niels Waller):</span>
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that standardized = TRUE denotes that the</span>
+<span class="co"># hypotheses are in terms of standardized regression coefficients</span>
+results&lt;-<span class="kw">bain</span>(regr, <span class="st">&quot;age = peab = pre ; pre &gt; age &gt; peab&quot;</span>,<span class="dt">standardize =</span> <span class="ot">TRUE</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<p><strong>3. Examples Using a named vector</strong></p>
+<ol style="list-style-type: lower-alpha">
+<li>An example of the Bayesian ANOVA using a named vector as input for bain</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data se</span>
+<span class="kw">library</span>(bain)
+<span class="co"># make a factor of variable site</span>
+sesamesim<span class="op">$</span>site &lt;-<span class="st"> </span><span class="kw">as.factor</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># execute an analysis of variance using lm() which, due to the -1, returns</span>
+<span class="co"># estimates of the means per group</span>
+anov &lt;-<span class="st"> </span><span class="kw">lm</span>(postnumb<span class="op">~</span>site<span class="op">-</span><span class="dv">1</span>,sesamesim)
+<span class="co"># take a look at the estimated means and their names</span>
+<span class="kw">coef</span>(anov)
+<span class="co"># collect the estimates means in a vector</span>
+estimate &lt;-<span class="st"> </span><span class="kw">coef</span>(anov)
+<span class="co"># give names to the estimates in anov</span>
+<span class="kw">names</span>(estimate) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;site1&quot;</span>, <span class="st">&quot;site2&quot;</span>, <span class="st">&quot;site3&quot;</span>,<span class="st">&quot;site4&quot;</span>,<span class="st">&quot;site5&quot;</span>)
+<span class="co"># create a vector containing the sample sizes of each group</span>
+ngroup &lt;-<span class="st"> </span><span class="kw">table</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># compute for each group the covariance matrix of the parameters</span>
+<span class="co"># of that group and collect these in a list</span>
+<span class="co"># for the ANOVA this is simply a list containing for each group the variance</span>
+<span class="co"># of the mean note that, the within group variance as estimated using lm is</span>
+<span class="co"># used to compute the variance of each of the means! See, Hoijtink, Gu, and</span>
+<span class="co"># Mulder (2018) for further elaborations.</span>
+var &lt;-<span class="st"> </span><span class="kw">summary</span>(anov)<span class="op">$</span>sigma<span class="op">**</span><span class="dv">2</span>
+cov1 &lt;-<span class="st"> </span><span class="kw">matrix</span>(var<span class="op">/</span>ngroup[<span class="dv">1</span>], <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">1</span>)
+cov2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(var<span class="op">/</span>ngroup[<span class="dv">2</span>], <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">1</span>)
+cov3 &lt;-<span class="st"> </span><span class="kw">matrix</span>(var<span class="op">/</span>ngroup[<span class="dv">3</span>], <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">1</span>)
+cov4 &lt;-<span class="st"> </span><span class="kw">matrix</span>(var<span class="op">/</span>ngroup[<span class="dv">4</span>], <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">1</span>)
+cov5 &lt;-<span class="st"> </span><span class="kw">matrix</span>(var<span class="op">/</span>ngroup[<span class="dv">5</span>], <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">1</span>)
+covlist &lt;-<span class="st"> </span><span class="kw">list</span>(cov1, cov2, cov3, cov4,cov5)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that there are multiple groups</span>
+<span class="co"># characterized by one mean, therefore group_parameters=0. Note that are no</span>
+<span class="co"># joint parameters, therefore, joint_parameters=0.</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(estimate,
+<span class="st">&quot;site1=site2=site3=site4=site5; site2&gt;site5&gt;site1&gt;site3&gt;site4&quot;</span>,
+<span class="dt">n=</span>ngroup,<span class="dt">Sigma=</span>covlist,<span class="dt">group_parameters=</span><span class="dv">1</span>,<span class="dt">joint_parameters =</span> <span class="dv">0</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian ANCOVA using a named vector as input for bain</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data se</span>
+<span class="kw">library</span>(bain)
+<span class="co"># make a factor of variable site</span>
+sesamesim<span class="op">$</span>site &lt;-<span class="st"> </span><span class="kw">as.factor</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># center the covariate. If centered the coef() command below displays the</span>
+<span class="co"># adjusted means. If not centered the intercepts are displayed.</span>
+sesamesim<span class="op">$</span>prenumb &lt;-<span class="st"> </span>sesamesim<span class="op">$</span>prenumb <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(sesamesim<span class="op">$</span>prenumb)
+<span class="co"># execute an analysis of covariance using lm() which, due to the -1, returns</span>
+<span class="co"># estimates of the adjusted means per group</span>
+ancov2 &lt;-<span class="st"> </span><span class="kw">lm</span>(postnumb<span class="op">~</span>site<span class="op">+</span>prenumb<span class="op">-</span><span class="dv">1</span>,sesamesim)
+<span class="co"># take a look at the estimated adjusted means and their names</span>
+<span class="kw">coef</span>(ancov2)
+<span class="co"># collect the estimates of the adjusted means and regression coefficient of</span>
+<span class="co"># the covariate in a vector</span>
+estimates &lt;-<span class="st"> </span><span class="kw">coef</span>(ancov2)
+<span class="co"># assign names to the estimates</span>
+<span class="kw">names</span>(estimates)&lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;v.1&quot;</span>, <span class="st">&quot;v.2&quot;</span>, <span class="st">&quot;v.3&quot;</span>, <span class="st">&quot;v.4&quot;</span>,<span class="st">&quot;v.5&quot;</span>, <span class="st">&quot;pre&quot;</span>)
+<span class="co"># compute the sample size per group</span>
+ngroup &lt;-<span class="st"> </span><span class="kw">table</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># compute for each group the covariance matrix of the parameters of that</span>
+<span class="co"># group and collect these in a list note that, the residual variance as</span>
+<span class="co"># estimated using lm is used to compute these covariance matrices</span>
+var &lt;-<span class="st"> </span>(<span class="kw">summary</span>(ancov2)<span class="op">$</span>sigma)<span class="op">**</span><span class="dv">2</span>
+<span class="co"># below, for each group, the covariance matrix of the adjusted mean and</span>
+<span class="co"># covariate is computed</span>
+<span class="co"># see Hoijtink, Gu, and Mulder (2018) for further explanation and elaboration</span>
+cat1 &lt;-<span class="st"> </span><span class="kw">subset</span>(<span class="kw">cbind</span>(sesamesim<span class="op">$</span>site,sesamesim<span class="op">$</span>prenumb), sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)
+cat1[,<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+cat1 &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(cat1)
+cov1 &lt;-<span class="st"> </span>var <span class="op">*</span><span class="st"> </span><span class="kw">solve</span>(<span class="kw">t</span>(cat1) <span class="op">%*%</span><span class="st"> </span>cat1)
+<span class="co">#</span>
+cat2 &lt;-<span class="st"> </span><span class="kw">subset</span>(<span class="kw">cbind</span>(sesamesim<span class="op">$</span>site,sesamesim<span class="op">$</span>prenumb), sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">2</span>)
+cat2[,<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+cat2 &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(cat2)
+cov2 &lt;-<span class="st"> </span>var <span class="op">*</span><span class="st"> </span><span class="kw">solve</span>(<span class="kw">t</span>(cat2) <span class="op">%*%</span><span class="st"> </span>cat2)
+<span class="co">#</span>
+cat3 &lt;-<span class="st"> </span><span class="kw">subset</span>(<span class="kw">cbind</span>(sesamesim<span class="op">$</span>site,sesamesim<span class="op">$</span>prenumb), sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)
+cat3[,<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+cat3 &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(cat3)
+cov3 &lt;-<span class="st"> </span>var <span class="op">*</span><span class="st"> </span><span class="kw">solve</span>(<span class="kw">t</span>(cat3) <span class="op">%*%</span><span class="st"> </span>cat3)
+<span class="co">#</span>
+cat4 &lt;-<span class="st"> </span><span class="kw">subset</span>(<span class="kw">cbind</span>(sesamesim<span class="op">$</span>site,sesamesim<span class="op">$</span>prenumb), sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">4</span>)
+cat4[,<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+cat4 &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(cat4)
+cov4 &lt;-<span class="st"> </span>var <span class="op">*</span><span class="st"> </span><span class="kw">solve</span>(<span class="kw">t</span>(cat4) <span class="op">%*%</span><span class="st"> </span>cat4)
+<span class="co">#</span>
+cat5 &lt;-<span class="st"> </span><span class="kw">subset</span>(<span class="kw">cbind</span>(sesamesim<span class="op">$</span>site,sesamesim<span class="op">$</span>prenumb), sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">5</span>)
+cat5[,<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+cat5 &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(cat5)
+cov5 &lt;-<span class="st"> </span>var <span class="op">*</span><span class="st"> </span><span class="kw">solve</span>(<span class="kw">t</span>(cat5) <span class="op">%*%</span><span class="st"> </span>cat5)
+<span class="co">#</span>
+covariances &lt;-<span class="st"> </span><span class="kw">list</span>(cov1, cov2, cov3, cov4,cov5)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that there are multiple groups</span>
+<span class="co"># characterized by one adjusted mean, therefore group_parameters=1 Note that</span>
+<span class="co"># there is one covariate, therefore, joint_parameters=1.</span>
+results2&lt;-<span class="kw">bain</span>(estimates,<span class="st">&quot;v.1=v.2=v.3=v.4=v.5;v.2 &gt; v.5 &gt; v.1 &gt; v.3 &gt;v.4;&quot;</span>,
+<span class="dt">n=</span>ngroup,<span class="dt">Sigma=</span>covariances,<span class="dt">group_parameters=</span><span class="dv">1</span>,<span class="dt">joint_parameters =</span> <span class="dv">1</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results2)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results2, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian one within factor repeated measures analysis</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># estimate the means of three repeated measures of number knowledge</span>
+<span class="co"># the 1 denotes that these means have to be estimated</span>
+within &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">cbind</span>(prenumb,postnumb,funumb)<span class="op">~</span><span class="dv">1</span>, <span class="dt">data=</span>sesamesim)
+<span class="co"># take a look at the estimated means and their names</span>
+<span class="kw">coef</span>(within)
+<span class="co"># note that the model specified in lm has three dependent variables.</span>
+<span class="co"># Consequently, the estimates rendered by lm are collected in a &quot;matrix&quot;.</span>
+<span class="co"># Since bain needs a named vector containing the estimated means, the [1:3]</span>
+<span class="co"># code is used to select the three means from a matrix and store them in a</span>
+<span class="co"># vector.</span>
+estimate &lt;-<span class="st"> </span><span class="kw">coef</span>(within)[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]
+<span class="co"># give names to the estimates in anov</span>
+<span class="kw">names</span>(estimate) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;pre&quot;</span>, <span class="st">&quot;post&quot;</span>, <span class="st">&quot;fu&quot;</span>)
+<span class="co"># compute the sample size</span>
+ngroup &lt;-<span class="st"> </span><span class="kw">nrow</span>(sesamesim)
+<span class="co"># compute the covariance matrix of the three means</span>
+covmatr &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">vcov</span>(within))
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that there is one group, with three</span>
+<span class="co"># means therefore group_parameters=3.</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(estimate,<span class="st">&quot;pre = post = fu; pre &lt; post &lt; fu&quot;</span>, <span class="dt">n=</span>ngroup,
+<span class="dt">Sigma=</span>covmatr, <span class="dt">group_parameters=</span><span class="dv">3</span>, <span class="dt">joint_parameters =</span> <span class="dv">0</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian one between factor and one within factor repeated measures analysis</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># make a factor of the variable sex</span>
+sesamesim<span class="op">$</span>sex &lt;-<span class="st"> </span><span class="kw">factor</span>(sesamesim<span class="op">$</span>sex)
+<span class="co"># estimate the means of prenumb, postnumb, and funumb for boys and girls</span>
+<span class="co"># the -1 denotes that the means have to estimated</span>
+bw &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="kw">cbind</span>(prenumb, postnumb, funumb)<span class="op">~</span>sex<span class="op">-</span><span class="dv">1</span>, <span class="dt">data=</span>sesamesim)
+<span class="co"># take a look at the estimated means and their names</span>
+<span class="kw">coef</span>(bw)
+<span class="co"># collect the estimated means in a vector</span>
+est1 &lt;-<span class="kw">coef</span>(bw)[<span class="dv">1</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>] <span class="co"># the three means for sex = 1</span>
+est2 &lt;-<span class="kw">coef</span>(bw)[<span class="dv">2</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>] <span class="co"># the three means for sex = 2</span>
+estimate &lt;-<span class="st"> </span><span class="kw">c</span>(est1,est2)
+<span class="co"># give names to the estimates in anov</span>
+<span class="kw">names</span>(estimate) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;pre1&quot;</span>, <span class="st">&quot;post1&quot;</span>, <span class="st">&quot;fu1&quot;</span>,<span class="st">&quot;pre2&quot;</span>, <span class="st">&quot;post2&quot;</span>, <span class="st">&quot;fu2&quot;</span>)
+<span class="co"># determine the sample size per group</span>
+ngroup&lt;-<span class="kw">table</span>(sesamesim<span class="op">$</span>sex)
+<span class="co"># cov1 has to contain the covariance matrix of the three means in group 1.</span>
+<span class="co"># cov2 has to contain the covariance matrix in group 2</span>
+<span class="co"># typing vcov(bw) in the console pane highlights the structure of</span>
+<span class="co"># the covariance matrix of all 3+3=6 means</span>
+<span class="co"># it has to be dissected in to cov1 and cov2</span>
+cov1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">vcov</span>(bw)[<span class="dv">1</span>,<span class="dv">1</span>],<span class="kw">vcov</span>(bw)[<span class="dv">1</span>,<span class="dv">3</span>],<span class="kw">vcov</span>(bw)[<span class="dv">1</span>,<span class="dv">5</span>],<span class="kw">vcov</span>(bw)[<span class="dv">3</span>,<span class="dv">1</span>],
+<span class="kw">vcov</span>(bw)[<span class="dv">3</span>,<span class="dv">3</span>],<span class="kw">vcov</span>(bw)[<span class="dv">3</span>,<span class="dv">5</span>],<span class="kw">vcov</span>(bw)[<span class="dv">5</span>,<span class="dv">1</span>],<span class="kw">vcov</span>(bw)[<span class="dv">5</span>,<span class="dv">3</span>],<span class="kw">vcov</span>(bw)[<span class="dv">5</span>,<span class="dv">5</span>])
+cov1 &lt;-<span class="st"> </span><span class="kw">matrix</span>(cov1,<span class="dv">3</span>,<span class="dv">3</span>)
+cov2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">vcov</span>(bw)[<span class="dv">2</span>,<span class="dv">2</span>],<span class="kw">vcov</span>(bw)[<span class="dv">2</span>,<span class="dv">4</span>],<span class="kw">vcov</span>(bw)[<span class="dv">2</span>,<span class="dv">6</span>],<span class="kw">vcov</span>(bw)[<span class="dv">4</span>,<span class="dv">2</span>],
+<span class="kw">vcov</span>(bw)[<span class="dv">4</span>,<span class="dv">4</span>],<span class="kw">vcov</span>(bw)[<span class="dv">4</span>,<span class="dv">6</span>],<span class="kw">vcov</span>(bw)[<span class="dv">6</span>,<span class="dv">2</span>],<span class="kw">vcov</span>(bw)[<span class="dv">6</span>,<span class="dv">4</span>],<span class="kw">vcov</span>(bw)[<span class="dv">6</span>,<span class="dv">6</span>])
+cov2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(cov2,<span class="dv">3</span>,<span class="dv">3</span>)
+covariance&lt;-<span class="kw">list</span>(cov1,cov2)
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that there are multiple groups</span>
+<span class="co"># characterized by three means, therefore group_parameters=3. Note that there</span>
+<span class="co"># are no additional parameters, therefore, joint_parameters=0.</span>
+results &lt;-<span class="kw">bain</span>(estimate, <span class="st">&quot;pre1 - pre2 = post1 - post2 = fu1 -fu2;</span>
+<span class="st">pre1 - pre2 &gt; post1 - post2 &gt; fu1 -fu2&quot;</span>  , <span class="dt">n=</span>ngroup, <span class="dt">Sigma=</span>covariance,
+<span class="dt">group_parameters=</span><span class="dv">3</span>, <span class="dt">joint_parameters =</span> <span class="dv">0</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian logistic regression as the counterpart of Bayesian multiple regression</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># regression coefficients can only be mutually compared if the</span>
+<span class="co"># corresponding predictors are measured on the same scale, therefore the</span>
+<span class="co"># predictors are standardized</span>
+sesamesim<span class="op">$</span>age &lt;-<span class="st"> </span>(sesamesim<span class="op">$</span>age <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(sesamesim<span class="op">$</span>age))<span class="op">/</span><span class="kw">sd</span>(sesamesim<span class="op">$</span>age)
+sesamesim<span class="op">$</span>peabody &lt;-<span class="st"> </span>(sesamesim<span class="op">$</span>peabody <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(sesamesim<span class="op">$</span>peabody))<span class="op">/</span>
+<span class="kw">sd</span>(sesamesim<span class="op">$</span>peabody)
+sesamesim<span class="op">$</span>prenumb &lt;-<span class="st"> </span>(sesamesim<span class="op">$</span>prenumb <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(sesamesim<span class="op">$</span>prenumb))<span class="op">/</span>
+<span class="kw">sd</span>(sesamesim<span class="op">$</span>prenumb)
+<span class="co"># estimate the logistic regression coefficients</span>
+logreg &lt;-<span class="st"> </span><span class="kw">glm</span>(viewenc <span class="op">~</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>peabody <span class="op">+</span><span class="st"> </span>prenumb, <span class="dt">family=</span>binomial,
+<span class="dt">data=</span>sesamesim)
+<span class="co"># take a look at the estimates and their names</span>
+<span class="kw">coef</span>(logreg)
+<span class="co"># collect the estimated intercept and regression coefficients in a vector</span>
+estimate &lt;-<span class="st"> </span><span class="kw">coef</span>(logreg)
+<span class="co"># give names to the estimates</span>
+<span class="kw">names</span>(estimate) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;int&quot;</span>, <span class="st">&quot;age&quot;</span>, <span class="st">&quot;peab&quot;</span> ,<span class="st">&quot;pre&quot;</span> )
+<span class="co"># compute the sample size. Note that, this is an analysis with ONE group</span>
+ngroup &lt;-<span class="st"> </span><span class="kw">nrow</span>(sesamesim)
+<span class="co"># compute the covariance matrix of the intercept and regression coefficients</span>
+covmatr &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">vcov</span>(logreg))
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that there is one group, with four</span>
+<span class="co"># parameters (intercept plus three regression coefficients) therefore</span>
+<span class="co"># group_parameters=4.</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(estimate, <span class="st">&quot;age = peab = pre; age &gt; pre &gt; peab&quot;</span>, <span class="dt">n=</span>ngroup,
+<span class="dt">Sigma=</span>covmatr, <span class="dt">group_parameters=</span><span class="dv">4</span>, <span class="dt">joint_parameters =</span> <span class="dv">0</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="6" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian logistic regression as the counterpart of an ANCOVA. This is Example 3 from Hoijtin, Gu, and Mulder (2018). The research question concerns the probability of encouragement to view sesame street (a dichotomous 0/1 meaning no/yes dependent variable) for boys (sex=1) and girls (sex=2) adjusted for their age. This is a kind of ANCOVA with a dichotomous instead of a continuous dependent variable.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># load the numDeriv package which will be used to compute the covariance</span>
+<span class="co"># matrix of the adjusted group coefficients and regression coefficient of age</span>
+<span class="co"># for the boys and the girls # using the estimates obtained using the data for </span>
+<span class="co"># the boys AND the girls.</span>
+<span class="kw">library</span>(numDeriv)
+<span class="co"># make a factor of the variable sex</span>
+sesamesim<span class="op">$</span>sex &lt;-<span class="st"> </span><span class="kw">factor</span>(sesamesim<span class="op">$</span>sex)
+<span class="co"># center the covariate age</span>
+sesamesim<span class="op">$</span>age &lt;-<span class="st"> </span>sesamesim<span class="op">$</span>age <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(sesamesim<span class="op">$</span>age)
+<span class="co"># determine sample size per sex group</span>
+ngroup &lt;-<span class="st"> </span><span class="kw">table</span>(sesamesim<span class="op">$</span>sex)
+<span class="co"># execute the logistic regression, -1 ensures that the coefficients</span>
+<span class="co"># for boys and girl are estimated adjusted for the covariate age</span>
+anal &lt;-<span class="st"> </span><span class="kw">glm</span>(viewenc <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>age <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">family=</span>binomial, <span class="dt">data=</span>sesamesim)
+<span class="co"># take a look at the estimates and their names</span>
+<span class="kw">coef</span>(logreg)
+<span class="co"># collect the estimates obtained using the data of the boys AND the</span>
+<span class="co"># girls in a vector</span>
+estimates &lt;-<span class="kw">coef</span>(anal)
+<span class="co"># give names to the estimates</span>
+<span class="kw">names</span>(estimates) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;boys&quot;</span>, <span class="st">&quot;girls&quot;</span>, <span class="st">&quot;age&quot;</span>)
+<span class="co"># use numDeriv to compute the Hessian matrix and subsequently the</span>
+<span class="co"># covariance matrix for each of the two (boys and girls) groups.</span>
+<span class="co"># The vector f should contain the regression coefficient of the group</span>
+<span class="co"># at hand and the regression coefficient of the covariate.</span>
+<span class="co">#</span>
+<span class="co"># the first group</span>
+data &lt;-<span class="st"> </span><span class="kw">subset</span>(<span class="kw">cbind</span>(sesamesim<span class="op">$</span>sex,sesamesim<span class="op">$</span>age,sesamesim<span class="op">$</span>viewenc),
+sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">1</span>)
+f &lt;-<span class="st"> </span><span class="dv">1</span>
+f[<span class="dv">1</span>] &lt;-<span class="st"> </span>estimates[<span class="dv">1</span>] <span class="co"># the regression coefficient of boys</span>
+f[<span class="dv">2</span>] &lt;-<span class="st"> </span>estimates[<span class="dv">3</span>] <span class="co"># the regression coefficient of age</span>
+<span class="co">#</span>
+<span class="co"># within the for loop below the log likelihood of the logistic</span>
+<span class="co"># regression model is computed using the data for the boys</span>
+logist1 &lt;-<span class="st"> </span><span class="cf">function</span>(x){
+  out &lt;-<span class="st"> </span><span class="dv">0</span>
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>ngroup[<span class="dv">1</span>]){
+    out &lt;-<span class="st"> </span>out <span class="op">+</span><span class="st"> </span>data[i,<span class="dv">3</span>]<span class="op">*</span>(x[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>x[<span class="dv">2</span>]<span class="op">*</span>data[i,<span class="dv">2</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">log</span> (<span class="dv">1</span> <span class="op">+</span>
+<span class="st">    </span><span class="kw">exp</span>(x[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>x[<span class="dv">2</span>]<span class="op">*</span>data[i,<span class="dv">2</span>]))
+  }
+  <span class="kw">return</span>(out)
+}
+hes1 &lt;-<span class="st"> </span><span class="kw">hessian</span>(<span class="dt">func=</span>logist1, <span class="dt">x=</span>f)
+<span class="co"># multiply with -1 and invert to obtain the covariance matrix for the</span>
+<span class="co"># first group</span>
+cov1 &lt;-<span class="st"> </span><span class="op">-</span><span class="dv">1</span> <span class="op">*</span><span class="st"> </span><span class="kw">solve</span>(hes1)
+<span class="co">#</span>
+<span class="co"># the second group</span>
+data &lt;-<span class="st"> </span><span class="kw">subset</span>(<span class="kw">cbind</span>(sesamesim<span class="op">$</span>sex,sesamesim<span class="op">$</span>age,sesamesim<span class="op">$</span>viewenc),
+sesamesim<span class="op">$</span>sex<span class="op">==</span><span class="dv">2</span>)
+f[<span class="dv">1</span>] &lt;-<span class="st"> </span>estimates[<span class="dv">2</span>] <span class="co"># the regression coefficient of girls</span>
+f[<span class="dv">2</span>] &lt;-<span class="st"> </span>estimates[<span class="dv">3</span>] <span class="co"># the regression coefficient of age</span>
+
+<span class="co"># within the for loop below the log likelihood of the logistic</span>
+<span class="co"># regression model is computed using the data for the girls</span>
+logist2 &lt;-<span class="st"> </span><span class="cf">function</span>(x){
+  out &lt;-<span class="st"> </span><span class="dv">0</span>
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>ngroup[<span class="dv">2</span>]){ 
+    out &lt;-<span class="st"> </span>out <span class="op">+</span><span class="st"> </span>data[i,<span class="dv">3</span>]<span class="op">*</span>(x[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>x[<span class="dv">2</span>]<span class="op">*</span>data[i,<span class="dv">2</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">log</span> (<span class="dv">1</span> <span class="op">+</span>
+<span class="st">    </span><span class="kw">exp</span>(x[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>x[<span class="dv">2</span>]<span class="op">*</span>data[i,<span class="dv">2</span>]))
+  }
+  <span class="kw">return</span>(out)
+}
+hes2 &lt;-<span class="st"> </span><span class="kw">hessian</span>(<span class="dt">func=</span>logist2, <span class="dt">x=</span>f)
+<span class="co"># multiply with -1 and invert to obtain the covariance matrix</span>
+cov2 &lt;-<span class="st"> </span><span class="op">-</span><span class="dv">1</span> <span class="op">*</span><span class="st"> </span><span class="kw">solve</span>(hes2)
+<span class="co">#</span>
+<span class="co">#make a list of covariance matrices</span>
+covariance&lt;-<span class="kw">list</span>(cov1,cov2)
+<span class="co">#</span>
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain. Note that there are multiple groups</span>
+<span class="co"># characterized by one adjusted group coefficient,</span>
+<span class="co"># therefore group_parameters=1. Note that there is one covariate,</span>
+<span class="co"># therefore, joint_parameters=1.</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(estimates, <span class="st">&quot;boys &lt; girls &amp; age &gt; 0&quot;</span>, <span class="dt">n=</span>ngroup,
+<span class="dt">Sigma=</span>covariance, <span class="dt">group_parameters=</span><span class="dv">1</span>, <span class="dt">joint_parameters =</span> <span class="dv">1</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="7" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian robust ANOVA with unequal within group variances. Robust ANOVA is elaborated in Bosman and Hoijtink (unpublished).</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># load the WRS2 package which renders the trimmed sample mean and</span>
+<span class="co"># corresponding standard error</span>
+<span class="kw">library</span>(WRS2)
+<span class="co"># make a factor of variable site</span>
+sesamesim<span class="op">$</span>site &lt;-<span class="st"> </span><span class="kw">as.factor</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># create a vector containing the sample sizes of each group</span>
+ngroup &lt;-<span class="st"> </span><span class="kw">table</span>(sesamesim<span class="op">$</span>site)
+<span class="co"># Compute the 20\% sample trimmed mean for each site</span>
+estimates &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">mean</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], <span class="dt">tr =</span> <span class="fl">0.2</span>),
+               <span class="kw">mean</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">2</span>], <span class="dt">tr =</span> <span class="fl">0.2</span>),
+               <span class="kw">mean</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">3</span>], <span class="dt">tr =</span> <span class="fl">0.2</span>),
+               <span class="kw">mean</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">4</span>], <span class="dt">tr =</span> <span class="fl">0.2</span>),
+               <span class="kw">mean</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">5</span>], <span class="dt">tr =</span> <span class="fl">0.2</span>))
+<span class="co"># give names to the estimates</span>
+<span class="kw">names</span>(estimates) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;s1&quot;</span>, <span class="st">&quot;s2&quot;</span>, <span class="st">&quot;s3&quot;</span>,<span class="st">&quot;s4&quot;</span>,<span class="st">&quot;s5&quot;</span>)
+<span class="co"># display the estimates and their names</span>
+<span class="kw">print</span>(estimates)
+<span class="co"># Compute the sample trimmed mean standard error for each site</span>
+se &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">trimse</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]),
+        <span class="kw">trimse</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]),
+        <span class="kw">trimse</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">3</span>]),
+        <span class="kw">trimse</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">4</span>]),
+        <span class="kw">trimse</span>(sesamesim<span class="op">$</span>postnumb[sesamesim<span class="op">$</span>site <span class="op">==</span><span class="st"> </span><span class="dv">5</span>]))
+<span class="co"># Square the standard errors to obtain the variances of the sample</span>
+<span class="co"># trimmed means</span>
+var &lt;-<span class="st"> </span>se<span class="op">^</span><span class="dv">2</span>
+<span class="co"># Store the variances in a list of matrices</span>
+covlist &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">matrix</span>(var[<span class="dv">1</span>]),<span class="kw">matrix</span>(var[<span class="dv">2</span>]),
+<span class="kw">matrix</span>(var[<span class="dv">3</span>]),<span class="kw">matrix</span>(var[<span class="dv">4</span>]), <span class="kw">matrix</span>(var[<span class="dv">5</span>]))
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(estimates,<span class="st">&quot;s1=s2=s3=s4=s5;s2&gt;s5&gt;s1&gt;s3&gt;s4&quot;</span>,
+<span class="dt">n=</span>ngroup,<span class="dt">Sigma=</span>covlist,<span class="dt">group_parameters=</span><span class="dv">1</span>,<span class="dt">joint_parameters=</span> <span class="dv">0</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol start="8" style="list-style-type: lower-alpha">
+<li>An example of the Bayesian Regression with missing data. The computation of Bayes factors in the presence of missing data is elaborated in Hoijtink, Gu, Mulder, and Rosseel (2018).</li>
+</ol>
+<p>RUNNING THIS EXAMPLE WILL TAKE ABOUT 60 SECONDS</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package which includes the simulated sesamesim data set</span>
+<span class="kw">library</span>(bain)
+<span class="co"># load the mice (multiple imputation of missing data), psych</span>
+<span class="co"># (provides access to the describe function), and MASS libraries - </span>
+<span class="co"># inspect the mice help file to obtain further information </span>
+<span class="co"># - also surf to http://www.stefvanbuuren.nl/mi/MICE.html to obtain </span>
+<span class="co"># further information and references for mice.</span>
+<span class="kw">library</span>(mice)
+<span class="kw">library</span>(psych)
+<span class="kw">library</span>(MASS)
+sesamesim &lt;-<span class="st"> </span><span class="kw">cbind</span>(sesamesim<span class="op">$</span>prenumb,sesamesim<span class="op">$</span>postnumb,sesamesim<span class="op">$</span>funumb,sesamesim<span class="op">$</span>peabody)
+<span class="kw">colnames</span>(sesamesim) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;prenumb&quot;</span>,<span class="st">&quot;postnumb&quot;</span>,<span class="st">&quot;funumb&quot;</span>,<span class="st">&quot;peabody&quot;</span>)
+sesamesim &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(sesamesim)
+<span class="co"># this examples is based on the prenumb, postnumb, funumb and peabody</span>
+<span class="co"># variables in the sesamesim data set. First of all, missing data are</span>
+<span class="co"># created in these four variables.</span>
+<span class="co">#</span>
+<span class="kw">set.seed</span>(<span class="dv">1</span>)
+pmis1&lt;-<span class="dv">1</span>
+pmis2&lt;-<span class="dv">1</span>
+pmis3&lt;-<span class="dv">1</span>
+<span class="co">#</span>
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">240</span>){
+  pmis1[i] &lt;-<span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span><span class="dv">40</span><span class="op">+</span>sesamesim<span class="op">$</span>prenumb[i]<span class="op">+</span>sesamesim<span class="op">$</span>postnumb[i])<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="kw">exp</span>(<span class="op">-</span><span class="dv">40</span><span class="op">+</span>sesamesim<span class="op">$</span>prenumb[i]<span class="op">+</span>sesamesim<span class="op">$</span>postnumb[i]))
+  pmis2[i]&lt;-<span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span><span class="dv">30</span><span class="op">+</span>sesamesim<span class="op">$</span>peabody[i])<span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="kw">exp</span>(<span class="op">-</span><span class="dv">30</span><span class="op">+</span>sesamesim<span class="op">$</span>peabody[i]))
+  pmis3[i]&lt;-<span class="st"> </span>.<span class="dv">90</span>
+<span class="co">#</span>
+  uni&lt;-<span class="kw">runif</span>(<span class="dv">1</span>)
+  <span class="cf">if</span> (pmis1[i] <span class="op">&lt;</span><span class="st"> </span>uni) {
+    sesamesim<span class="op">$</span>funumb[i]&lt;-<span class="ot">NaN</span>
+  }
+  uni&lt;-<span class="kw">runif</span>(<span class="dv">1</span>)
+  <span class="cf">if</span> (pmis2[i] <span class="op">&lt;</span><span class="st"> </span>uni) {
+    sesamesim<span class="op">$</span>prenumb[i]&lt;-<span class="ot">NaN</span>
+    sesamesim<span class="op">$</span>postnumb[i]&lt;-<span class="ot">NaN</span>
+  }
+  uni&lt;-<span class="kw">runif</span>(<span class="dv">1</span>)
+  <span class="cf">if</span> (pmis3[i] <span class="op">&lt;</span><span class="st"> </span>uni) {
+    sesamesim<span class="op">$</span>peabody[i]&lt;-<span class="ot">NaN</span>
+  }
+}
+<span class="co"># print data summaries - note that due to missing valus the n per variable is smaller than 240</span>
+<span class="kw">print</span>(<span class="kw">describe</span>(sesamesim))
+<span class="co"># use mice to create 1000 imputed data matrices. Note that, the approach used below </span>
+<span class="co"># is only one manner in which mice can be instructed. Many other options are available.</span>
+M &lt;-<span class="st"> </span><span class="dv">1000</span> 
+out &lt;-<span class="st"> </span><span class="kw">mice</span>(<span class="dt">data =</span> sesamesim, <span class="dt">m =</span> M, <span class="dt">seed=</span><span class="dv">999</span>, <span class="dt">meth=</span><span class="kw">c</span>(<span class="st">&quot;norm&quot;</span>,<span class="st">&quot;norm&quot;</span>,<span class="st">&quot;norm&quot;</span>,<span class="st">&quot;norm&quot;</span>), <span class="dt">diagnostics =</span> <span class="ot">FALSE</span>, <span class="dt">printFlag =</span> <span class="ot">FALSE</span>)
+<span class="co"># create matrices in which 1000 vectors with estimates can be stored and in which a covariance matrix can be stored</span>
+mulest &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow=</span><span class="dv">1000</span>,<span class="dt">ncol=</span><span class="dv">2</span>)
+covwithin &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow=</span><span class="dv">2</span>,<span class="dt">ncol=</span><span class="dv">2</span>)
+<span class="co"># execute 1000 multiple regressions using the imputed data matrices and store the estimates </span>
+<span class="co"># of only the regression coefficients of funumb on prenumb and postnumband and the average </span>
+<span class="co"># of the 1000 covariance matrices.</span>
+<span class="co"># See Hoijtink, Gu, Mulder, and Rosseel (2018) for an explanation of the latter.</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>M) {
+mulres &lt;-<span class="st"> </span><span class="kw">lm</span>(funumb<span class="op">~</span>prenumb<span class="op">+</span>postnumb,<span class="kw">complete</span>(out,i))
+mulest[i,]&lt;-<span class="kw">coef</span>(mulres)[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>]
+covwithin&lt;-covwithin <span class="op">+</span><span class="st"> </span><span class="dv">1</span><span class="op">/</span>M <span class="op">*</span><span class="st"> </span><span class="kw">vcov</span>(mulres)[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>]
+}
+<span class="co"># Compute the average of the estimates and assign names, the between and total covariance matrix.</span>
+<span class="co"># See Hoijtink, Gu, Mulder, and Rosseel (2018) for an explanation.</span>
+estimates &lt;-<span class="st"> </span><span class="kw">colMeans</span>(mulest)
+<span class="kw">names</span>(estimates) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;prenumb&quot;</span>, <span class="st">&quot;postnumb&quot;</span>)
+covbetween &lt;-<span class="st"> </span><span class="kw">cov</span>(mulest)
+covariance &lt;-<span class="st"> </span>covwithin <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">+</span><span class="dv">1</span><span class="op">/</span>M)<span class="op">*</span>covbetween
+<span class="co"># determine the sample size</span>
+samp &lt;-<span class="st"> </span><span class="kw">nrow</span>(sesamesim)
+<span class="co"># compute the effective sample size</span>
+<span class="co"># See Hoijtink, Gu, Mulder, and Rosseel (2018) for an explanation.</span>
+nucom&lt;-samp<span class="op">-</span><span class="kw">length</span>(estimates)
+lam &lt;-<span class="st"> </span>(<span class="dv">1</span><span class="op">+</span><span class="dv">1</span><span class="op">/</span>M)<span class="op">*</span>(<span class="dv">1</span><span class="op">/</span><span class="kw">length</span>(estimates))<span class="op">*</span><span class="st"> </span><span class="kw">tr</span>(covbetween <span class="op">%*%</span><span class="st"> </span><span class="kw">ginv</span>(covariance))
+nuold&lt;-(M<span class="op">-</span><span class="dv">1</span>)<span class="op">/</span>(lam<span class="op">^</span><span class="dv">2</span>)
+nuobs&lt;-(nucom<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span>(nucom<span class="op">+</span><span class="dv">3</span>)<span class="op">*</span>nucom<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>lam)
+nu&lt;-<span class="st"> </span>nuold<span class="op">*</span>nuobs<span class="op">/</span>(nuold<span class="op">+</span>nuobs)
+fracmis &lt;-<span class="st"> </span>(nu<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span>(nu<span class="op">+</span><span class="dv">3</span>)<span class="op">*</span>lam <span class="op">+</span><span class="st"> </span><span class="dv">2</span><span class="op">/</span>(nu<span class="op">+</span><span class="dv">3</span>)
+neff&lt;-samp<span class="op">-</span>samp<span class="op">*</span>fracmis
+covariance&lt;-<span class="kw">list</span>(covariance)
+<span class="co"># set the seed</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(estimates,<span class="st">&quot;prenumb=postnumb=0&quot;</span>,<span class="dt">n=</span>neff,<span class="dt">Sigma=</span>covariance,<span class="dt">group_parameters=</span><span class="dv">2</span>,<span class="dt">joint_parameters =</span> <span class="dv">0</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+<ol style="list-style-type: lower-roman">
+<li>An example of the Bayesian structural equation modelling. For this topic additional examples are elaborated in Gu, Hoijtink, Mulder, and Rosseel (unpublished).</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the bain package</span>
+<span class="kw">library</span>(bain)
+<span class="co"># load the lavaan package - look at the lavaan help file to obtain </span>
+<span class="co"># further information - also surf to # lavaan.ugent.be to obtain </span>
+<span class="co"># further information and references for lavaan - this example uses the</span>
+<span class="co"># HolzingerSwineford1939 data set which is included with lavaan.</span>
+<span class="kw">library</span>(lavaan)
+<span class="co"># Specify a latent regression model</span>
+model &lt;-<span class="st"> 'visual  =~ x1 + x2 + x3</span>
+<span class="st">textual =~ x4 + x5 + x6</span>
+<span class="st">speed   =~ x7 + x8 + x9</span>
+<span class="st">speed ~ textual + visual'</span>
+<span class="co"># Estimate the parameters of the latent regression model with lavaan</span>
+fit&lt;-<span class="kw">sem</span>(model,<span class="dt">data=</span>HolzingerSwineford1939,<span class="dt">std.lv =</span> <span class="ot">TRUE</span>)
+<span class="co"># determine the sample size</span>
+ngroup&lt;-<span class="kw">nobs</span>(fit)
+<span class="co"># collect the &quot;standardized&quot; estimates of the latent regression</span>
+<span class="co"># coefficients in a vector, typing standardizedSolution(fit) </span>
+<span class="co"># in the console pane shows that the estimates can be</span>
+<span class="co"># found in the fourth column of rows 10 and 11.</span>
+estimate&lt;-<span class="kw">standardizedSolution</span>(fit)[<span class="dv">10</span><span class="op">:</span><span class="dv">11</span>,<span class="dv">4</span>]
+<span class="co"># assign names to the estimates</span>
+<span class="kw">names</span>(estimate) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;textual&quot;</span>,<span class="st">&quot;visual&quot;</span>)
+<span class="co"># determine the covariance matrix of the estimates typing </span>
+<span class="co"># lavInspect(fit, &quot;vcov.std.all&quot;) in the console pane shows that the </span>
+<span class="co"># estimates can be found in the rows 10 and 11 crossed with </span>
+<span class="co"># columns 10 and 11</span>
+covariance&lt;-<span class="kw">list</span>(<span class="kw">lavInspect</span>(fit, <span class="st">&quot;vcov.std.all&quot;</span>)[<span class="dv">10</span><span class="op">:</span><span class="dv">11</span>,<span class="dv">10</span><span class="op">:</span><span class="dv">11</span>])
+<span class="co"># set a seed value</span>
+<span class="kw">set.seed</span>(<span class="dv">100</span>)
+<span class="co"># test hypotheses with bain</span>
+results &lt;-<span class="st"> </span><span class="kw">bain</span>(estimate,<span class="st">&quot;visual=textual=0; visual &gt; textual &gt;</span>
+<span class="st">0&quot;</span>,<span class="dt">n=</span>ngroup,<span class="dt">Sigma=</span>covariance,<span class="dt">group_parameters=</span><span class="dv">2</span>,<span class="dt">joint_parameters =</span> <span class="dv">0</span>)
+<span class="co"># display the results</span>
+<span class="kw">print</span>(results)
+<span class="co"># obtain the descriptives table</span>
+<span class="kw">summary</span>(results, <span class="dt">ci =</span> <span class="fl">0.95</span>)</code></pre></div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
