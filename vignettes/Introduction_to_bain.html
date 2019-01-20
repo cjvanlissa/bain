@@ -12,7 +12,7 @@
 
 <meta name="author" content="Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Xin Gu" />
 
-<meta name="date" content="2019-01-18" />
+<meta name="date" content="2019-01-20" />
 
 <title>Introduction to bain</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to bain</h1>
 <h4 class="author"><em>Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Xin Gu</em></h4>
-<h4 class="date"><em>2019-01-18</em></h4>
+<h4 class="date"><em>2019-01-20</em></h4>
 
 
 
@@ -128,8 +128,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 <p>In case of a multiple group analysis, the following information has to be extracted from the statistical analysis and supplied to <code>bain</code>:</p>
 <ol style="list-style-type: lower-alpha">
-<li>A vector containing estimates of the parameters used to specify <code>hypotheses</code> possibly augmented with the estimates of other parameters;</li>
-<li>A list containing, per group, the covariance matrix of the parameters corresponding to the group at hand and, possibly, the augmented parameters;</li>
+<li>A vector containing estimates of the group specific parameters possibly augmented with the estimates of parameters that are joined by the groups. The structure of this vector is [parameters of group 1, parameters of group 2, …, the parameters that are joined by the groups];</li>
+<li>A list containing, per group, the covariance matrix of the parameters corresponding to the group at hand and, possibly, the augmented parameters. In the rows and colums of each covariance matrix the parameters of the group at hand come first, possibly followed by the augmented parameters.</li>
 <li>per group the sample size.</li>
 </ol>
 <ol start="2" style="list-style-type: decimal">
@@ -142,7 +142,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>hypotheses</code> A character string containing the informative hypotheses to evaluate (the specification is elaborated below).</li>
 <li><code>n</code> A vector containing the sample size of each group in the analysis. See, Hoijtink, Gu, and Mulder (2018), for an elaboration of the difference between one and multiple group analyses. A multiple group analysis is required when group specific parameters are used to formulate <code>hypotheses</code>. Examples are the Student’s and Welch’s t-test, ANOVA, and ANCOVA. See the Examples section for elaborations of the specification of multiple group analyses when a named vector is input for <code>bain</code>.</li>
 <li><code>Sigma</code> A list of covariance matrices. In case of one group analyses the list contains one covariance matrix. In case of multiple group analyses the list contains one covariance matrix for each group. See the Examples section and Hoijtink, Gu, and Mulder (2018) for further instructions.</li>
-<li><code>group_parameters</code> The number of group specific parameters. In, for example, an ANOVA with three groups, <code>estimates</code> will contain three sample means, <code>group_parameters = 1</code> because each group is characterized by one mean, and <code>joint_parameters = 0</code> because there are no parameters that apply to each of the groups. In, for example, an ANCOVA with three groups and two covariates, <code>estimates</code> will contain five parameters (three adjusted means and the regression coefficients of two covariates), <code>group_parameters = 1</code> because each group is characterized by one adjusted mean, and <code>joint_parameters = 2</code> because there are two regression coefficients that apply to each group. In, for example, a repeated measures design with four repeated measures and two groups (a between factor with two levels and a within factor with four levels) <code>estimates</code> will contain eight means (four for each group), <code>group_parameters = 4</code> because each group is characterized by four means and <code>joint_parameters = 0</code> because there are no parameters that apply to each of the groups.</li>
+<li><code>group_parameters</code> The number of group specific parameters. In, for example, an ANOVA with three groups, <code>estimates</code> will contain three sample means, <code>group_parameters = 1</code> because each group is characterized by one mean, and <code>joint_parameters = 0</code> because there are no parameters that apply to each of the groups. In, for example, an ANCOVA with three groups and two covariates, <code>estimates</code> will contain five parameters (first the three adjusted means, followed by the regression coefficients of the two covariates), <code>group_parameters = 1</code> because each group is characterized by one adjusted mean, and <code>joint_parameters = 2</code> because there are two regression coefficients that apply to each group. In, for example, a repeated measures design with four repeated measures and two groups (a between factor with two levels and a within factor with four levels) <code>estimates</code> will contain eight means (first the four for group 1, followed by the four for group 2), <code>group_parameters = 4</code> because each group is characterized by four means and <code>joint_parameters = 0</code> because there are no parameters that apply to each of the groups.</li>
 <li><code>joint_parameters</code> In case of one group <code>joint_parameters = 0</code>. In case of two or more groups, the number of parameters in <code>estimates</code> shared by the groups. In, for example, an ANCOVA, the number of <code>joint_parameters</code> equals the number of covariates.</li>
 </ol>
 <ol start="5" style="list-style-type: decimal">
@@ -230,11 +230,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Bayesian Equivalence test</li>
 </ol>
 <p><strong>2. Examples Using a <code>lm</code> Object</strong></p>
-<p>Note that, ONLY the type of calls to LM presented in the examples can be processed by bain. Calls structured in a different manner will either render an error message, or results that are meaningless.</p>
+<p>Note that, <strong>only the type of calls to <code>lm</code> presented in the examples can be processed by bain</strong>. Calls structured in a different manner will either render an error message, or results that are meaningless.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Bayesian ANOVA. The example concerns a one-way ANOVA. Two-way or higher order ANOVA’s can only be handled by recoding all factors into one factor. If, for example, there is a factor <code>sex</code> with levels <code>man</code> and <code>woman</code>, and a factor <code>age</code> with levels <code>young</code> and <code>old</code>, these have to be recoded in a new factor <code>sexage</code> with levels <code>manyoung</code>, <code>manold</code>, <code>womanyoung</code>, <code>womanold</code></li>
-<li>Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher order ANCOVA’s can only be handled by recoding all factors into one factor.</li>
-<li>Bayesian multiple regression</li>
+<li>Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher order ANCOVA’s can only be handled by recoding all factors into one factor. <strong>Note that calls to <code>lm</code> using interactions between groups and covariates or functions of the covariates (interactions or squared covariates) can not be processed by <code>bain</code>.</strong></li>
+<li>Bayesian multiple regression. <strong>Note that calls to <code>lm</code> using functions of the predictors (for example, interactions or squared predictors) can not be processed by <code>bain</code>.</strong> However, one can compute a new variable (for example, an interaction) and add this variable to the model specification of <code>lm</code>.</li>
 </ol>
 <p><strong>3. Examples Using a Named Vector</strong></p>
 <ol style="list-style-type: lower-alpha">
@@ -499,7 +499,8 @@ ancov2 &lt;-<span class="st"> </span><span class="kw">lm</span>(postnumb<span cl
 <span class="co"># take a look at the estimated adjusted means and their names</span>
 <span class="kw">coef</span>(ancov2)
 <span class="co"># collect the estimates of the adjusted means and regression coefficient of</span>
-<span class="co"># the covariate in a vector</span>
+<span class="co"># the covariate in a vector (the vector has to contain first the</span>
+<span class="co"># adjusted means and next the regression coefficients of the covariates)</span>
 estimates &lt;-<span class="st"> </span><span class="kw">coef</span>(ancov2)
 <span class="co"># assign names to the estimates</span>
 <span class="kw">names</span>(estimates)&lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;v.1&quot;</span>, <span class="st">&quot;v.2&quot;</span>, <span class="st">&quot;v.3&quot;</span>, <span class="st">&quot;v.4&quot;</span>,<span class="st">&quot;v.5&quot;</span>, <span class="st">&quot;pre&quot;</span>)
@@ -682,9 +683,10 @@ ngroup &lt;-<span class="st"> </span><span class="kw">table</span>(sesamesim<spa
 <span class="co"># for boys and girl are estimated adjusted for the covariate age</span>
 anal &lt;-<span class="st"> </span><span class="kw">glm</span>(viewenc <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>age <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">family=</span>binomial, <span class="dt">data=</span>sesamesim)
 <span class="co"># take a look at the estimates and their names</span>
-<span class="kw">coef</span>(logreg)
+<span class="kw">coef</span>(anal)
 <span class="co"># collect the estimates obtained using the data of the boys AND the</span>
-<span class="co"># girls in a vector</span>
+<span class="co"># girls in a vector. This vector contains first the group specific</span>
+<span class="co"># parameters followed by the regression coefficient of the covariate.</span>
 estimates &lt;-<span class="kw">coef</span>(anal)
 <span class="co"># give names to the estimates</span>
 <span class="kw">names</span>(estimates) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;boys&quot;</span>, <span class="st">&quot;girls&quot;</span>, <span class="st">&quot;age&quot;</span>)
