@@ -36,8 +36,6 @@ advised to read the tutorial AND the vignette that is provided
 with this package before using} \code{bain}.
 }
 \examples{
-SEE THE TUTORIAL AND VIGNETTE FOR MANY ADDITIONAL EXAMPLES
-
 \dontrun{
 # USING BAIN WITH A LM OBJECT: Bayesian ANOVA
 
@@ -87,6 +85,8 @@ set.seed(100)
 results <- bain(estimate,
 "site1=site2=site3=site4=site5; site2>site5>site1>site3>site4",
 n=ngroup,Sigma=covlist,group_parameters=1,joint_parameters = 0)
+
+# SEE THE TUTORIAL AND VIGNETTE FOR MANY ADDITIONAL EXAMPLES
 }
 
 

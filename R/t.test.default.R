@@ -34,6 +34,7 @@ t.test.default <-
            mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95,
            ...)
   {
+
     alternative <- match.arg(alternative)
 
     if(!missing(mu) && (length(mu) != 1 || is.na(mu)))
