@@ -21,7 +21,6 @@ Depends:
 Suggests:
     MASS,
     testthat,
-    mvtnorm,
     knitr,
     rmarkdown
 VignetteBuilder: knitr

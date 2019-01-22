@@ -35,3 +35,4 @@ m_lm <- label_estimates(m_lm, labels = c("a", "b", "c", "d", "e", "f"))
 \seealso{
 get_estimates bain
 }
+\keyword{internal}

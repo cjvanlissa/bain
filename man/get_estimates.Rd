@@ -30,3 +30,4 @@ m_lm <- lm(Sepal.Length ~., iris)
 get_estimates(m_lm)
 }
 }
+\keyword{internal}
