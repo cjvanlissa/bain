@@ -67,7 +67,7 @@ results <- bain(anov, "site1=site2=site3=site4=site5; site2>site5>site1>site3>si
 des1 <- summary(results, ci = 0.95)
 
 test_that("summary", {expect_equal(des1$Estimate , as.numeric(results$estimates))})
-test_that("summary", {expect_equal(des1$n.Freq , as.numeric(results$n))})
+test_that("summary", {expect_equal(des1$n , as.numeric(results$n))})
 lbd <- as.vector(results$estimates + qnorm(.025) * c(sqrt(results$posterior[1,1]),sqrt(results$posterior[2,2]),sqrt(results$posterior[3,3]),
                                                                                 sqrt(results$posterior[4,4]),sqrt(results$posterior[5,5])))
 test_that("summary", {expect_equal(des1$lb , lbd)})
@@ -78,7 +78,7 @@ test_that("summary", {expect_equal(des1$ub , ubd)})
 des2 <- summary(results, ci = 0.98)
 
 test_that("summary", {expect_equal(des2$Estimate , as.numeric(results$estimates))})
-test_that("summary", {expect_equal(des2$n.Freq , as.numeric(results$n))})
+test_that("summary", {expect_equal(des2$n , as.numeric(results$n))})
 lbd <- as.vector(results$estimates + qnorm(.01) * c(sqrt(results$posterior[1,1]),sqrt(results$posterior[2,2]),sqrt(results$posterior[3,3]),
                                                      sqrt(results$posterior[4,4]),sqrt(results$posterior[5,5])))
 test_that("summary", {expect_equal(des2$lb , lbd)})
@@ -187,7 +187,5 @@ results <-bain(estimate, "pre1 - pre2 = post1 - post2 = fu1 -fu2;
                pre1 - pre2 > post1 - post2 > fu1 -fu2"  , n=ngroup, Sigma=covariance,
                group_parameters=3, joint_parameters = 0)
 des2<-summary(results, ci = 0.95)
-
-# DE ONDERSTAANDE REGEL LEIDT TOT EEN BREUK IN BAIN
-# test_that("summary", {expect_equal(des2$n , c(115,115,115,125,125,125))})
+test_that("summary", {expect_equal(des2$n , c(115,115,115,125,125,125))})
 
