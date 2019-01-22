@@ -121,12 +121,17 @@ In case of a multiple group
 analysis, the following information has to be extracted from the statistical
 analysis and supplied to `bain`: 
 
-a) A vector containing estimates of the
-parameters used to specify `hypotheses` possibly augmented with the
-estimates of other parameters; 
+a) A vector containing estimates of the group specific
+parameters possibly augmented with the
+estimates of parameters that are joined by the groups. The structure 
+of this vector is 
+[parameters of group 1, parameters of group 2, ..., the parameters that 
+are joined by the groups];
 b) A list containing, per group, the covariance
 matrix of the parameters corresponding to the group at hand and, possibly,
-the augmented parameters;
+the augmented parameters. In the rows and colums of each covariance matrix 
+the parameters of the group at hand come first, possibly followed by the 
+augmented parameters.
 c) per group the sample size.
 
 2) Assign names to the estimates
@@ -161,13 +166,15 @@ sample means, `group_parameters = 1` because each group is characterized
 by one mean, and `joint_parameters = 0` because there are no parameters
 that apply to each of the groups. In, for example, an ANCOVA with  three
 groups and two covariates, `estimates` will contain five parameters
-(three adjusted means and the regression coefficients of two covariates),
+(first the three adjusted means, followed by the regression coefficients 
+of the two covariates),
 `group_parameters = 1` because each group is characterized by one
 adjusted mean, and `joint_parameters = 2` because there are two
 regression coefficients that apply to each group. In, for example, a repeated
 measures design with four repeated measures and two groups (a between factor
 with two levels and a  within factor with four levels) `estimates` will
-contain eight means (four for each group), `group_parameters = 4`
+contain eight means (first the four for group 1, followed by the four
+for group 2), `group_parameters = 4`
 because each group is characterized by four means and `joint_parameters
 = 0` because there are no parameters that apply to each of the groups.
 f) `joint_parameters` In case of one group `joint_parameters =
@@ -357,8 +364,8 @@ e) Bayesian Equivalence test
 
 **2. Examples Using a `lm` Object**
 
-Note that, ONLY the type of calls to LM presented in the examples can be
-processed by bain. Calls structured in a different manner will either
+Note that, **only the type of calls to `lm` presented in the examples can be
+processed by bain**. Calls structured in a different manner will either
 render an error message, or results that are meaningless.
 
 a) Bayesian ANOVA. The example concerns a one-way ANOVA. Two-way or higher
@@ -368,8 +375,15 @@ and a factor `age` with levels `young` and `old`, these have to be recoded in a
 new factor `sexage` with levels `manyoung`, `manold`, `womanyoung`, `womanold`
 b) Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher
 order ANCOVA's can only be handled by recoding all factors into one
-factor.
-c) Bayesian multiple regression
+factor. **Note that calls to `lm` using interactions between groups and
+covariates or functions of the covariates (interactions or squared covariates)
+can not be processed by `bain`.**
+c) Bayesian multiple regression. **Note that calls to `lm` using 
+functions of the predictors (for example, interactions or squared
+predictors)
+can not be processed by `bain`.** However, one can compute a new variable
+(for example, an interaction) and add this variable to the model specification
+of `lm`.
 
 **3. Examples Using a Named Vector**
 
@@ -658,7 +672,8 @@ ancov2 <- lm(postnumb~site+prenumb-1,sesamesim)
 # take a look at the estimated adjusted means and their names
 coef(ancov2)
 # collect the estimates of the adjusted means and regression coefficient of
-# the covariate in a vector
+# the covariate in a vector (the vector has to contain first the
+# adjusted means and next the regression coefficients of the covariates)
 estimates <- coef(ancov2)
 # assign names to the estimates
 names(estimates)<- c("v.1", "v.2", "v.3", "v.4","v.5", "pre")
@@ -856,9 +871,10 @@ ngroup <- table(sesamesim$sex)
 # for boys and girl are estimated adjusted for the covariate age
 anal <- glm(viewenc ~ sex + age - 1, family=binomial, data=sesamesim)
 # take a look at the estimates and their names
-coef(logreg)
+coef(anal)
 # collect the estimates obtained using the data of the boys AND the
-# girls in a vector
+# girls in a vector. This vector contains first the group specific
+# parameters followed by the regression coefficient of the covariate.
 estimates <-coef(anal)
 # give names to the estimates
 names(estimates) <- c("boys", "girls", "age")

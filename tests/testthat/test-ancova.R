@@ -237,5 +237,22 @@ test_that("Bain mutual", {expect_equal(y$fit$PMPb , z$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$BFmatrix)))})
 
 
+# testing that the order of input of group and covariates does not matter
 
+rm(list=ls())
+sesamesim$site <- as.factor(sesamesim$site)
+ancov <- lm(postnumb ~ site + prenumb + peabody -1, data = sesamesim)
+set.seed(100)
+y<-bain(ancov, "site1=site2=site3=site4=site5;site2 > site5 > site3 > site1 >site4;")
 
+ancov2 <- lm(postnumb ~ prenumb + peabody +site -1, data = sesamesim)
+set.seed(100)
+y2<-bain(ancov2, "site1=site2=site3=site4=site5;site2 > site5 > site3 > site1 >site4;")
+
+ancov3 <- lm(postnumb ~ prenumb + site + peabody -1, data = sesamesim)
+set.seed(100)
+y3<-bain(ancov3, "site1=site2=site3=site4=site5;site2 > site5 > site3 > site1 >site4;")
+test_that("Bain mutual", {expect_equal(y$estimates , y2$estimates)})
+test_that("Bain mutual", {expect_equal(y$estimates , y3$estimates)})
+test_that("Bain mutual", {expect_equal(y$fit$PMPb , y2$fit$PMPb)})
+test_that("Bain mutual", {expect_equal(y$fit$PMPb , y3$fit$PMPb)})
