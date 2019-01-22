@@ -313,7 +313,9 @@ bain.default <- function(x,
 
 
 # Check legal input -------------------------------------------------------
-
+  if(group_parameters > 1 & joint_parameters > 0){
+    stop("Bain can not yet evaluate hypotheses where group_parameters is larger than 1 and joint_parameters is larger than 0.")
+  }
   rank_hyp <- qr(hyp_mat)$rank
 
   ##for unit group
