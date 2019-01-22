@@ -90,6 +90,7 @@ rename_estimate <- function(estimate){
 #' get_estimates(m_lm)
 #' }
 #' @rdname get_estimates
+#' @keywords internal
 get_estimates <- function(x, ...){
   UseMethod("get_estimates", x)
 }
@@ -140,6 +141,7 @@ get_estimates.htest <- function(x, ...) {
 #' m_lm <- label_estimates(m_lm, labels = c("a", "b", "c", "d", "e", "f"))
 #' }
 #' @rdname label_estimates
+#' @keywords internal
 label_estimates <- function(x, labels, ...){
   x
   #UseMethod("label_estimates", x)
