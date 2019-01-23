@@ -5,15 +5,15 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 2 warnings | 1 note
 
-* This is a new release.
-* This warning is a feature, not a bug:
+* 1 note: This is a new release.
+* 2 warnings, both are:
   Registered S3 methods overwritten by 'bain':
       t.test.default stats
       t.test.formula stats
-  The t.test methods in 'stats' do not return variance or sample size, which are
-  both required to conduct Bayesian inference.
+  This behavior is intentional. The t.test methods in 'stats' do not return
+  variance or sample size, which are both required for Bayesian inference.
   Therefore, I am intentionally masking the 'stats' t.test methods with a
   version that returns variance and sample size. No other changes to the code
   of the stats::t.test functions. This behavior is explained in the manual, and
