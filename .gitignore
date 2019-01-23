@@ -10,3 +10,6 @@ doc
 R/oud/
 binary/
 inst/doc
+src-i386/
+src-x64/
+src/Bain.o
