@@ -7,7 +7,7 @@
 rm(list=ls())
 
 x<-sesamesim$postnumb
-ttest <- t.test(x)
+ttest <- t_test(x)
 set.seed(100)
 z <- bain(ttest, "x=30; x>30; x<30")
 
@@ -38,7 +38,7 @@ rm(list=ls())
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
 set.seed(100)
 z <- bain(ttest, "x=y; x>y; x<y")
 
@@ -73,7 +73,7 @@ rm(list=ls())
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 
-ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
 set.seed(100)
 z <- bain(ttest, "x=y; x>y; x<y")
 
@@ -100,7 +100,7 @@ test_that("Bain mutual", {expect_equal(zd$fit$PMPb , z$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$BFmatrix)))})
 
 sesamesim$sex<-as.factor(sesamesim$sex)
-ttest <- t.test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = TRUE)
 set.seed(100)
 zh<-bain(ttest, "group1=group2; group1>group2; group1<group2")
 
@@ -126,7 +126,7 @@ rm(list=ls())
 x<-sesamesim$prenumb
 y<-sesamesim$postnumb
 
-ttest <- t.test(x,y,paired = TRUE)
+ttest <- t_test(x,y,paired = TRUE)
 set.seed(100)
 z <- bain(ttest, "difference=0; difference>0; difference<0")
 
@@ -160,7 +160,7 @@ rm(list=ls())
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 
-ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
 set.seed(100)
 z <- bain(ttest, "x - y > -1 & x - y < 1")
 
@@ -196,12 +196,12 @@ rm(list=ls())
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE,alternative = c("less"))
+ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE,alternative = c("less"))
 set.seed(100)
 z1 <- bain(ttest, "x=y; x>y; x<y")
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
 set.seed(100)
 z2 <- bain(ttest, "x=y; x>y; x<y")
 
@@ -224,13 +224,13 @@ rm(list=ls())
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE,mu=50)
+ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE,mu=50)
 set.seed(100)
 z1 <- bain(ttest, "x=y; x>y; x<y")
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
 set.seed(100)
 z2 <- bain(ttest, "x=y; x>y; x<y")
 

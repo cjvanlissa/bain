@@ -9,7 +9,7 @@ bain(x, hypothesis, ...)
 \arguments{
 \item{x}{An R object containing the outcome of a statistical analysis.
 Currently, the following objects can be processed: \code{lm()},
-\code{t.test()}, and named vector objects. See the vignette for
+\code{t_test()}, and named vector objects. See the vignette for
 elaborations.}
 
 \item{hypothesis}{A character string containing the informative hypotheses

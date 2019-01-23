@@ -13,7 +13,7 @@
 #'
 #' @param x An R object containing the outcome of a statistical analysis.
 #' Currently, the following objects can be processed: \code{lm()},
-#' \code{t.test()}, and named vector objects. See the vignette for
+#' \code{t_test()}, and named vector objects. See the vignette for
 #' elaborations.
 #' @param hypothesis	A character string containing the informative hypotheses
 #' to evaluate. See the vignette for elaborations.
@@ -244,7 +244,7 @@ bain.htest <-
   function(x,
            hypothesis,
            ...) {
-    stop("To be able to run bain on the results of an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t.test is replaced by a version that does return this necessary information.")
+    stop("The standard t.test() function from the 'stats' package does not return variance and sample size, which are required to run bain. Please use the function t_test() from the 'bain' package instead. It accepts the same arguments.")
 }
 
 #' @method bain bain_htest
@@ -264,7 +264,7 @@ bain.bain_htest <-
         Args$group_parameters <- 0
         Args$joint_parameters <- 1
       } else {
-        if (!x$method == " Two Sample t-test") {
+        if (!x$method == " Two Sample t_test") {
           Args$Sigma <- lapply(x$v/x$n, as.matrix)
         } else {
           df <- sum(x$n) - 2

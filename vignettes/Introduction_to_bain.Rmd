@@ -66,7 +66,7 @@ DOI: 10.1037/met0000187
 `x`
 An R object containing the outcome of a statistical analysis. Currently, the following objects can be processed:
 
-1) `t.test()` objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test, equivalence test).
+1) `t_test()` objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test, equivalence test).
 2) `lm()` objects (anova, ancova, multiple regression). **In the Examples section it is elaborated which calls to lm can be processed by bain (other calls cannot be processed).**
 3) A named vector containing the estimates resulting from a statistical analysis. Note that, named means that each estimate has to be nameled such that it can be referred to in hypotheses.
 
@@ -74,15 +74,15 @@ An R object containing the outcome of a statistical analysis. Currently, the fol
 
 `...`	Additional arguments (see below).
 
-## Using `bain` with an `lm` or `t.test` object 
+## Using `bain` with an `lm` or `t_test` object 
 
 The following steps need to be executed:
 
-1) `x <- lm()` or `x <- t.test()`. Execute an analysis with
-`lm` or `t.test`. See the Examples section below for a complete elaboration 
+1) `x <- lm()` or `x <- t_test()`. Execute an analysis with
+`lm` or `t_test`. See the Examples section below for a complete elaboration 
 of the
-calls to `lm` and `t.test` that can be processed by `bain`.
-Note that, `lm` and `t.test` will apply list-wise deletion if there
+calls to `lm` and `t_test` that can be processed by `bain`.
+Note that, `lm` and `t_test` will apply list-wise deletion if there
 are cases with missing values in the variables used.
 2) Display the estimates and their names using the command `coef(x)`. 
 (Unique abbreviations of) the names will be used to specify `hypotheses`.
@@ -90,7 +90,7 @@ are cases with missing values in the variables used.
 number to create a repeatable random number sequence.
 4) `results <- bain(x,hypotheses)` or `results <-
 bain(x,hypotheses,standardize = TRUE)`. The first call to `bain` is used
-in case of `lm` implementations of anova, ancova, and `t.test`. The
+in case of `lm` implementations of anova, ancova, and `t_test`. The
 second call to `bain` is used in case of `lm` implementations of
 multiple regression. With `standardize = TRUE` hypotheses with respect
 to standardized regression coefficients are evaluated. With `standarize
@@ -198,7 +198,7 @@ names "a", "b", and "c", respectively.
 The hypotheses specified have to adhere to the following rules **`bain` may still run if you
 deviate from the rules, however, the output will be nonsense**:
 
-* When using `bain` with a `lm` or `t.test` object, (unique abbreviations of) the names
+* When using `bain` with a `lm` or `t_test` object, (unique abbreviations of) the names
 displayed by `coef(x)` have to be used. If, for example, the names are `cat` and `dog`, `c`
 and `d ` would be unique abreviations. If, for example, the names are `cato` and `cata` the whole
 names have to be used.
@@ -346,7 +346,7 @@ year)
 
 The examples that follow below are organized in three categories:
 
-1) Running `bain` with a `t.test` object; 
+1) Running `bain` with a `t_test` object; 
 2) running `bain` with a `lm object`; and, 
 3) running bain with a named vector. 
 
@@ -354,7 +354,7 @@ The ANOVA and ANCOVA
 examples are provided using both a `lm` object and a named vector
 as input for `bain`. Below you will find the following examples:
 
-**1. Examples Using a `t.test` Object**
+**1. Examples Using a `t_test` Object**
 
 a) BayesianStudent's t-test (equal within group variances)
 b) Bayesian Welch's t-test (unequal within group variances
@@ -405,7 +405,7 @@ https://informative-hypotheses.sites.uu.nl/software/bain/.
 * Executing a sensitivity analysis with `bain`
 * Executing Bayesian updating with `bain`
 
-**1. Examples Using a `t.test` Object**
+**1. Examples Using a `t_test` Object**
 
 a)  An example of the Bayesian Student's t-test (equal within group variances):
 
@@ -417,7 +417,7 @@ library(bain)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 # execute student's t-test
-ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
 # Check the names of the estimates
 coef(ttest)
 # set a seed value
@@ -440,7 +440,7 @@ library(bain)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 # execute student's t-test
-ttest <- t.test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
 # Check the names of the coefficients
 coef(ttest)
 # set a seed value
@@ -459,7 +459,7 @@ c) An example of the Bayesian paired samples t-test:
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
 # compare the pre with the post measurements
-ttest <- t.test(sesamesim$prenumb,sesamesim$postnumb,paired = TRUE)
+ttest <- t_test(sesamesim$prenumb,sesamesim$postnumb,paired = TRUE)
 # Check name of the coefficient
 coef(ttest)
 # set a seed value
@@ -478,7 +478,7 @@ d) An example of the Bayesian one group t-test:
 # load the bain package which includes the simulated sesamesim data se
 library(bain)
 # compare post measurements with the reference value 30
-ttest <- t.test(sesamesim$postnumb)
+ttest <- t_test(sesamesim$postnumb)
 # Check name of estimate
 coef(ttest)
 # set a seed value
@@ -501,7 +501,7 @@ library(bain)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 # execute student's t-test
-ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
 # Check the names of the estimates
 coef(ttest)
 # compute the pooled within standard deviation using the variance of x

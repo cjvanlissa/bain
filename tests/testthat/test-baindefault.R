@@ -245,7 +245,7 @@ test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.125,NA),tolerance = .
 test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .01)})
 
 #========================================================================================")
-# a test of the t-test using bain default shows that b per group is correctly")
+# a test of the t_test using bain default shows that b per group is correctly")
 # used to compute the prior covariance matrix")
 #========================================================================================")
 

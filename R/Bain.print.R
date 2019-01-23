@@ -7,7 +7,7 @@ print.Bain <- function(x,...){
     print(x$fit_com_table)
   }
 
-  # Inputs a bain t-test result object
+  # Inputs a bain t_test result object
   if(fun_type=="Bain_ttest"||fun_type=="Bain_ttestData"){
     output<-do.call(cbind,x[-length(x)])
     print(data.frame(output,row.names = ""))
