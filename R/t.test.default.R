@@ -1,35 +1,100 @@
-#  In order to allow users to enjoy the functionality of bain with the familiar
-#  stats-function t.test, we have had to make minor changes to the function
-#  t.test.default, which will mask the stats function when the package is
-#  loaded. All rights to, and credit for, the function t.test.default belong to
-#  the R Core Team, as indicated in the original license below. We have marked
-#  all changes in this document. We make no claims to copyright on these
-#  changes.
-
-#  This the original copyright notice by the R core team:
-
-#  File src/library/stats/R/t.test.R
-#  Part of the R package, https://www.R-project.org
-#
-#  Copyright (C) 1995-2015 The R Core Team
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  A copy of the GNU General Public License is available at
-#  https://www.R-project.org/Licenses/
-#' @method t.test default
+#' Student's t-Test
+#'
+#' Performs one and two sample t-tests on vectors of data.
+#'
+#' @details The formula interface is only applicable for the 2-sample tests.
+#'
+#' \code{alternative = "greater"} is the alternative that \code{x} has a larger
+#' mean than \code{y}.
+#'
+#' If \code{paired} is \code{TRUE} then both \code{x} and \code{y} must be
+#' specified and they must be the same length.  Missing values are silently
+#' removed (in pairs if \code{paired} is \code{TRUE}).  If \code{var.equal} is
+#' \code{TRUE} then the pooled estimate of the variance is used.  By default,
+#' if \code{var.equal} is \code{FALSE} then the variance is estimated
+#' separately for both groups and the Welch modification to the degrees of
+#' freedom is used.
+#'
+#' If the input data are effectively constant (compared to the larger of the
+#' two means) an error is generated.
+#'
+#' @section Bain t_test
+#' In order to allow users to enjoy the functionality of bain with the familiar
+#' stats-function t.test, we have had to make minor changes to the function
+#' t.test.default. All rights to, and credit for, the function t.test.default
+#' belong to the R Core Team, as indicated in the original license below.
+#' We make no claims to copyright and incur no liability with regard to the
+#' changes implemented in t_test.
+#'
+#' This the original copyright notice by the R core team:
+#' File src/library/stats/R/t_test.R
+#' Part of the R package, https://www.R-project.org
+#'
+#' Copyright (C) 1995-2015 The R Core Team
+#'
+#' This program is free software; you can redistribute it and/or modify
+#' it under the terms of the GNU General Public License as published by
+#' the Free Software Foundation; either version 2 of the License, or
+#' (at your option) any later version.
+#'
+#' This program is distributed in the hope that it will be useful,
+#' but WITHOUT ANY WARRANTY; without even the implied warranty of
+#' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#' GNU General Public License for more details.
+#'
+#' A copy of the GNU General Public License is available at
+#' https://www.R-project.org/Licenses/
+#'
+#' @aliases t_test t_test.default t_test.formula
+#' @param x a (non-empty) numeric vector of data values.
+#' @param \dots further arguments to be passed to or from methods.
+#' @return A list with class \code{"htest"} containing the following
+#' components: \item{statistic}{the value of the t-statistic.}
+#' \item{parameter}{the degrees of freedom for the t-statistic.}
+#' \item{p.value}{the p-value for the test.} \item{conf.int}{a confidence
+#' interval for the mean appropriate to the specified alternative hypothesis.}
+#' \item{estimate}{the estimated mean or difference in means depending on
+#' whether it was a one-sample test or a two-sample test.}
+#' \item{null.value}{the specified hypothesized value of the mean or mean
+#' difference depending on whether it was a one-sample test or a two-sample
+#' test.} \item{alternative}{a character string describing the alternative
+#' hypothesis.} \item{method}{a character string indicating what type of t-test
+#' was performed.} \item{data.name}{a character string giving the name(s) of
+#' the data.}
+#' @seealso \code{\link[stats]{t.test}}
+#' @keywords htest
+#' @examples
+#'
+#' require(graphics)
+#'
+#' t_test(1:10, y = c(7:20))      # P = .00001855
+#' t_test(1:10, y = c(7:20, 200)) # P = .1245    -- NOT significant anymore
+#'
+#' ## Classical example: Student's sleep data
+#' plot(extra ~ group, data = sleep)
+#' ## Traditional interface
+#' with(sleep, t_test(extra[group == 1], extra[group == 2]))
+#' ## Formula interface
+#' t_test(extra ~ group, data = sleep)
 #' @export
-#' @importFrom stats t.test
-#' @importFrom methods hasArg
-t.test.default <-
+t_test <- function(x, ...) UseMethod("t_test")
+
+#' @method t_test default
+#' @rdname t_test
+#' @param y an optional (non-empty) numeric vector of data values.
+#' @param alternative a character string specifying the alternative hypothesis,
+#' must be one of \code{"two.sided"} (default), \code{"greater"} or
+#' \code{"less"}.  You can specify just the initial letter.
+#' @param mu a number indicating the true value of the mean (or difference in
+#' means if you are performing a two sample test).
+#' @param paired a logical indicating whether you want a paired t-test.
+#' @param var.equal a logical variable indicating whether to treat the two
+#' variances as being equal. If \code{TRUE} then the pooled variance is used to
+#' estimate the variance otherwise the Welch (or Satterthwaite) approximation
+#' to the degrees of freedom is used.
+#' @param conf.level confidence level of the interval.
+#' @export
+t_test.default <-
   function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
            mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95,
            ...)
@@ -75,7 +140,7 @@ t.test.default <-
       if(stderr < 10 *.Machine$double.eps * abs(mx))
         stop("data are essentially constant")
       tstat <- (mx-mu)/stderr
-      method <- if(paired) "Paired t-test" else "One Sample t-test"
+      method <- if(paired) "Paired t_test" else "One Sample t_test"
       estimate <-
         setNames(mx, if(paired)"mean of the differences" else "mean of x")
     } else {
@@ -87,7 +152,7 @@ t.test.default <-
       if(var.equal && nx+ny < 3) stop("not enough observations")
       my <- mean(y)
       vy <- var(y)
-      method <- paste(if(!var.equal)"Welch", "Two Sample t-test")
+      method <- paste(if(!var.equal)"Welch", "Two Sample t_test")
       estimate <- c(mx,my)
       names(estimate) <- c("mean of x","mean of y")
       if(var.equal) {
@@ -151,9 +216,21 @@ t.test.default <-
 
 
 #' @importFrom stats terms
-#' @method t.test formula
+#' @method t_test formula
+#' @rdname t_test
+#' @param formula a formula of the form \code{lhs ~ rhs} where \code{lhs} is a
+#' numeric variable giving the data values and \code{rhs} a factor with two
+#' levels giving the corresponding groups.
+#' @param data an optional matrix or data frame (or similar: see
+#' \code{\link{model.frame}}) containing the variables in the formula
+#' \code{formula}.  By default the variables are taken from
+#' \code{environment(formula)}.
+#' @param subset an optional vector specifying a subset of observations to be
+#' used.
+#' @param na.action a function which indicates what should happen when the data
+#' contain \code{NA}s.  Defaults to \code{getOption("na.action")}.
 #' @export
-t.test.formula <- function(formula, data, subset, na.action, ...)
+t_test.formula <- function(formula, data, subset, na.action, ...)
 {
   if (missing(formula) || (length(formula) != 3L) || (length(attr(terms(formula[-2L]),
                                                                   "term.labels")) != 1L))
@@ -171,7 +248,7 @@ t.test.formula <- function(formula, data, subset, na.action, ...)
   if (nlevels(g) != 2L)
     stop("grouping factor must have exactly 2 levels")
   DATA <- setNames(split(mf[[response]], g), c("x", "y"))
-  y <- do.call(t.test.default, c(DATA, list(...)))
+  y <- do.call(t_test.default, c(DATA, list(...)))
   y$data.name <- DNAME
   if (length(y$estimate) == 2L)
     names(y$estimate) <- paste0("mean of group", levels(g))

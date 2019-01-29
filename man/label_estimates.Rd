@@ -25,7 +25,7 @@ Label estimates from a model object, before passing it on to the
 \examples{
 \dontrun{
 # Example 1
-m_tt <- t.test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
+m_tt <- t_test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
 m_tt <- label_estimates(m_tt, c("a", "b"))
 # Example 2
 m_lm <- lm(Sepal.Length ~., iris)

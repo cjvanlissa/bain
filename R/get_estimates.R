@@ -83,7 +83,7 @@ rename_estimate <- function(estimate){
 #' @examples
 #' \dontrun{
 #' # Example 1
-#' m_tt <- t.test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
+#' m_tt <- t_test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
 #' get_estimates(m_tt)
 #' # Example 2
 #' m_lm <- lm(Sepal.Length ~., iris)
@@ -117,7 +117,7 @@ get_estimates.bain_htest <- function(x, ...){
 
 #' @method get_estimates htest
 get_estimates.htest <- function(x, ...) {
-  stop("To be able to run bain on the results of an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t.test is replaced by a version that does return this necessary information.")
+  stop("To be able to run bain on the results of an object returned by t_test(), you must first load the 'bain' package, and then conduct your t_test. The standard t_test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t_test is replaced by a version that does return this necessary information.")
 }
 
 
@@ -134,7 +134,7 @@ get_estimates.htest <- function(x, ...) {
 #' @examples
 #' \dontrun{
 #' # Example 1
-#' m_tt <- t.test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
+#' m_tt <- t_test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
 #' m_tt <- label_estimates(m_tt, c("a", "b"))
 #' # Example 2
 #' m_lm <- lm(Sepal.Length ~., iris)
@@ -200,5 +200,5 @@ label_estimates.bain_htest <- function(x, labels, ...){
 
 #' @method label_estimates htest
 label_estimates.htest <- function(x, labels, ...) {
-  stop("To be able to run bain on the results of an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t.test is replaced by a version that does return this necessary information.")
+  stop("To be able to run bain on the results of an object returned by t_test(), you must first load the 'bain' package, and then conduct your t_test. The standard t_test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t_test is replaced by a version that does return this necessary information.")
 }

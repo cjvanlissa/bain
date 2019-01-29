@@ -159,7 +159,7 @@ function brank(M,nrow,ncol)
    brank=nrow
    A=M
 
-   do i=1,nrow
+   do i=1,min(nrow,ncol)
       do k=i+1,nrow
          if (A(i,i).EQ.0 .and. A(k,i).NE.0) then
             do j=1,ncol

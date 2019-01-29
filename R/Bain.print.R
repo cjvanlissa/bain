@@ -7,7 +7,7 @@ print.Bain <- function(x,...){
     print(x$fit_com_table)
   }
 
-  # Inputs a bain t-test result object
+  # Inputs a bain t_test result object
   if(fun_type=="Bain_ttest"||fun_type=="Bain_ttestData"){
     output<-do.call(cbind,x[-length(x)])
     print(data.frame(output,row.names = ""))
@@ -37,7 +37,7 @@ print.bain <- function(x, stats = c("Fit_eq", "Com_eq", "Fit_in", "Com_in", "Fit
   miss_val <- is.na(dat)
   dat <- formatC(dat, digits = digits, format = "f")
   dat[miss_val] <- ""
-  cat("Bayesian informative hypothesis testing for an object of class ", class(x$model), ":\n\n", sep = "")
+  cat("Bayesian informative hypothesis testing for an object of class ", class(x$model)[1], ":\n\n", sep = "")
 
   prmatrix(dat,
            quote = FALSE,

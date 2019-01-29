@@ -6,7 +6,7 @@ rm(list=ls())
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t.test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
 set.seed(100)
 results <- bain(ttest, "x=y; x>y;x<y")
 des1 <- summary(results, ci = 0.95)
@@ -33,7 +33,7 @@ test_that("summary", {expect_equal(des2$ub , ubd)})
 
 rm(list=ls())
 
-ttest <- t.test(sesamesim$postnumb)
+ttest <- t_test(sesamesim$postnumb)
 set.seed(100)
 results <- bain(ttest, "x=30; x>30; x<30")
 des1 <- summary(results, ci = 0.95)
