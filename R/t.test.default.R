@@ -18,7 +18,7 @@
 #' If the input data are effectively constant (compared to the larger of the
 #' two means) an error is generated.
 #'
-#' @section Bain t_test
+#' @section Bain t_test:
 #' In order to allow users to enjoy the functionality of bain with the familiar
 #' stats-function t.test, we have had to make minor changes to the function
 #' t.test.default. All rights to, and credit for, the function t.test.default

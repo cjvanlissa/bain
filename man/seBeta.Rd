@@ -39,7 +39,15 @@ Computes Normal Theory and ADF Standard Errors and CIs for Standardized
 Regression Coefficients
 }
 \examples{
+set.seed(123)
 
+R <- matrix(.5, 3, 3)
+diag(R) <- 1
+X <- sesamesim[, c("peabody", "prenumb", "postnumb")]
+y <- sesamesim$age
+results <- seBeta(X, y, Nobs = nrow(sesamesim), alpha = .05, estimator = 'ADF')
+print(results, digits = 3)
+\donttest{
 library(MASS)
 
 set.seed(123)
@@ -51,13 +59,7 @@ Beta <- c(.2, .3, .4)
 y <- X \%*\% Beta + .64 * scale(rnorm(200))
 results <- seBeta(X, y, Nobs = 200, alpha = .05, estimator = 'ADF')
 print(results, digits = 3)
-
-# 95\% CIs for Standardized Regression Coefficients:
-#
-#        lbound estimate ubound
-# beta_1  0.104    0.223  0.341
-# beta_2  0.245    0.359  0.473
-# beta_3  0.245    0.360  0.476
+}
 }
 \references{
 Jones, J. A, and Waller, N. G. (2015). The Normal-Theory and

@@ -41,7 +41,15 @@
 #' Psychometrika, 80, 365-378.
 #' @keywords Statistics
 #' @examples
+#' set.seed(123)
 #'
+#' R <- matrix(.5, 3, 3)
+#' diag(R) <- 1
+#' X <- sesamesim[, c("peabody", "prenumb", "postnumb")]
+#' y <- sesamesim$age
+#' results <- seBeta(X, y, Nobs = nrow(sesamesim), alpha = .05, estimator = 'ADF')
+#' print(results, digits = 3)
+#' \donttest{
 #' library(MASS)
 #'
 #' set.seed(123)
@@ -53,13 +61,8 @@
 #' y <- X %*% Beta + .64 * scale(rnorm(200))
 #' results <- seBeta(X, y, Nobs = 200, alpha = .05, estimator = 'ADF')
 #' print(results, digits = 3)
-#'
-#' # 95% CIs for Standardized Regression Coefficients:
-#' #
-#' #        lbound estimate ubound
-#' # beta_1  0.104    0.223  0.341
-#' # beta_2  0.245    0.359  0.473
-#' # beta_3  0.245    0.360  0.476
+#' }
+
 #' @export
 seBeta<-function (X = NULL, y = NULL, cov.x = NULL, cov.xy = NULL, var.y = NULL,
                   Nobs = NULL, alpha = 0.05, estimator = "ADF")
