@@ -16,13 +16,4 @@ Character
 Moves all terms on the right hand side of a BAIN constraint, which has been
 formatted as an equation, to the left hand side.
 }
-\examples{
-\dontrun{
-order_terms("+2+1*a-1=+1*b-2")
-order_terms(hyp = "+1*a=-2")
-order_terms(hyp = "+1*a=-2+3")
-order_terms(hyp = "+1*a=+1*b")
-order_terms(hyp = "-2+1*a=+1*b")
-}
-}
 \keyword{internal}

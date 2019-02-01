@@ -17,9 +17,4 @@ Takes a BAIN constraint and flips elements on both sides of any "<"
 operators so that only the ">" operator is used to define inequality
 constraints.
 }
-\examples{
-\dontrun{
-flip_inequality("b<c")
-}
-}
 \keyword{internal}

@@ -16,10 +16,4 @@ A character vector with one element for each simple constraint
 Takes a BAIN constraint with parentheses containing a "vector" of parameter
 labels, and recursively expands the parenthesized "vectors".
 }
-\examples{
-\dontrun{
-expand_parentheses("(a,b)>c")
-expand_parentheses("(openness, conscientiousness)>(neuroticism,extraversion)")
-}
-}
 \keyword{internal}

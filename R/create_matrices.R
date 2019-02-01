@@ -119,74 +119,6 @@ parse_hypothesis <- function(varnames, hyp){
 #' and one matrix named IRr, specifying inequality constraints.
 #' @author Caspar van Lissa
 #' @keywords internal utilities
-#' @examples
-#' \dontrun{
-#' varnames <- c("a","b","c","d","e","f")
-#' hyp <- "e=f<a=b=c"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- ".5*f>e>0&c>0&d=0&a=b=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "f>e<0&c>0&d=0&a=b=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "f<e>0&c>0&d=0&a=b=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>b<c>d"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "d<c>b<a"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>2"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>2& b+3=0& b>c=d&e=f=4"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "(a,b)>c&d=0"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>-1&a<1"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>b&b>c&c>a"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a+b>2"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "(a+b)>2"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a&b>c&d"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "(.5*a,b)>c"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "1/2*a>c"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a < -2"
-#' create_matrices(varnames, hyp)
-#' hyp <- "-2 > a"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp <- "a>2; b=0; c< -0.5; d>e=f"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp1 <- "a>2; b=0; c< -.5; d>e=f"
-#' create_matrices(varnames, hyp1)
-#'
-#' hyp <- "(a+a+a,c+c+c)>b+b"
-#' create_matrices(varnames, hyp)
-#'
-#' hyp1 <- "a+a+b>b+b+a"
-#' create_matrices(varnames, hyp1)
-#' }
 create_matrices <- function(varnames, hyp){
   if(is.null(varnames)) stop("Please input proper linear model object")
   hyp <- gsub("\\s", "", hyp)
@@ -237,11 +169,6 @@ create_matrices <- function(varnames, hyp){
 #' @param hyp Character. A BAIN (in)equality constraint
 #' @return A character vector with one element for each simple constraint
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' expand_compound_constraints("a=b=c")
-#' expand_compound_constraints("openness>neuroticism>extraversion==c")
-#' }
 expand_compound_constraints <- function(hyp){
   equality_operators <- gregexpr("[=<>]", hyp)[[1]]
   if(length(equality_operators) > 1){
@@ -267,11 +194,6 @@ expand_compound_constraints <- function(hyp){
 #' @param hyp Character. A BAIN (in)equality constraint
 #' @return A character vector with one element for each simple constraint
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' expand_parentheses("(a,b)>c")
-#' expand_parentheses("(openness, conscientiousness)>(neuroticism,extraversion)")
-#' }
 expand_parentheses <- function(hyp){
   parenth_locations <- gregexpr("[\\(\\)]", hyp)[[1]]
   if(!parenth_locations[1] == -1){
@@ -303,10 +225,6 @@ expand_parentheses <- function(hyp){
 #' @param hyp Character. A BAIN (in)equality constraint
 #' @return Character
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' flip_inequality("b<c")
-#' }
 flip_inequality <- function(hyp){
   if(grepl("<", hyp)){
     loc <- gregexpr("<", hyp)[[1]][1]
@@ -330,16 +248,6 @@ flip_inequality <- function(hyp){
 #' @param hyp Character. A BAIN (in)equality constraint
 #' @return Character
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' constraint_to_equation(hyp = c("-strength>wisdom", "intelligence>wisdom",
-#'                     "strength>dexterity", "intelligence>dexterity"))
-#' constraint_to_equation("1*b")
-#' constraint_to_equation(hyp  ="b")
-#' constraint_to_equation(hyp = "5*b-4c")
-#' constraint_to_equation("5+c=0")
-#' constraint_to_equation("5+c=d")
-#' }
 constraint_to_equation <- function(hyp){
   # If scalar comes after variable name, move it in front
   hyp <- gsub("([\\.a-zA-Z][a-zA-Z0-9_\\.]{0,})\\*(\\d+)", "\\2*\\1", hyp, perl = TRUE)
@@ -396,14 +304,6 @@ constraint_to_equation <- function(hyp){
 #' @param hyp Character. A BAIN (in)equality constraint formatted as equation.
 #' @return Character
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' order_terms("+2+1*a-1=+1*b-2")
-#' order_terms(hyp = "+1*a=-2")
-#' order_terms(hyp = "+1*a=-2+3")
-#' order_terms(hyp = "+1*a=+1*b")
-#' order_terms(hyp = "-2+1*a=+1*b")
-#' }
 order_terms <- function(hyp){
   eq_location <- gregexpr("[=<>]", hyp)[[1]]
   rhs <- substring(hyp, eq_location+1, nchar(hyp))
@@ -426,12 +326,6 @@ order_terms <- function(hyp){
 #' with all terms on the left hand side.
 #' @return Numeric vector.
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' constraint_to_row(varnames = c("a", "b", "c", "d"), hyp = "+1*a-1*b+0=")
-#' constraint_to_row(c("a", "b", "c", "d"), "+1*b-1*c+0=")
-#' constraint_to_row(c("a", "b", "c", "d"), "-+0+1*c-1*d=")
-#' }
 constraint_to_row <- function(varnames, hyp){
   e <- new.env()
   objects <- c(varnames, "XXXconstant")
