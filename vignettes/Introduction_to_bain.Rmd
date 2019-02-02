@@ -1018,9 +1018,9 @@ pmis2<-1
 pmis3<-1
 #
 for (i in 1:240){
-  pmis1[i] <- exp(-40+sesamesim$prenumb[i]+sesamesim$postnumb[i])/(1+exp(-40+sesamesim$prenumb[i]+sesamesim$postnumb[i]))
-  pmis2[i]<- exp(-30+sesamesim$peabody[i])/(1+exp(-30+sesamesim$peabody[i]))
-  pmis3[i]<- .90
+  pmis1[i] <- .80
+  pmis2[i]<- .80
+  pmis3[i]<- .80
 #
   uni<-runif(1)
   if (pmis1[i] < uni) {
