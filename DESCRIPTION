@@ -3,11 +3,24 @@ Type: Package
 Date: 2019-01-23
 Title: Bayes Factors for Informative Hypotheses
 Version: 0.2.0
-Author: Xin Gu, Herbert Hoijtink, Joris Mulder, Caspar van Lissa
-Maintainer: Caspar J. van Lissa <c.j.vanlissa@uu.nl>
+Authors@R: c(
+    person(c("Xin"), "Gu", role = c("aut"), email = "guxin57@hotmail.com"),
+    person(c("Herbert"), "Hoijtink", role = c("aut"), email = "h.hoijtink@uu.nl"),
+    person(c("Joris"), "Mulder", role = c("aut"), email = "jomulder@gmail.com"),
+    person(c("Caspar", "J"), "van Lissa", role = c("aut", "cre"), email = "c.j.vanlissa@uu.nl"),
+    person(c("Jeff"), "Jones", role = "ctb"),
+    person(c("Niels"), "Waller", role = "ctb"),
+    person("The R Core Team", role = "cph")
+    )
 Description: Computes approximated adjusted fractional Bayes factors for
-    equality, inequality, and about equality constrained hypotheses. Methods are
-    available for t test, ANOVA, ANCOVA, and regression models.
+    equality, inequality, and about equality constrained hypotheses. S3 methods
+    are available for specific types of lm() models, namely ANOVA, ANCOVA, and
+    multiple regression, and for the t_test(). The statistical underpinnings are
+    described in 
+    Hoijtink, Mulder, van Lissa, and Gu, (2018) <doi:10.31234/osf.io/v3shc>,
+    Gu, Mulder, and Hoijtink, (2018) <doi:10.1111/bmsp.12110>,
+    Hoijtink, Gu, and Mulder, (2018) <doi:10.1111/bmsp.12145>, and
+    Hoijtink, Gu, Mulder, and Rosseel, (2018) <doi:10.1037/met0000187>.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

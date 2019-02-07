@@ -80,15 +80,6 @@ rename_estimate <- function(estimate){
 #' @param x A model object for which a \code{\link{bain}} method exists.
 #' @param ... Parameters passed to and from other functions.
 #' @return A named numeric vector.
-#' @examples
-#' \dontrun{
-#' # Example 1
-#' m_tt <- t_test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
-#' get_estimates(m_tt)
-#' # Example 2
-#' m_lm <- lm(Sepal.Length ~., iris)
-#' get_estimates(m_lm)
-#' }
 #' @rdname get_estimates
 #' @keywords internal
 get_estimates <- function(x, ...){
@@ -131,15 +122,6 @@ get_estimates.htest <- function(x, ...) {
 #' @param ... Parameters passed to and from other functions.
 #' @return A model object of the same class as x.
 #' @seealso get_estimates bain
-#' @examples
-#' \dontrun{
-#' # Example 1
-#' m_tt <- t_test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
-#' m_tt <- label_estimates(m_tt, c("a", "b"))
-#' # Example 2
-#' m_lm <- lm(Sepal.Length ~., iris)
-#' m_lm <- label_estimates(m_lm, labels = c("a", "b", "c", "d", "e", "f"))
-#' }
 #' @rdname label_estimates
 #' @keywords internal
 label_estimates <- function(x, labels, ...){

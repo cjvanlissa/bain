@@ -17,15 +17,4 @@ Formats a BAIN constraint as an equation that can be evaluated. Adds scalars
 to all parameters in the constraint, and adds a XXXconstant parameter to any
 constants. Also adds "*" and "+" operators where necessary for evaluation.
 }
-\examples{
-\dontrun{
-constraint_to_equation(hyp = c("-strength>wisdom", "intelligence>wisdom",
-                    "strength>dexterity", "intelligence>dexterity"))
-constraint_to_equation("1*b")
-constraint_to_equation(hyp  ="b")
-constraint_to_equation(hyp = "5*b-4c")
-constraint_to_equation("5+c=0")
-constraint_to_equation("5+c=d")
-}
-}
 \keyword{internal}

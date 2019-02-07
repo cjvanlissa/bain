@@ -16,10 +16,4 @@ A character vector with one element for each simple constraint
 Takes a compound BAIN constraint, with multiple (in)equality operators, and
 expands it into simple constraints.
 }
-\examples{
-\dontrun{
-expand_compound_constraints("a=b=c")
-expand_compound_constraints("openness>neuroticism>extraversion==c")
-}
-}
 \keyword{internal}

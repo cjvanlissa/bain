@@ -39,11 +39,7 @@
 #' DOI: 10.1037/met0000201
 #'
 #' @examples
-#' \dontrun{
 #' # USING BAIN WITH A LM OBJECT: Bayesian ANOVA
-#'
-#' # load the bain package which includes the simulated sesamesim data set
-#' library(bain)
 #' # make a factor of variable site
 #' sesamesim$site <- as.factor(sesamesim$site)
 #' # execute an analysis of variance using lm() which, due to the -1, returns
@@ -59,8 +55,6 @@
 #' #
 #' # USING BAIN WITH A NAMED VECTOR: Bayesian ANOVA
 #'
-#' # load the bain package which includes the simulated sesamesim data set
-#' library(bain)
 #' # make a factor of variable site
 #' sesamesim$site <- as.factor(sesamesim$site)
 #' # execute an analysis of variance using lm() which, due to the -1, returns
@@ -90,7 +84,6 @@
 #' n=ngroup,Sigma=covlist,group_parameters=1,joint_parameters = 0)
 #'
 #' # SEE THE TUTORIAL AND VIGNETTE FOR MANY ADDITIONAL EXAMPLES
-#' }
 #'
 #'
 #' @rdname bain
