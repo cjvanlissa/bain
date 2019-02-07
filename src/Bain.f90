@@ -143,7 +143,7 @@ recursive subroutine combine(a,b,c)
           end if
         end if
      end do
-end
+end subroutine
 
 function brank(M,nrow,ncol)
 
@@ -192,7 +192,7 @@ function brank(M,nrow,ncol)
       end if
    end do
    return
-end
+end function
 
 
 end
@@ -556,7 +556,7 @@ function rnormal ()
   rnormal = x
 
   return
-end
+end function
 
 
 
@@ -755,7 +755,7 @@ function cumnor ( arg )
   end if
 
   return
- end
+ end function
 
 function dinvnr ( p )
 
@@ -835,7 +835,7 @@ function dinvnr ( p )
   end if
 
   return
-end
+end function
 
 function stvaln ( p )
 
@@ -903,7 +903,7 @@ function stvaln ( p )
   stvaln = sgn * stvaln
 
   return
-end
+end function
 
 function eval_pol ( a, n, x )
 
@@ -948,7 +948,7 @@ function eval_pol ( a, n, x )
   eval_pol = term
 
   return
-end
+end function
 
 
 end
