@@ -1,3 +1,10 @@
+# Resubmission 2/7/2019
+
+This is a resubmission addressing Prof. Brian Ripley's comments:
+
+* Every END statement in the F90 code was ammended to explicitly state which
+  subroutine is being ended.
+
 # Resubmission
 
 This is a resubmission addressing Swetlana Herbrandt's comments:

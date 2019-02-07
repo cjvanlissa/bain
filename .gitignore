@@ -12,3 +12,5 @@ binary/
 inst/doc
 src-i386/
 src-x64/
+vignettes/*.R
+vignettes/*.html
