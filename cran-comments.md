@@ -1,6 +1,9 @@
-# Resubmission 2/7/2019
+# Resubmission 2/8/2019
 
-This is a resubmission addressing Prof. Brian Ripley's comments:
+Requesting a ‘same-version update’: As pointed out by Prof. Brian Ripley,
+https://cran.r-project.org/web/checks/check_results_bain.html fails for
+r-patched-solaris-x86. This is a resubmission addressing Prof. Brian Ripley's
+comment:
 
 * Every END statement in the F90 code was ammended to explicitly state which
   subroutine is being ended.
