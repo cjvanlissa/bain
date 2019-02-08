@@ -1,3 +1,13 @@
+# Version 0.2.1
+
+As pointed out by Prof. Brian Ripley,
+https://cran.r-project.org/web/checks/check_results_bain.html fails for
+r-patched-solaris-x86. This version addresses the reason for the compilation 
+error of the F90 source code:
+
+* Every END statement in the F90 code was ammended to explicitly state which
+  subroutine is being ended.
+
 # Resubmission 2/8/2019
 
 Requesting a ‘same-version update’: As pointed out by Prof. Brian Ripley,
