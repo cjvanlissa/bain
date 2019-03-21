@@ -259,7 +259,29 @@ t_test.formula <- function(formula, data, subset, na.action, ...)
 
 #' @method coef bain_htest
 #' @export
-coef.bain_htest <- function (object, complete = TRUE, ...)
+coef.bain_htest <- function (object, ...)
 {
   rename_estimate(object$estimate)
+}
+
+#' @method vcov bain_htest
+#' @export
+vcov.bain_htest <- function (object, ...)
+{
+  if(length(object$estimate) == 1){
+    diag(object$v/object$n)
+  } else {
+    if (!object$method == " Two Sample t_test") {
+      diag(object$v/object$n)
+    } else {
+      df <- sum(object$n) - 2
+      v <- 0
+      if (object$n[1] > 1)
+        v <- v + (object$n[1] - 1) * object$v[1]
+      if (object$n[2] > 1)
+        v <- v + (object$n[2] - 1) * object$v[2]
+      v <- v/df
+      diag(v / object$n)
+    }
+}
 }

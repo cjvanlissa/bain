@@ -7,13 +7,13 @@
 expand_parentheses(hyp)
 }
 \arguments{
-\item{hyp}{Character. A BAIN (in)equality constraint}
+\item{hyp}{Character. An (in)equality constraint}
 }
 \value{
 A character vector with one element for each simple constraint
 }
 \description{
-Takes a BAIN constraint with parentheses containing a "vector" of parameter
+Takes a constraint with parentheses containing a "vector" of parameter
 labels, and recursively expands the parenthesized "vectors".
 }
 \keyword{internal}

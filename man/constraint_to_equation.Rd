@@ -7,13 +7,13 @@
 constraint_to_equation(hyp)
 }
 \arguments{
-\item{hyp}{Character. A BAIN (in)equality constraint}
+\item{hyp}{Character. An (in)equality constraint}
 }
 \value{
 Character
 }
 \description{
-Formats a BAIN constraint as an equation that can be evaluated. Adds scalars
+Formats a constraint as an equation that can be evaluated. Adds scalars
 to all parameters in the constraint, and adds a XXXconstant parameter to any
 constants. Also adds "*" and "+" operators where necessary for evaluation.
 }

@@ -300,7 +300,7 @@ bain.default <- function(x,
 # Parse hypotheses --------------------------------------------------------
   #ren_estimate <- rename_estimate(x)
   parsed_hyp <- parse_hypothesis(names(x), hypothesis)
-  hyp_mat <- parsed_hyp$hyp_mat
+  hyp_mat <- do.call(rbind, parsed_hyp$hyp_mat)
   n_hyp <- length(parsed_hyp$original_hypothesis)
   n_constraints <- parsed_hyp$n_constraints
 

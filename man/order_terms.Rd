@@ -7,13 +7,13 @@
 order_terms(hyp)
 }
 \arguments{
-\item{hyp}{Character. A BAIN (in)equality constraint formatted as equation.}
+\item{hyp}{Character. An (in)equality constraint formatted as equation.}
 }
 \value{
 Character
 }
 \description{
-Moves all terms on the right hand side of a BAIN constraint, which has been
+Moves all terms on the right hand side of a constraint, which has been
 formatted as an equation, to the left hand side.
 }
 \keyword{internal}

@@ -34,7 +34,7 @@ parse_hypothesis <- function(varnames, hyp){
 
   legal_varnames <- sapply(hyp_params, grepl, pattern = "^[a-zA-Z\\.][a-zA-Z0-9\\._]{0,}$")
   if(!all(legal_varnames)){
-    stop("Could not parse the names of the 'estimates' supplied to bain(). Estimate names must start with a letter or period (.), and can be a combination of letters, digits, period and underscore (_).\nThe estimates violating these rules were originally named: ", paste("'", names_est[!legal_varnames], "'", sep = "", collapse = ", "), ".\nAfter parsing by bain, these parameters are named: ", paste("'", hyp_params[!legal_varnames], "'", sep = "", collapse = ", "), call. = FALSE)
+    stop("Could not parse the names of the 'estimates' supplied to parse_hypothesis(). Estimate names must start with a letter or period (.), and can be a combination of letters, digits, period and underscore (_).\nThe estimates violating these rules were originally named: ", paste("'", names_est[!legal_varnames], "'", sep = "", collapse = ", "), ".\nAfter parsing, these parameters are named: ", paste("'", hyp_params[!legal_varnames], "'", sep = "", collapse = ", "), call. = FALSE)
   }
 
   # Currently disabled: Is it a problem if there are parameters that don't occur in the hypothesis?
@@ -67,8 +67,8 @@ parse_hypothesis <- function(varnames, hyp){
   hyp_list <- lapply(hyp_list, function(x){sapply(x, order_terms)})
 
   n_constraints <- as.vector(sapply(hyp_list, function(x){c(sum(grepl("=", x)), sum(grepl("[<>]", x)))}))
-
-  hyp_mat <- do.call(rbind, lapply(1:length(hyp_list), function(i){
+  nec_vec <- as.vector(sapply(hyp_list, function(x){sum(grepl("=", x))}))
+  hyp_mat <- lapply(1:length(hyp_list), function(i){
     if(n_constraints[((i-1)*2)+1] == 0){
       ERr <- NULL
     } else {
@@ -82,15 +82,15 @@ parse_hypothesis <- function(varnames, hyp){
                       constraint_to_row, varnames = varnames))
     }
     rbind(ERr, IRr)
-  }))
+  })
 
-  list(hyp_mat = hyp_mat, n_constraints = n_constraints, original_hypothesis = original_hypothesis)
+  list(hyp_mat = hyp_mat, n_constraints = n_constraints, n_ec = nec_vec, original_hypothesis = original_hypothesis)
 }
 
-#' Create Bain (in)equality constraint matrices
+#' Create (in)equality constraint matrices
 #'
-#' Parses a character string describing a set of BAIN informative hypotheses,
-#' and returns BAIN (in)equality constraint matrices
+#' Parses a character string describing a set of informative hypotheses,
+#' and returns (in)equality constraint matrices
 #'
 #' Informative hypotheses specified as a character string by "hyp" should
 #' adhere to the following simple syntax: \itemize{ \item Competing hypotheses
@@ -113,7 +113,7 @@ parse_hypothesis <- function(varnames, hyp){
 #' @param varnames A character (vector of characters), containing names of
 #' variables used in the hypotheses.  %Object of class \code{\link{lm}}, from
 #' which the model parameters are extracted.
-#' @param hyp A character string, containing a Bain hypothesis (see Details).
+#' @param hyp A character string, containing a hypothesis (see Details).
 #' @return A pair of named matrices for every hypothesis specified in the
 #' \code{hyp} argument; one matrix named ERr, specifying equality constraints,
 #' and one matrix named IRr, specifying inequality constraints.
@@ -162,11 +162,11 @@ create_matrices <- function(varnames, hyp){
 
 #' Expand compound constraints
 #'
-#' Takes a compound BAIN constraint, with multiple (in)equality operators, and
+#' Takes a compound constraint, with multiple (in)equality operators, and
 #' expands it into simple constraints.
 #'
 #'
-#' @param hyp Character. A BAIN (in)equality constraint
+#' @param hyp Character. An (in)equality constraint
 #' @return A character vector with one element for each simple constraint
 #' @keywords internal
 expand_compound_constraints <- function(hyp){
@@ -187,11 +187,11 @@ expand_compound_constraints <- function(hyp){
 
 #' Expand parentheses
 #'
-#' Takes a BAIN constraint with parentheses containing a "vector" of parameter
+#' Takes a constraint with parentheses containing a "vector" of parameter
 #' labels, and recursively expands the parenthesized "vectors".
 #'
 #'
-#' @param hyp Character. A BAIN (in)equality constraint
+#' @param hyp Character. An (in)equality constraint
 #' @return A character vector with one element for each simple constraint
 #' @keywords internal
 expand_parentheses <- function(hyp){
@@ -217,12 +217,12 @@ expand_parentheses <- function(hyp){
 
 #' Flip inequality
 #'
-#' Takes a BAIN constraint and flips elements on both sides of any "<"
+#' Takes a constraint and flips elements on both sides of any "<"
 #' operators so that only the ">" operator is used to define inequality
 #' constraints.
 #'
 #'
-#' @param hyp Character. A BAIN (in)equality constraint
+#' @param hyp Character. An (in)equality constraint
 #' @return Character
 #' @keywords internal
 flip_inequality <- function(hyp){
@@ -240,12 +240,12 @@ flip_inequality <- function(hyp){
 
 #' Constraint to equation
 #'
-#' Formats a BAIN constraint as an equation that can be evaluated. Adds scalars
+#' Formats a constraint as an equation that can be evaluated. Adds scalars
 #' to all parameters in the constraint, and adds a XXXconstant parameter to any
 #' constants. Also adds "*" and "+" operators where necessary for evaluation.
 #'
 #'
-#' @param hyp Character. A BAIN (in)equality constraint
+#' @param hyp Character. An (in)equality constraint
 #' @return Character
 #' @keywords internal
 constraint_to_equation <- function(hyp){
@@ -297,11 +297,11 @@ constraint_to_equation <- function(hyp){
 
 #' Order terms
 #'
-#' Moves all terms on the right hand side of a BAIN constraint, which has been
+#' Moves all terms on the right hand side of a constraint, which has been
 #' formatted as an equation, to the left hand side.
 #'
 #'
-#' @param hyp Character. A BAIN (in)equality constraint formatted as equation.
+#' @param hyp Character. An (in)equality constraint formatted as equation.
 #' @return Character
 #' @keywords internal
 order_terms <- function(hyp){
@@ -317,12 +317,12 @@ order_terms <- function(hyp){
 
 #' Constraint to row
 #'
-#' Evaluate a BAIN constraint, which has been formatted as an equation, with
-#' all terms moved to the left hand side, and return a single row of a BAIN
+#' Evaluate a constraint, which has been formatted as an equation, with
+#' all terms moved to the left hand side, and return a single row of a
 #' (in)equality constraint matrix.
 #'
 #'
-#' @param hyp Character. A BAIN (in)equality constraint formatted as equation,
+#' @param hyp Character. An (in)equality constraint formatted as equation,
 #' with all terms on the left hand side.
 #' @return Numeric vector.
 #' @keywords internal

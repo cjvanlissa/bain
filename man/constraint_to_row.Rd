@@ -7,15 +7,15 @@
 constraint_to_row(varnames, hyp)
 }
 \arguments{
-\item{hyp}{Character. A BAIN (in)equality constraint formatted as equation,
+\item{hyp}{Character. An (in)equality constraint formatted as equation,
 with all terms on the left hand side.}
 }
 \value{
 Numeric vector.
 }
 \description{
-Evaluate a BAIN constraint, which has been formatted as an equation, with
-all terms moved to the left hand side, and return a single row of a BAIN
+Evaluate a constraint, which has been formatted as an equation, with
+all terms moved to the left hand side, and return a single row of a
 (in)equality constraint matrix.
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_matrices.R
 \name{create_matrices}
 \alias{create_matrices}
-\title{Create Bain (in)equality constraint matrices}
+\title{Create (in)equality constraint matrices}
 \usage{
 create_matrices(varnames, hyp)
 }
@@ -11,7 +11,7 @@ create_matrices(varnames, hyp)
 variables used in the hypotheses.  %Object of class \code{\link{lm}}, from
 which the model parameters are extracted.}
 
-\item{hyp}{A character string, containing a Bain hypothesis (see Details).}
+\item{hyp}{A character string, containing a hypothesis (see Details).}
 }
 \value{
 A pair of named matrices for every hypothesis specified in the
@@ -19,8 +19,8 @@ A pair of named matrices for every hypothesis specified in the
 and one matrix named IRr, specifying inequality constraints.
 }
 \description{
-Parses a character string describing a set of BAIN informative hypotheses,
-and returns BAIN (in)equality constraint matrices
+Parses a character string describing a set of informative hypotheses,
+and returns (in)equality constraint matrices
 }
 \details{
 Informative hypotheses specified as a character string by "hyp" should

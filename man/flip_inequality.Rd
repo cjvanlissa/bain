@@ -7,13 +7,13 @@
 flip_inequality(hyp)
 }
 \arguments{
-\item{hyp}{Character. A BAIN (in)equality constraint}
+\item{hyp}{Character. An (in)equality constraint}
 }
 \value{
 Character
 }
 \description{
-Takes a BAIN constraint and flips elements on both sides of any "<"
+Takes a constraint and flips elements on both sides of any "<"
 operators so that only the ">" operator is used to define inequality
 constraints.
 }

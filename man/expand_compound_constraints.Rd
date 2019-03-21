@@ -7,13 +7,13 @@
 expand_compound_constraints(hyp)
 }
 \arguments{
-\item{hyp}{Character. A BAIN (in)equality constraint}
+\item{hyp}{Character. An (in)equality constraint}
 }
 \value{
 A character vector with one element for each simple constraint
 }
 \description{
-Takes a compound BAIN constraint, with multiple (in)equality operators, and
+Takes a compound constraint, with multiple (in)equality operators, and
 expands it into simple constraints.
 }
 \keyword{internal}
