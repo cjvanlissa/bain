@@ -34,5 +34,6 @@ Suggests:
     MASS,
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    lavaan
 VignetteBuilder: knitr

@@ -231,6 +231,50 @@ bain.lm <-
   }
 
 
+
+#' @method bain lavaan
+#' @export
+bain.lavaan <- function(x, hypothesis, ..., standardize = TRUE) {
+
+  Ng             <- lavInspect(x, what = "ngroups")
+  N_lvls         <- lavInspect(x, what = "nlevels")
+
+  if (N_lvls> 1) {
+    # Multilevel structure in data: Gives warning since this aspect is not integrated.
+    stop(
+      paste(
+        "Lavaan object contains",
+        N_lvls ,
+        "levels. Multilevel structures are not yet integrated in Lav_in_Bain."
+      )
+    )
+  }
+
+  if (Ng <= 1) {
+    Args <- Single_group_estimates_lavaan(x,standardize)
+  }
+
+  else{
+    if (Ng > 1 & any(parametertable(x)$op == "==")) {
+      Args <-  Mult_Group_common_param_lavaan(x , standardize)
+    }
+
+    if(Ng > 1 & any(parametertable(x)$op != "==")){
+      Args <-  Mult_Group_no_common_param_lavaan(x, standardize)
+    }
+
+  }
+  Args$hypothesis <-  hypothesis
+
+  class(Args) <- "bain_estimate"
+  attr(Args, "analysisType") <- "lavaan"
+
+  do.call(bain, Args)
+
+}
+
+
+
 #' @method bain htest
 #' @export
 bain.htest <-
