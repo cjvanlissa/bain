@@ -114,9 +114,9 @@ MultiGroup_lavaan_extract <- function(x, standardize) {
       pattern = paste0("^", unique(custompara[nchar(custompara) > 0]),
                        collapse = "|^"),
       x = names(estims),
-      invert = T,
-      perl = T,
-      value = F
+      invert = TRUE,
+      perl = TRUE,
+      value = FALSE
     )
 
   ## Removing the .g lavaan uses
@@ -125,21 +125,21 @@ MultiGroup_lavaan_extract <- function(x, standardize) {
       pattern     = "\\.g[[:digit:]]$",
       x =    names(estims),
       replacement = "",
-      perl = T
+      perl = TRUE
     )
   rownames(covv)  <-
     gsub(
       pattern     = "\\.g[[:digit:]]$",
       x = rownames(covv),
       replacement = "",
-      perl = T
+      perl = TRUE
     )
   colnames(covv)  <-
     gsub(
       pattern     = "\\.g[[:digit:]]$",
       x = colnames(covv),
       replacement = "",
-      perl = T
+      perl = TRUE
     )
 
   if (any(nchar(custompara) > 0)) {
