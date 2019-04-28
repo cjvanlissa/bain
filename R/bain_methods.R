@@ -235,9 +235,8 @@ bain.lm <-
 #' @method bain lavaan
 #' @export
 bain.lavaan <- function(x, hypothesis, ..., standardize = TRUE) {
-  num_groups             <- lavInspect(x, what = "ngroups")
+  cl <- match.call()
   num_levels         <- lavInspect(x, what = "nlevels")
-
   if (num_levels > 1) {
     # Multilevel structure in data: Gives warning since this aspect is not integrated.
     stop(
@@ -249,22 +248,14 @@ bain.lavaan <- function(x, hypothesis, ..., standardize = TRUE) {
     )
   }
   #browser()
-  if(num_groups <= 1) {
-    Args <- lav_get_estimates_single_group(x, standardize)
-  } else {
-    if(!any(parametertable(x)$op == "==")){
-      Args <-  lav_get_estimates_multi_group_free(x, standardize)
-    } else {
-      Args <-  lav_get_estimates_multi_group_constraints(x, standardize)
-    }
-  }
+  Args <- lav_get_estimates(x, standardize)
   Args$hypothesis <-  hypothesis
 
-  class(Args) <- "bain_estimate"
-  attr(Args, "analysisType") <- "lavaan"
-
-  do.call(bain, Args)
-
+  Bain_res <- do.call(bain, Args)
+  Bain_res$call <- cl
+  Bain_res$model <- x
+  class(Bain_res) <- c("bain_lavaan", class(Bain_res))
+  Bain_res
 }
 
 

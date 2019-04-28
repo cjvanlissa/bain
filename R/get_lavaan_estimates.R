@@ -28,8 +28,7 @@ lav_get_vcov <- function(x, param_labels, standardize) {
 
 
 
-lav_get_estimates_single_group <- function(x, standardize) {
-  browser()
+lav_get_estimates <- function(x, standardize) {
   parameter_table <- lav_get_est(x, standardize)
   if (standardize) {
     estims <- parameter_table$est.std
@@ -38,78 +37,62 @@ lav_get_estimates_single_group <- function(x, standardize) {
   }
   names(estims) <- parameter_table$parameter_label
 
-  N          <- lavInspect(x, what = "ntotal")
   covv       <- lav_get_vcov(x, parameter_table$parameter_label, standardize)
-  covv       <- list(covv)
+  out_list <- list(x = estims,
+                   n = lavInspect(x, what = "ntotal"),
+                   Sigma = covv,
+                   group_parameters = length(estims),
+                   joint_parameters = 0
+                   )
 
-  list(
-    'n' = N,
-    'Sigma' = covv,
-    'x' = estims,
-    'group_parameters' = length(estims),
-    'joint_parameters' = 0
-  )
+# Handle multi-group ------------------------------------------------------
+  num_groups             <- lavInspect(x, what = "ngroups")
 
+  if(num_groups > 1) {
+    out_list <- lav_label_multi_group(x, out_list, parameter_table)
+    if(!any(parameter_table$op == "==")){
+      out_list <- lav_bain_multi_group_free(x, out_list)
+    } else {
+      out_list <- lav_multi_group_constraints(x, out_list)
+    }
+  }
 }
 
 
-
-lav_extract_multi_group <- function(x, standardize) {
-  #estims <- lav_get_est(x, standardize)
-  parameter_table <- lav_get_est(x, standardize)
-  if (standardize) {
-    estims <- parameter_table$est.std
-  } else {
-    estims <- parameter_table$est
-  }
-  names(estims) <- parameter_table$parameter_label
-
-  #N          <- lavInspect(x, what = "ntotal")
-  covv       <- lav_get_vcov(x, parameter_table$parameter_label, standardize)
-
-  #covv <- lav_get_vcov(x, estims, standardize)
-
+lav_label_multi_group <- function(x, out_list, parameter_table) {
   ## Repeat label suffices for number of parameters in each group
-  group_labels <- lavInspect(x, what =  "group.label")
-  n_groups <- lavInspect(x, what =  "ngroups")
-  suffix <- rep(group_labels, each = length(estims) / n_groups)
+  group_labels <- lavInspect(x, what = "group.label")
+  n_groups <- lavInspect(x, what = "ngroups")
+  suffix <- rep(group_labels, each = length(out_list$x) / n_groups)
 
   ## Boolean indexing for the user-named parameters
-  custompara <- parametertable(x)$label
+  custompara <- parameter_table$label
   custompara <- unique(custompara[custompara != ""])
-  which_custom <- names(estims) %in% custompara
+  which_custom <- names(out_list$x) %in% custompara
 
   ## Removing the .g lavaan uses
-  names(estims)  <-
-    gsub(
-      pattern     = "\\.g[[:digit:]]$",
-      x =    names(estims),
-      replacement = "",
-      perl = TRUE
-    )
+  names(out_list$x)  <-
+    gsub(pattern     = "\\.g[[:digit:]]$", x =    names(out_list$x),
+         replacement = "", perl = TRUE)
 
   if (any(which_custom)){
-    names(estims)[!which_custom]     <-
-      paste0(names(estims)[!which_custom], ".", suffix[!which_custom])
+    names(out_list$x)[!which_custom]     <-
+      paste0(names(out_list$x)[!which_custom], ".", suffix[!which_custom])
   } else{
-    names(estims) <- paste0(names(estims), ".", suffix)
+    names(out_list$x) <- paste0(names(out_list$x), ".", suffix)
   }
 
-  rownames(covv) <- colnames(covv)  <- names(estims)
-
-  list('estims' = estims, 'covv' = covv)
+  rownames(out_list$Sigma) <- colnames(out_list$Sigma)  <- names(out_list$x)
+  out_list
 }
 
 
 
-lav_get_estimates_multi_group_constraints <- function(x, standardize) {
+lav_bain_multi_group_constraints <- function(x, out_list) {
     n_by_group <- lavInspect(x, what = "nobs")
-    N <- lavInspect(x, what = "ntotal")
-
-    estims_and_cov <- lav_extract_multi_group(x, standardize)
-
+    N_total <- lavInspect(x, what = "ntotal")
+    # Warning is given when the groups size is not perfectly equal.
     if (sum(diff(n_by_group)) != 0) {
-      # Warning is given when the groups size is not perfectly equal.
       warning(
         paste0(
           "Since at least some parameter values are constrained to be equal across groups,
@@ -123,36 +106,22 @@ lav_get_estimates_multi_group_constraints <- function(x, standardize) {
     }
 
     ## Removing the duplicate parameters that are consistent across groups
-    list(
-      "x"         = estims_and_cov$estims[unique(names(estims_and_cov$estims))],
-      "Sigma"      = list(estims_and_cov$covv[unique(colnames(estims_and_cov$covv)),
-                                              unique(rownames(estims_and_cov$covv))]),
-      "n"          = N,
-      "group_parameters" = length(estims_and_cov$estims),
-      "joint_parameters" = 0
-    )
-  }
+    out_list$x <- out_list$x[unique(names(out_list$x))]
+    out_list$Sigma <- out_list$Sigma[unique(colnames(out_list$Sigma)),
+                                     unique(rownames(out_list$Sigma))]
+    out_list$group_parameters <- length(out_list$x)
+    out_list
+    }
 
-
-lav_get_estimates_multi_group_free <- function(x, standardize) {
-  estims_and_cov <- lav_extract_multi_group(x, standardize)
+lav_bain_multi_group_free <- function(x, out_list) {
   n_groups <- lavInspect(x, what = "ngroups")
   n_by_group <- lavInspect(x, what = "nobs")
-
-  pars_per_group <- length(estims_and_cov$estims) / n_groups
-
-  covvm <- lapply(1:n_groups, function(Y){
+  pars_per_group <- length(out_list$x) / n_groups
+  out_list$Sigma <- lapply(1:n_groups, function(Y){
     these_covs <- (1+(Y-1)*pars_per_group):(Y*pars_per_group)
-    estims_and_cov$covv[these_covs, these_covs]
+    out_list$Sigma[these_covs, these_covs]
   })
-
-list("x"       = estims_and_cov$estims,
-    "Sigma"      = covvm,
-    "n"         = n_by_group,
-    "group_parameters" = length(estims_and_cov$estims) / n_groups,
-    "joint_parameters" = 0)
-
+  out_list$n <- n_by_group
+  out_list$group_parameters <- pars_per_group
+  out_list
 }
-
-
-
