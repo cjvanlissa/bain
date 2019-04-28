@@ -73,43 +73,76 @@ rename_estimate <- function(estimate){
 }
 
 #' @title Get estimates from a model object
-#' @description Get estimates from a model object, the way the
-#' \code{\link{bain}} function will. This convenience function allows you to see
-#' that coefficients are properly extracted, note how their names will be parsed
-#' by bain, and inspect their values.
-#' @param x A model object for which a \code{\link{bain}} method exists.
+#' @description Get estimates from a model object.
+#' This convenience function allows you to see that coefficients are properly
+#' extracted, note how their names will be parsed, and inspect their values.
+#' @param x A model object.
 #' @param ... Parameters passed to and from other functions.
-#' @return A named numeric vector.
+#' @return An object of class 'model_estimates'
+#' @examples
+#' \dontrun{
+#' # Example 1
+#' m_tt <- t.test(iris$Sepal.Length[1:20], iris$Sepal.Length[21:40])
+#' get_estimates(m_tt)
+#' # Example 2
+#' m_lm <- lm(Sepal.Length ~., iris)
+#' get_estimates(m_lm)
+#' }
 #' @rdname get_estimates
-#' @keywords internal
+#' @export
 get_estimates <- function(x, ...){
   UseMethod("get_estimates", x)
 }
 
-#' @method get_estimates lm
-get_estimates.lm <- function(x, ...){
-  estimates <- x$coefficients
-  variable_types <- sapply(x$model, class)
 
-  # if(any(variable_types[-1] == "factor")){
-  #   names(estimates) <- gsub(paste0("(^|:)(",
-  #                                  paste(names(x$model)[-1][variable_types[-1] == "factor"], sep = "|"),
-  #                                  ")"), "\\1", names(estimates))
-  # }
-  # Restore standard interaction term notation
-  rename_estimate(estimates)
+#' @method get_estimates matrix
+#' @export
+get_estimates.matrix <- function(x, ...){
+  if(!(nrow(x) == ncol(x) & all(x^2 <= 1) & all(diag(x) == 1))){
+    stop("Attempted to get_estimates from a matrix, but the matrix does not appear to be a correlation matrix.")
+  }
+  if(is.null(rownames(x)) | is.null(colnames(x))){
+    warning("Running get_estimates on a (correlation) matrix without rownames or colnames. The names of the extracted estimates will be generated automatically.")
+    colnames(x) <- rownames(x) <- paste0("V", 1:nrow(x))
+  }
+
+  x <- as.data.frame.table(x)
+  estimate <- x$Freq
+  names(estimate) <- paste0(x$Var1, "_with_", x$Var2)
+  out <- list(estimate = estimate,
+              Sigma = NULL)
+  class(out) <- "model_estimates"
+  attr(out, "analysisType") <- "correlation"
+  out
+}
+
+
+#' @method get_estimates lm
+#' @export
+get_estimates.lm <- function(x, ...){
+  out <- list(estimate = coef(x),
+              Sigma = vcov(x))
+  class(out) <- "model_estimates"
+  attr(out, "analysisType") <- "lm"
+  out
 }
 
 #' @method get_estimates bain_htest
+#' @export
 get_estimates.bain_htest <- function(x, ...){
-  rename_estimate(x$estimate)
+  out <- list(estimate = coef(x),
+              Sigma = vcov(x))
+  class(out) <- "model_estimates"
+  attr(out, "analysisType") <- "htest"
+  out
 }
 
 
 #' @method get_estimates htest
 get_estimates.htest <- function(x, ...) {
-  stop("To be able to run bain on the results of an object returned by t_test(), you must first load the 'bain' package, and then conduct your t_test. The standard t_test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t_test is replaced by a version that does return this necessary information.")
+  stop("To be able to run get_estimates on an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by get_estimates. The 'bain' package contains a function, t_test(), which does return this necessary information.")
 }
+
 
 
 #' @title Label estimates from a model object

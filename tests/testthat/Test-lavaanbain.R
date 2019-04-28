@@ -131,3 +131,30 @@ test_that("Bain mutual", {expect_equal(lavres$fit$PMPb , z$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(lavres$BFmatrix)), as.vector(t(z$BFmatrix)))})
 
 # Only difference is in length of the posterior and prior matrices, due to many more parameters included with my method.
+
+
+# Multiple groups with constrained parameters -----------------------------
+
+# Specify a latent regression model
+model <- 'visual  =~ x1 + x2 + x3
+textual =~ x4 + x5 + x6
+speed   =~ c(a, a)*x7 + x8 + x9
+speed ~ c(pas.text, grant.text)*textual + c(pas.vis, grant.vis)*visual'
+
+# Estimate the parameters of the latent regression model with lavaan
+fit<-sem(model,data=HolzingerSwineford1939, group = "school", std.lv = TRUE)
+
+bain(fit, "pas.text > grant.text")
+
+
+
+# Specify a latent regression model
+model <- 'visual  =~ x1 + x2 + x3
+textual =~ x4 + x5 + x6
+speed   =~ c(a, a)*x7 + x8 + x9
+speed ~ c(pas.text, grant.text)*textual + c(pas.vis, grant.vis)*visual'
+
+# Estimate the parameters of the latent regression model with lavaan
+fit<-sem(model,data=HolzingerSwineford1939, group = "school", std.lv = TRUE)
+
+bain(fit, "pas.text > grant.text")

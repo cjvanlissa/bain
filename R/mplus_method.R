@@ -54,8 +54,6 @@ mplus_SG <- function(x, hypothesis, standardize ){
     names(duplicates) <- estimate$label[match(dups$id, estimate$id)]
   }
   estimate <- estimate[order(estimate$id), ]
-  #covv    <- list(covv)
-  #class(est) <- "lavaan"
 
   coefs <- estimate$est
   names(coefs) <- estimate$label
@@ -78,45 +76,13 @@ mplus_SG <- function(x, hypothesis, standardize ){
 
 
 
+#  if( standardize == T){
+#    est              <- free$est.std[free$lhs!=free$rhs] # to ignore variances
+#  }
+#  if( standardize == F){
+#    est              <- free$est[free$lhs!=free$rhs]
+#  }
 
-estis <- function(lavobject,standardize){
-  browser()
-  ## Possibility, always ignoring a specific parameter type (deemed non neccesary)
-  # ignores <- "theta"
-  free <- extracter(lavobject)
-
-  if( standardize == T){
-    #est             <- free$est.std[free$OGmatrix!=ignores& free$lhs!=free$rhs ]
-    est              <- free$est.std[free$lhs!=free$rhs] # to ignore variances
-  }
-
-  if( standardize == F){
-    # est             <- free$est[free$OGmatrix!=ignores& free$lhs!=free$rhs ]
-    est              <- free$est[free$lhs!=free$rhs]
-  }
-  ## Function lavaan uses to determine parameterlabels
-  #names(est)       <- lavaan:::getParameterLabels(partable = free[free$OGmatrix!=ignores& free$lhs!=free$rhs ,])
-  names(est)        <- lavaan:::getParameterLabels(partable = free[free$lhs!=free$rhs,])
-
-  return(est)
-}
-
-
-vcovis <- function(lavobject, standardize){
-  browser()
-  est <- estis(lavobject, standardize)
-
-  if( standardize == T){
-    covv <- lavInspect(lavobject, "vcov.std.all")
-  }
-
-  if( standardize == F){
-    covv <- lavInspect(lavobject, "vcov")
-  }
-
-  covv <- covv[names(est), names(est)]
-  return(covv)
-}
 
 
 
@@ -165,8 +131,9 @@ Multigrouper <- function(lavobject, standardize){
 
 Multishared <- function(lavobject, standardize){
   browser()
-  Ng_n           <- lavInspect(lavobject, what = "nobs"  )
-  N              <- lavInspect(lavobject, what = "ntotal")
+
+  Ng_n           <- attributes(lavobject$summaries)$Observations
+  N              <- lavobject$summaries$Observations
 
   X <- Multigrouper(lavobject, standardize)
 
