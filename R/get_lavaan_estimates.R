@@ -3,7 +3,6 @@ lav_getParameterLabels <-
   getFromNamespace("getParameterLabels", "lavaan")
 
 #' @importFrom lavaan lavInspect parametertable standardizedsolution
-
 lav_get_est <- function(x, standardize) {
   estims <- cbind(parametertable(x)[nchar(parametertable(x)$plabel) > 0, ],
                   standardizedsolution(x)[, c("est.std", "se")])

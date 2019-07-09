@@ -158,3 +158,4 @@ speed ~ c(pas.text, grant.text)*textual + c(pas.vis, grant.vis)*visual'
 fit<-sem(model,data=HolzingerSwineford1939, group = "school", std.lv = TRUE)
 
 bain(fit, "pas.text > grant.text")
+
