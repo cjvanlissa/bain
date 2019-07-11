@@ -13,9 +13,9 @@ parse_hypothesis <- function(varnames, hyp){
   # Any varnames that do not match?
   if(anyNA(match_names)){
     stop("Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' did not match any parameters in 'x': ",
-         paste(hyp_params[is.na(match_names)], collapse = ", "),
+         paste(reverse_rename_function(hyp_params[is.na(match_names)]), collapse = ", "),
          "\n  The parameters in object 'x' are named: ",
-         paste(varnames, collapse = ", "))
+         paste(reverse_rename_function(varnames), collapse = ", "))
   }
   if(any(match_names == 0)){
     stop("Some of the parameters referred to in the 'hypothesis' matched multiple parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' matched multiple parameters in 'x': ",

@@ -2,7 +2,7 @@
 # THE T-TEST
 # #===========================================================================
 
-rm(list=ls())
+
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -31,7 +31,7 @@ test_that("summary", {expect_equal(des2$ub , ubd)})
 # THE ONE-SAMPLE T-TEST
 #===========================================================================
 
-rm(list=ls())
+
 
 ttest <- t_test(sesamesim$postnumb)
 set.seed(100)
@@ -58,7 +58,7 @@ test_that("summary", {expect_equal(des2$ub , ubd)})
 # ANOVA
 #===========================================================================
 
-rm(list=ls())
+
 
 sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(postnumb~site-1,sesamesim)
@@ -92,7 +92,7 @@ test_that("summary", {expect_equal(des2$ub , ubd)})
 # ANCOVA - BUG SUMMARY BREEKT
 #===========================================================================
 
-rm(list=ls())
+
 
 sesamesim$site <- as.factor(sesamesim$site)
 sesamesim$prenumb <- sesamesim$prenumb - mean(sesamesim$prenumb)
@@ -126,7 +126,7 @@ test_that("summary", {expect_equal(des2$ub , ubd)})
 # MULTIPLE REGRESSION
 #===========================================================================
 
-rm(list=ls())
+
 
 regr <- lm(postnumb ~ age + peabody + prenumb,sesamesim)
 set.seed(100)
@@ -152,7 +152,7 @@ test_that("summary", {expect_equal(des2$ub , ubd)})
 
 # REPEATED MEASUERES WITH ONE WITHIN FACTOR ONLY
 
-rm(list=ls())
+
 within <- lm(cbind(prenumb,postnumb,funumb)~1, data=sesamesim)
 estimate <- coef(within)[1:3]
 names(estimate) <- c("pre", "post", "fu")
@@ -166,7 +166,7 @@ test_that("summary", {expect_equal(des2$n , c(240,240,240))})
 
 # REPEATED MEASURES WITH A WITHIN AND BETWEEN FACTOR
 
-rm(list=ls())
+
 sesamesim$sex <- factor(sesamesim$sex)
 bw <- lm(cbind(prenumb, postnumb, funumb)~sex-1, data=sesamesim)
 coef(bw)

@@ -4,7 +4,7 @@
 # compute c and f for an about equality constrained hypothesis with bain and with R")
 #==============================================================================================
 
-rm(list=ls())
+
 
 set.seed(124)
 x <- rnorm(20,-.3,.7)
@@ -74,7 +74,7 @@ test_that("bain default", {expect_equal(z$fit$Fit[1], mean(sampff), tolerance = 
 # compute c and f for a range constrained hypothesis where range is determined by another parameter")
 #==============================================================================================")
 
-rm(list=ls())
+
 
 #estimate of parameters
 estimate<-c(2,4)
@@ -114,7 +114,7 @@ test_that("bain default", {expect_equal(y$fit$Fit[1], countf, tolerance = .01)})
 # compute c=, f=, and f>|= for an hypothesis with 1 = and 1 > restriction with Bain and R")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate <- c(1,1)
 names(estimate)<-c("a", "b")
@@ -149,7 +149,7 @@ test_that("bain default", {expect_equal(y$fit$Com_in[1], .5, tolerance = .01)})
 # a straightforward variation of the previous test")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate <- c(0,4)
 names(estimate)<-c("a", "b")
@@ -185,7 +185,7 @@ test_that("bain default", {expect_equal(y$fit$Com_in[1], .5, tolerance = .01)})
 # and complexity for three hypotheses using Bain, R, and mentally.")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate <- c(0,0,0,0,0,0)
 names(estimate)<-c("a", "b","c", "d", "e", "f")
@@ -213,7 +213,7 @@ test_that("bain default", {expect_equal(y$fit$Com_in, c(1,.125,.015625,NA))})
 # Compute fit of 0 and complexity of 1/6 for an hypothesis that is really wrong")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate <- c(-1,0,1)
 names(estimate)<-c("a", "b","c")
@@ -231,7 +231,7 @@ test_that("bain default", {expect_equal(y$fit$Com[1], .167, tolerance = .01)})
 # the same example without redundant constraints renders similar results")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate <- c(0, 0, 0)
 names(estimate)<-c("a", "b","c")
@@ -249,7 +249,7 @@ test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .
 # used to compute the prior covariance matrix")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate <- c(.2,0)
 names(estimate)<-c("a", "b")
@@ -268,7 +268,7 @@ test_that("bain default", {expect_equal(as.vector(y$prior), c(4,0,0,8))})
 #  using an ancova to test the reconstruction of the posterior covariance matrix")
 #========================================================================================")
 
-rm(list=ls())
+
 
 # select the appropriate columns from the data file sesame.txt and center the covariates
 
@@ -296,7 +296,7 @@ test_that("bain default", {expect_equal(as.vector(y$posterior), as.vector(vcov(a
 # of the prior covariance matrix")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate<-c(0,0,0,0,0,0,0)
 names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2")
@@ -357,7 +357,7 @@ test_that("bain default", {expect_equal(invcov[5,7], invcov57)})
 # SAME AS ABOVE BUT NOW DIFFERENT N AND NONDIAGONAL COVS")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate<-c(0,0,0,0,0,0,0)
 names(estimate) <- c("a", "b", "c", "d", "e", "c1", "c2")
@@ -426,7 +426,7 @@ test_that("bain default", {expect_equal(invcov[5,7], invcov57)})
 # using stylized tests")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate<-c(0,0,0)
 names(estimate) <- c("a", "b", "c")
@@ -461,7 +461,7 @@ test_that("bain default", {expect_equal(x$fit$Com, c(0.003874745,NA),tolerance =
 # using stylized tests to check the use of scalar multiplyers and additive constants")
 #========================================================================================")
 
-rm(list=ls())
+
 
 estimate<-c(0,1,2)
 names(estimate) <- c("a", "b", "c")
@@ -494,16 +494,12 @@ test_that("bain default", {expect_equal(y$fit$Com[1], propc,tolerance = .01)})
 # same as the previous test but now constants split in two parts")
 #========================================================================================")
 
-rm(list=ls())
-
 estimate<-c(0,1,2)
 names(estimate) <- c("a", "b", "c")
 sampN <- 100
 covariance <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
-
 set.seed(199)
-y<-bain(estimate,"3*a + .5 + .5 > 2*b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
-
+y<-bain(estimate,"3a + .5 + .5 > 2b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
 a <- rnorm(100000,0,1)
 b <- rnorm(100000,1,1)
 c <- rnorm(100000,2,1)
@@ -512,9 +508,8 @@ for (i in 1:100000){
   if (3 * a[i] + 1 > 2 * b[i] & 2 * b[i] > c[i]-2) {propf <- propf + 1/100000}
 }
 test_that("bain default", {expect_equal(y$fit$Fit[1], propf,tolerance = .01)})
-
-a <- rnorm(100000,-1/3,50)
-b <- rnorm(100000,0,50)
+a <- rnorm(100000,0,50)
+b <- rnorm(100000,1,50)
 c <- rnorm(100000,2,50)
 propc <- 0
 for (i in 1:100000){

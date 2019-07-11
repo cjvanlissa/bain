@@ -4,7 +4,7 @@
 
 # THE ONE SAMPLE T-TEST WITH A T.TEST OBJECT
 
-rm(list=ls())
+
 
 x<-sesamesim$postnumb
 ttest <- t_test(x)
@@ -34,7 +34,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 
 # THE INDEPENDENT GROUPS WELCH TEST WITH A T.TEST OBJECT
 
-rm(list=ls())
+
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -68,7 +68,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 
 # THE INDEPENDENT GROUPS T-TEST WITH A T.TEST OBJECT
 
-rm(list=ls())
+
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -121,7 +121,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(zh
 
 # THE PAIRED SAMPLES T-TEST WITH A T.TEST OBJECT
 
-rm(list=ls())
+
 
 x<-sesamesim$prenumb
 y<-sesamesim$postnumb
@@ -155,7 +155,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 
 # THE EQUIVALENCE TEST WITH A T.TEST OBJECT
 
-rm(list=ls())
+
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -191,7 +191,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 
 # T.TEST VARIATIONS: T.TEST WITH AN ACTIVE ALTERNATIVE OPTION
 
-rm(list=ls())
+
 
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
@@ -219,7 +219,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(z1$BFmatrix)), as.vector(t(z2
 
 # T.TEST VARIATIONS: T.TEST WITH AN ACTIVE MU OPTION
 
-rm(list=ls())
+
 
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]

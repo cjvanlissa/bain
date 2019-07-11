@@ -4,37 +4,58 @@
 \name{sesamesim}
 \alias{sesamesim}
 \title{Simulated Sesame Street Data}
-\format{A data frame with 240 rows and 9 variables.}
+\format{A data frame with 240 rows and 21 variables.}
 \usage{
 data(sesamesim)
 }
 \description{
-A simulated data set inspired by the Sesame Street data set from:
-Stevens, J. P. (1996). Applied Multivariate Statistics for the Social
-Sciences. Mahwah NJ: Lawrence Erlbaum.
+This is a simulated counterpart of part of the Sesame Street data presented
+by Stevens (1996, Appendix A) concerning
+the effect of the first year of the Sesame street series on the knowledge of
+240 children in the age range
+34 to 69 months. We will use the following variables: sex; site of child's
+origin; setting in which Sesame Street
+is watched; age; whether or not the child is encouraged to watch; Peabody
+metal age score; score on numbers test
+before, after and in a follow up measurement; and scores on knowledge of
+body parts, letters, forms, numbers, relations,
+and classifications, both before and after watching Sesame Street for a year.
 }
 \details{
-The number knowledge of children is measured before watching Sesame Street,
-after one year, and a follow up measurement after two years.
-
-\describe{
-  \item{sex}{Sex of the child; 1 = boy, 2 = girl}
-  \item{site}{Site of the child's origin; 1 = disadvantaged inner city, 2 =
+\tabular{lll}{
+  \strong{sex} \tab \code{integer} \tab Sex of the child; 1 = boy, 2 = girl\cr
+  \strong{site} \tab \code{integer} \tab Site of the child's origin; 1 = disadvantaged inner city, 2 =
    advantaged suburban , 3 = advantaged rural,
-  4 = disadvantaged rural, 5 = disadvantaged Spanish speaking}
-  \item{setting}{Setting in which the child watches Sesame Street; 1 = at
-  home, 2 = at school}
-  \item{age}{Age of the child in months}
-  \item{viewenc}{Whether or not the child is encouraged to watch Sesame
-  Street; 0 = no, 1 = yes}
-  \item{peabody}{Peabody mental age score of the child; the higher the
-  score the higher the mental age}
-  \item{prenumn}{score on a numbers test before watching Sesame Street for
-  a year}
-  \item{postnumb}{score on a numbers test after watching Sesame Street for
-  a year}
-  \item{funumb}{follow up numbers test score measured one year after
-  postnumb}
+  4 = disadvantaged rural, 5 = disadvantaged Spanish speaking\cr
+  \strong{setting} \tab \code{integer} \tab Setting in which the child watches Sesame Street; 1 = at
+  home, 2 = at school\cr
+  \strong{age} \tab \code{integer} \tab Age of the child in months\cr
+  \strong{viewenc} \tab \code{integer} \tab Whether or not the child is encouraged to watch Sesame
+  Street; 0 = no, 1 = yes\cr
+  \strong{peabody} \tab \code{integer} \tab Peabody mental age score of the child; the higher the
+  score the higher the mental age\cr
+  \strong{prenumb} \tab \code{integer} \tab score on a numbers test before watching Sesame Street for
+  a year\cr
+  \strong{postnumb} \tab \code{integer} \tab score on a numbers test after watching Sesame Street for
+  a year\cr
+  \strong{funumb} \tab \code{integer} \tab follow up numbers test score measured one year after
+  postnumb\cr
+  \strong{Bb} \tab \code{integer} \tab Knowledge of body parts before\cr
+  \strong{Bl} \tab \code{integer} \tab Knowledge of letters before\cr
+  \strong{Bf} \tab \code{integer} \tab Knowledge of forms before\cr
+  \strong{Bn} \tab \code{integer} \tab Knowledge of numbers before\cr
+  \strong{Br} \tab \code{integer} \tab Knowledge of relations before\cr
+  \strong{Bc} \tab \code{integer} \tab Knowledge of classifications before\cr
+  \strong{Ab} \tab \code{integer} \tab Knowledge of body parts after\cr
+  \strong{Al} \tab \code{integer} \tab Knowledge of letters after\cr
+  \strong{Af} \tab \code{integer} \tab Knowledge of forms after\cr
+  \strong{An} \tab \code{integer} \tab Knowledge of numbers after\cr
+  \strong{Ar} \tab \code{integer} \tab Knowledge of relations after\cr
+  \strong{Ac} \tab \code{integer} \tab Knowledge of classifications after
 }
+}
+\references{
+Stevens, J. (1996). Applied Multivariate Statistics for the
+Social Sciences. Mahwah NJ: Lawrence Erlbaum.
 }
 \keyword{datasets}

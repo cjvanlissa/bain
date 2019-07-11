@@ -1,4 +1,5 @@
-rm(list=ls())
 library(testthat)
 library(bain)
+library(lavaan)
+data(sesamesim)
 test_check("bain")

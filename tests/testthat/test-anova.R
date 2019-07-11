@@ -2,7 +2,7 @@
 
 # ANOVA VIA LM OBJECT
 
-rm(list=ls())
+
 
 sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(sesamesim$postnumb~sesamesim$site-1)
@@ -63,9 +63,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 
 # ANOVA VIA LM OBJECT "MORE CONSTRAINTS THAN PARAMETERS"
 
-rm(list=ls())
-library(bain)
-library(testthat)
 
 sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(sesamesim$postnumb~sesamesim$site-1)
