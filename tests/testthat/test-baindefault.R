@@ -494,16 +494,12 @@ test_that("bain default", {expect_equal(y$fit$Com[1], propc,tolerance = .01)})
 # same as the previous test but now constants split in two parts")
 #========================================================================================")
 
-
-
 estimate<-c(0,1,2)
 names(estimate) <- c("a", "b", "c")
 sampN <- 100
 covariance <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
-
 set.seed(199)
-y<-bain(estimate,"3*a + .5 + .5 > 2*b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
-
+y<-bain(estimate,"3a + .5 + .5 > 2b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
 a <- rnorm(100000,0,1)
 b <- rnorm(100000,1,1)
 c <- rnorm(100000,2,1)
@@ -512,14 +508,14 @@ for (i in 1:100000){
   if (3 * a[i] + 1 > 2 * b[i] & 2 * b[i] > c[i]-2) {propf <- propf + 1/100000}
 }
 test_that("bain default", {expect_equal(y$fit$Fit[1], propf,tolerance = .01)})
-
-b <- rnorm(100000,0,50)
+a <- rnorm(100000,0,50)
+b <- rnorm(100000,1,50)
 c <- rnorm(100000,2,50)
 propc <- 0
 for (i in 1:100000){
   if (3 * a[i] + 1 > 2 * b[i] & 2 * b[i] > c[i]-2) {propc <- propc + 1/100000}
 }
-#test_that("bain default", {expect_equal(y$fit$Com[1], propc,tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Com[1], propc,tolerance = .01)})
 
 #===========================================
 # END OF TESTS

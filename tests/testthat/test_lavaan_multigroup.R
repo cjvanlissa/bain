@@ -1,10 +1,14 @@
+data(sesamesim)
+sesameCFA <- sesamesim
+names(sesameCFA)[6] <- "pea"
+df <- sesameCFA
 model3 <- '
     A  =~ Ab + Al + Af + An + Ar + Ac
     B =~ Bb + Bl + Bf + Bn + Br + Bc
 
     A ~ B + age + pea
 '
-df <- sesameCFA
+
 df$sex <- factor(df$sex, labels = c("boy", "girl"))
 # fit a multiple group latent regression model
 fit3 <- sem(model3, data = df, std.lv = TRUE, group = "sex")

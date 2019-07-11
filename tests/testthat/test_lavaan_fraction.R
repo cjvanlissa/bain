@@ -1,3 +1,7 @@
+data(sesamesim)
+sesameCFA <- sesamesim
+names(sesameCFA)[6] <- "pea"
+
 model2 <- '
     A  =~ Ab + Al + Af + An + Ar + Ac
     B =~ Bb + Bl + Bf + Bn + Br + Bc
