@@ -1,7 +1,4 @@
-rm(list=ls())
-
 # ANCOVA VIA LM OBJECT
-
 sesamesim$site <- as.factor(sesamesim$site)
 ancov <- lm(postnumb ~ site + prenumb + peabody -1, data = sesamesim)
 
@@ -65,7 +62,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 
 # TESTING ANCOVA WITH RESTRICTIONS ON THE COVARIATES
 
-rm(list=ls())
+
 
 sesamesim$sex <- as.factor(sesamesim$sex)
 ancov <- lm(postnumb ~ sex + prenumb + peabody -1, data = sesamesim)
@@ -109,7 +106,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 
 # TESTING ANCOVA WITH LM OBJECT WITH INTERCEPTS UNEQUAL TO ZERO AND TWO COVARIATES
 
-rm(list=ls())
+
 df <- sesamesim
 df$site <- as.factor(df$site)
 model <- lm(postnumb~site+prenumb+peabody-1, df)
@@ -176,7 +173,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 
 # TESTING ANCOVA WITH LM OBJECT WITH INTERCEPTS UNEQUAL TO ZERO AND ONE COVARIATE
 
-rm(list=ls())
+
 
 sesamesim$site <- as.factor(sesamesim$site)
 ancov <- lm(postnumb ~ site + prenumb -1, data = sesamesim)
@@ -239,7 +236,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 
 # testing that the order of input of group and covariates does not matter
 
-rm(list=ls())
+
 sesamesim$site <- as.factor(sesamesim$site)
 ancov <- lm(postnumb ~ site + prenumb + peabody -1, data = sesamesim)
 set.seed(100)

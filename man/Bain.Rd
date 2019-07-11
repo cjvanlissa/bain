@@ -4,7 +4,7 @@
 \alias{bain}
 \title{Bayes factors for informative hypotheses}
 \usage{
-bain(x, hypothesis, ...)
+bain(x, hypothesis, fraction = 1, ...)
 }
 \arguments{
 \item{x}{An R object containing the outcome of a statistical analysis.
@@ -14,6 +14,11 @@ elaborations.}
 
 \item{hypothesis}{A character string containing the informative hypotheses
 to evaluate. See the vignette for elaborations.}
+
+\item{fraction}{An atomic numeric vector, indicating what fraction of the
+information in the data to use to specify the prior. Default is 1, which
+corresponds to 1/b_g (see doi: 10.1037/met0000201). Generally, the fraction
+is implemented as \code{fraction}/b_g.}
 
 \item{...}{Additional arguments. See the vignette for elaborations.}
 }

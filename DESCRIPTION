@@ -30,10 +30,11 @@ RoxygenNote: 6.1.1
 Depends:
     R (>= 3.0.0),
     stats
+Imports:
+    lavaan    
 Suggests:
     MASS,
     testthat,
     knitr,
-    rmarkdown,
-    lavaan
+    rmarkdown
 VignetteBuilder: knitr

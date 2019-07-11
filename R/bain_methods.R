@@ -17,8 +17,11 @@
 #' elaborations.
 #' @param hypothesis	A character string containing the informative hypotheses
 #' to evaluate. See the vignette for elaborations.
+#' @param fraction An atomic numeric vector, indicating what fraction of the
+#' information in the data to use to specify the prior. Default is 1, which
+#' corresponds to 1/b_g (see doi: 10.1037/met0000201). Generally, the fraction
+#' is implemented as \code{fraction}/b_g.
 #' @param ... Additional arguments. See the vignette for elaborations.
-#'
 #'
 #' @return The main output resulting from analyses with \code{bain} are
 #' Bayes factors and posterior model probabilities associated with the
@@ -92,7 +95,7 @@
 #' @importFrom stats as.formula coef complete.cases cov lm model.frame
 #' model.matrix pt qt sd setNames summary.lm var vcov
 #'
-bain <- function(x, hypothesis, ...) {
+bain <- function(x, hypothesis, fraction = 1, ...) {
   UseMethod("bain", x)
 }
 
@@ -102,6 +105,7 @@ bain <- function(x, hypothesis, ...) {
 bain.lm <-
   function(x,
            hypothesis,
+           fraction = 1,
            ...,
            standardize = FALSE) {
 
@@ -182,15 +186,15 @@ bain.lm <-
 
              if(anyNA(coef_in_hyp)){
                stop("Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' did not match any parameters in 'x': ",
-                    paste(hyp_params[is.na(coef_in_hyp)], collapse = ", "),
+                    paste(reverse_rename_function(hyp_params[is.na(coef_in_hyp)]), collapse = ", "),
                     "\n  The parameters in object 'x' are named: ",
-                    paste(names(x$coefficients), collapse = ", "))
+                    paste(reverse_rename_function(names(x$coefficients)), collapse = ", "))
              }
              if(any(coef_in_hyp == 0)){
                stop("Some of the parameters referred to in the 'hypothesis' matched multiple parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' matched multiple parameters in 'x': ",
-                    paste(hyp_params[coef_in_hyp == 0], collapse = ", "),
+                    paste(reverse_rename_function(hyp_params[coef_in_hyp == 0]), collapse = ", "),
                     "\n  The parameters in object 'x' are named: ",
-                    paste(names(x$coefficients), collapse = ", "))
+                    paste(reverse_rename_function(names(x$coefficients)), collapse = ", "))
              }
 
              if (!standardize) {
@@ -234,9 +238,14 @@ bain.lm <-
 
 #' @method bain lavaan
 #' @export
-bain.lavaan <- function(x, hypothesis, ..., standardize = TRUE) {
+bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = TRUE) {
   cl <- match.call()
+  Args <- as.list(cl[-1])
+
   num_levels         <- lavInspect(x, what = "nlevels")
+  if(grepl("~~", hypothesis)){
+    stop("Bain cannot yet handle hypotheses about (co)variance parameters in lavaan models.")
+  }
   if (num_levels > 1) {
     # Multilevel structure in data: Gives warning since this aspect is not integrated.
     stop(
@@ -247,14 +256,17 @@ bain.lavaan <- function(x, hypothesis, ..., standardize = TRUE) {
       )
     )
   }
-  #browser()
-  Args <- lav_get_estimates(x, standardize)
+
+  Args[c("x", "n", "Sigma", "group_parameters", "joint_parameters")] <- lav_get_estimates(x, standardize)
   Args$hypothesis <-  hypothesis
 
   Bain_res <- do.call(bain, Args)
   Bain_res$call <- cl
   Bain_res$model <- x
   class(Bain_res) <- c("bain_lavaan", class(Bain_res))
+
+  Bain_res$hypotheses <- reverse_rename_function(Bain_res$hypotheses)
+  names(Bain_res$estimates) <- reverse_rename_function(names(Bain_res$estimates))
   Bain_res
 }
 
@@ -265,6 +277,7 @@ bain.lavaan <- function(x, hypothesis, ..., standardize = TRUE) {
 bain.htest <-
   function(x,
            hypothesis,
+           fraction = 1,
            ...) {
     stop("The standard t.test() function from the 'stats' package does not return variance and sample size, which are required to run bain. Please use the function t_test() from the 'bain' package instead. It accepts the same arguments.")
 }
@@ -274,6 +287,7 @@ bain.htest <-
 bain.bain_htest <-
   function(x,
            hypothesis,
+           fraction = 1,
            ...) {
       cl <- match.call()
       Args <- as.list(cl[-1])
@@ -313,6 +327,7 @@ bain.bain_htest <-
 #' @export
 bain.default <- function(x,
                          hypothesis,
+                         fraction = 1,
                          ...,
                          n,
                          Sigma,
@@ -357,7 +372,7 @@ bain.default <- function(x,
       stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
     }
 
-    b <- rank_hyp / n
+    b <- rank_hyp / (n / fraction)
     thetacovpost <- Sigma
     thetacovprior <- thetacovpost / b
   }
@@ -392,8 +407,8 @@ bain.default <- function(x,
     b <- rep(0, n_Sigma)
     prior_cov <- vector("list", length = n_Sigma)
     for (p in 1:n_Sigma) {
-      b[p] <- 1 / n_Sigma * rank_hyp / n[p]
-      prior_cov[[p]] <- Sigma[[p]] / b[p]
+      b[p] <- 1 / n_Sigma * rank_hyp / (n[p] / fraction)
+      prior_cov[[p]] <- Sigma[[p]] / (b[p])
     }
 
     inv_prior <- lapply(prior_cov, solve)
@@ -402,7 +417,6 @@ bain.default <- function(x,
     thetacovprior <- covmatrixfun(inv_prior, group_parameters, joint_parameters, n_Sigma)
     thetacovpost <- covmatrixfun(inv_post, group_parameters, joint_parameters, n_Sigma)
   }
-
 
 # Check legality of constraints -------------------------------------------
 
@@ -641,13 +655,16 @@ bain.default <- function(x,
     BFmatrix = BFmatrix,
     b = b,
     prior = thetacovprior,
-    posterior = thetacovpost,
+    posterior = as.matrix(thetacovpost),
     call = cl,
     model = x,
     hypotheses = gsub("___X___", ":", parsed_hyp$original_hypothesis),
     independent_restrictions = rank_hyp,
     estimates = x,
-    n = n
+    n = as.vector(n),
+    Sigma = Sigma,
+    group_parameters = group_parameters,
+    joint_parameters = joint_parameters
   )
   class(Bainres) <- "bain"
   Bainres

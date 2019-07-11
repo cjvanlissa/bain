@@ -29,9 +29,26 @@ rename_function <- function(text){
     })
   }
 
+  text <- gsub(":", "___text___", text)
+  text <- gsub("\\|", "___thres___", text)
+  text <- gsub("=~", "___by___", text)
+  text <- gsub("~~", "___w___", text)
+  text <- gsub("~1", "___int___", text)
+  text <- gsub("~", "___on___", text)
+
   text
 }
 
+
+reverse_rename_function <- function(x){
+  x <- gsub("___X___", ":", x)
+  x <- gsub("___thres___", "\\|", x)
+  x <- gsub("___by___", "=~", x)
+  x <- gsub("___w___", "~~", x)
+  x <- gsub("___int___", "~1", x)
+  x <- gsub("___on___", "~", x)
+  x
+}
 
 
 #' @importFrom utils tail

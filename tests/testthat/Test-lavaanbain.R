@@ -1,8 +1,4 @@
 # TESTING
-library(bain)
-library(testthat)
-library(lavaan)
-
 
 # Latent Regression
 

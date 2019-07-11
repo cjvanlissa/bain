@@ -1,4 +1,4 @@
-rm(list=ls())
+
 
 regr <- lm(postnumb ~ prenumb + funumb + peabody, sesamesim)
 regr$call$formula
@@ -49,7 +49,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(y2$
 
 # STANDARDIZED REGRESSION USING AN LM OBJECT
 
-rm(list=ls())
+
 regr <- lm(postnumb ~ prenumb + funumb + peabody, sesamesim)
 set.seed(100)
 sz<-bain(regr,"pre=fu=pea;pea > fu > pre; pre>fu>pea", standardize = TRUE)
@@ -81,7 +81,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(sy$BFmatrix)), as.vector(t(sz
 
 # REGRESSION WITH THE INTERCEPT INCLUDED IN THE RESTRICTIONS
 
-rm(list=ls())
+
 
 regr <- lm(postnumb ~ prenumb + peabody, sesamesim)
 coef(regr)
@@ -111,7 +111,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(sy$BFmatrix)), as.vector(t(sz
 
 
 # REGRESSION WITH RESTRICTION ON INTERACTION EFFECT
-rm(list=ls())
+
 
 samp <- dim(sesamesim)[1]
 regr <- lm(postnumb ~ prenumb * peabody, sesamesim)

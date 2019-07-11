@@ -4,12 +4,12 @@ lav_getParameterLabels <-
 
 #' @importFrom lavaan lavInspect parametertable standardizedsolution
 lav_get_est <- function(x, standardize) {
-  estims <- cbind(parametertable(x)[nchar(parametertable(x)$plabel) > 0, ],
-                  standardizedsolution(x)[, c("est.std", "se")])
-
+  estims <- cbind(parametertable(x),
+                  standardizedsolution(x))
+  #standardizedsolution(x)[, c("est.std", "se")]
   ## Only the free parameters or parameters explicitly defined by user.
-  estims <- estims[estims$free > 0, ]
-  variance_parameters <- estims$lhs == estims$rhs
+  estims <- estims[estims$free > 0 & nchar(estims$plabel) > 0, ]
+  variance_parameters <- estims$lhs == estims$rhs & estims$op == "~~"
   estims <- estims[!variance_parameters, ]
   estims$parameter_label <- lav_getParameterLabels(partable = estims)
   estims
@@ -22,13 +22,17 @@ lav_get_vcov <- function(x, param_labels, standardize) {
   } else {
     covv <- lavInspect(x, "vcov")
   }
-  covv[param_labels, param_labels]
+  list(covv[param_labels, param_labels])
 }
 
 
 
 lav_get_estimates <- function(x, standardize) {
+
   parameter_table <- lav_get_est(x, standardize)
+  # Drop coefficients we cannot handle
+  #parameter_table <- parameter_table[!parameter_table$op %in% c("~~", ":="), ]
+  parameter_table <- parameter_table[parameter_table$op %in% c("=~", "~", "~1"), ]
   if (standardize) {
     estims <- parameter_table$est.std
   } else {
@@ -52,9 +56,18 @@ lav_get_estimates <- function(x, standardize) {
     if(!any(parameter_table$op == "==")){
       out_list <- lav_bain_multi_group_free(x, out_list)
     } else {
-      out_list <- lav_multi_group_constraints(x, out_list)
+      out_list <- lav_bain_multi_group_constraints(x, out_list)
     }
-  }
+  }# else {
+  #  colnames(out_list$Sigma[[1]]) <- rownames(out_list$Sigma) <- rename_function(colnames(out_list$Sigma))
+  #}
+  names(out_list$x) <- rename_function(names(out_list$x))
+
+  out_list$Sigma <- lapply(out_list$Sigma, function(x){
+    colnames(x) <- rownames(x) <- rename_function(colnames(x))
+    x
+  })
+  out_list
 }
 
 
@@ -80,8 +93,11 @@ lav_label_multi_group <- function(x, out_list, parameter_table) {
   } else{
     names(out_list$x) <- paste0(names(out_list$x), ".", suffix)
   }
+  out_list$Sigma <- lapply(out_list$Sigma, function(x){
+    rownames(x) <- colnames(x)  <- names(out_list$x)
+    x
+  })
 
-  rownames(out_list$Sigma) <- colnames(out_list$Sigma)  <- names(out_list$x)
   out_list
 }
 
@@ -118,7 +134,7 @@ lav_bain_multi_group_free <- function(x, out_list) {
   pars_per_group <- length(out_list$x) / n_groups
   out_list$Sigma <- lapply(1:n_groups, function(Y){
     these_covs <- (1+(Y-1)*pars_per_group):(Y*pars_per_group)
-    out_list$Sigma[these_covs, these_covs]
+    out_list$Sigma[[1]][these_covs, these_covs]
   })
   out_list$n <- n_by_group
   out_list$group_parameters <- pars_per_group
