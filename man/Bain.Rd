@@ -9,16 +9,17 @@ bain(x, hypothesis, fraction = 1, ...)
 \arguments{
 \item{x}{An R object containing the outcome of a statistical analysis.
 Currently, the following objects can be processed: \code{lm()},
-\code{t_test()}, and named vector objects. See the vignette for
-elaborations.}
+\code{t_test()}, \code{lavaan} objects created with the
+\code{sem()}, \code{cfa()}, and \code{growth()} functions, and named
+vector objects. See the vignette for elaborations.}
 
 \item{hypothesis}{A character string containing the informative hypotheses
 to evaluate. See the vignette for elaborations.}
 
-\item{fraction}{An atomic numeric vector, indicating what fraction of the
-information in the data to use to specify the prior. Default is 1, which
-corresponds to 1/b_g (see doi: 10.1037/met0000201). Generally, the fraction
-is implemented as \code{fraction}/b_g.}
+\item{fraction}{A number representing the fraction of information
+in the data used to construct the prior distribution
+(see the tutorial doi: 10.1037/met0000201): The default value 1 denotes the
+minimal fraction, 2 denotes twice the minimal fraction, etc.}
 
 \item{...}{Additional arguments. See the vignette for elaborations.}
 }

@@ -13,14 +13,15 @@
 #'
 #' @param x An R object containing the outcome of a statistical analysis.
 #' Currently, the following objects can be processed: \code{lm()},
-#' \code{t_test()}, and named vector objects. See the vignette for
-#' elaborations.
+#' \code{t_test()}, \code{lavaan} objects created with the
+#' \code{sem()}, \code{cfa()}, and \code{growth()} functions, and named
+#' vector objects. See the vignette for elaborations.
 #' @param hypothesis	A character string containing the informative hypotheses
 #' to evaluate. See the vignette for elaborations.
-#' @param fraction An atomic numeric vector, indicating what fraction of the
-#' information in the data to use to specify the prior. Default is 1, which
-#' corresponds to 1/b_g (see doi: 10.1037/met0000201). Generally, the fraction
-#' is implemented as \code{fraction}/b_g.
+#' @param fraction A number representing the fraction of information
+#' in the data used to construct the prior distribution
+#' (see the tutorial doi: 10.1037/met0000201): The default value 1 denotes the
+#' minimal fraction, 2 denotes twice the minimal fraction, etc.
 #' @param ... Additional arguments. See the vignette for elaborations.
 #'
 #' @return The main output resulting from analyses with \code{bain} are
@@ -350,9 +351,11 @@ bain.default <- function(x,
 
 
 # Check legal input -------------------------------------------------------
-  if(group_parameters > 1 & joint_parameters > 0){
-    stop("Bain can not yet evaluate hypotheses where group_parameters is larger than 1 and joint_parameters is larger than 0.")
-  }
+# CASPAR THE CHECK BELOW IS NO LONGER NECESSARY. ALL WORKS FINE
+#    if(group_parameters > 1 & joint_parameters > 0){
+#    stop("Bain can not yet evaluate hypotheses where group_parameters is larger than 1 and joint_parameters is larger than 0.")
+#  }
+
   rank_hyp <- qr(hyp_mat)$rank
 
   ##for unit group
@@ -368,8 +371,9 @@ bain.default <- function(x,
       stop("The rank of covariance matrix 'Sigma' did not match the number of estimates in 'x'.")
     }
     if (checkcov(Sigma) == 1) {
-      # CJ: Please give a more informative error here
-      stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
+      # CJ: Please give a more informative error here DONE-HH
+      stop("Your covariance matrix is not positive definite, that is, it cannot exist
+and therefore contains errors")
     }
 
     b <- rank_hyp / (n / fraction)
@@ -457,12 +461,18 @@ bain.default <- function(x,
   #Hypotheses are not comparable.
   if (error == 1) {
     stop(
-      "BaIn is not suited for the evaluation of one or more of the hypotheses,\n because the adjusted prior mean cannot be determined from R theta = r."
+      "Your hypotheses are not compatible, that is, they cannot be jointly
+evaluated, OR, one of your hypotheses is impossible. See the vignette
+      for an explanation of compatibility and possibility.
+      "
     )
   }
   if (error == 2) {
     stop(
-      "The informative hypotheses under evaluation are not comparable,\n and/or BaIn is not suited for the evaluation of one or more of the hypotheses,\n because the adjusted prior mean cannot be determined from R theta = r."
+      "Your hypotheses are not compatible, that is, they cannot be jointly
+evaluated, OR, one of your hypotheses is impossible. See the vignette
+      for an explanation of compatibility and possibility.
+      "
     )
   }
 

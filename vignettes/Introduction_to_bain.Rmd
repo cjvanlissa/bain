@@ -1,6 +1,6 @@
 ---
 title: "Introduction to bain"
-author: "Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Xin Gu"
+author: "Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Camiel van Zundert, Xin Gu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -24,7 +24,7 @@ inequality constraints among (linear combinations of) parameters in a wide
 range of statistical models. 
 
 A tutorial is provided by Hoijtink, Mulder,
-van Lissa, and Gu (2018) retrievable from the Psychological Methods website at
+van Lissa, and Gu (2019) retrievable from the Psychological Methods website at
 https://www.apa.org/pubs/journals/met/ or the bain website at
 https://informative-hypotheses.sites.uu.nl/software/bain/ 
 
@@ -41,40 +41,50 @@ Bayes factors: A general method for testing informative hypotheses.
 British Journal of Mathematical and Statistical Psychology, 71,
 229-261. DOI: 10.1111/bmsp.12110
 
-Gu, X., Hoijtink, H., Mulder, J., and Rosseel, Y. (unpublished). Bain: A
+Gu, X., Hoijtink, H., Mulder, J., and Rosseel, Y. (2019). Bain: A
 program for Bayesian testing of order constrained hypotheses in structural
-equation models.
+equation models. Journal of Statistical Computation
+and Simulation. https://doi.org/10.1080/00949655.2019.1590574
 
-Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2018). A tutorial on
+Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019). A tutorial on
 testing hypotheses using the Bayes factor. Psychological Methods.
 DOI: 10.1037/met0000201
 
-Hoijtink, H., Gu, X., and Mulder, J. (2018). Bayesian evaluation of
+Hoijtink, H., Gu, X., and Mulder, J. (2019). Bayesian evaluation of
 informative hypotheses for multiple populations. British Journal of
-Mathematical and Statistical Psychology. DOI: 10.1111/bmsp.12145
+Mathematical and Statistical Psychology, 72, 219-243. DOI: 10.1111/bmsp.12145
 
-Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (2018). Computing Bayes
-Factors from Data with Missing Values. Psychological Methods.
-DOI: 10.1037/met0000187
+Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (2019). Computing Bayes
+Factors from Data with Missing Values. Psychological Methods,
+24, 253-268. DOI: 10.1037/met0000187
+
+Van Lissa, C.J., Gu, X., Mulder, J., Rosseel, Y.,
+van Zundert, C, and Hoijtink, H. (2019). Teacher's 
+corner: Evaluating informative hypotheses using the
+Bayes factor in structural equation models. DOI: PsyArchiv
 
 ## Usage
 
-`bain(x, hypothesis, ...)`
+`bain(x, hypothesis, fraction = 1, ...)`
 
 ## Arguments
 
 `x`
 An R object containing the outcome of a statistical analysis. Currently, the following objects can be processed:
 
-1) `t_test()` objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test, equivalence test).
+1) `t_test()` objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test, equivalence test). Note that, `t_test` can be used in the same way as `t.test`.
 2) `lm()` objects (anova, ancova, multiple regression). **In the Examples section it is elaborated which calls to lm can be processed by bain (other calls cannot be processed).**
-3) A named vector containing the estimates resulting from a statistical analysis. Note that, named means that each estimate has to be nameled such that it can be referred to in hypotheses.
+3) `lavaan` objects generated with the `sem()`, `cfa()`, and
+`growth` functions.
+4) A named vector containing the estimates resulting from a statistical analysis. Note that, named means that each estimate has to be nameled such that it can be referred to in hypotheses.
 
 `hypothesis` A character string containing the informative hypotheses to evaluate (see Details).
 
+`fraction = 1` A number representing the fraction of information in the data used to construct the prior distribution (see Hoijtink, Mulder, van Lissa, and Gu, 2019): The default value 1 denotes the minimal fraction, 2 denotes twice the minimal fraction, etc. 
+
 `...`	Additional arguments (see below).
 
-## Using `bain` with an `lm` or `t_test` object 
+## Using `bain` with a `lm` or `t_test` object 
 
 The following steps need to be executed:
 
@@ -88,19 +98,70 @@ are cases with missing values in the variables used.
 (Unique abbreviations of) the names will be used to specify `hypotheses`.
 3) `set.seed(seed)`. Set `seed` equal to an integer
 number to create a repeatable random number sequence.
-4) `results <- bain(x,hypotheses)` or `results <-
-bain(x,hypotheses,standardize = TRUE)`. The first call to `bain` is used
+4) `results <- bain(x,hypotheses,fraction = 1)` or `results <-
+bain(x,hypotheses,fraction = 1,standardize = FALSE)`. The first call to 
+`bain` is used
 in case of `lm` implementations of anova, ancova, and `t_test`. The
 second call to `bain` is used in case of `lm` implementations of
 multiple regression. With `standardize = TRUE` hypotheses with respect
 to standardized regression coefficients are evaluated. With `standarize
 = FALSE` hypotheses with respect to unstandardized regression coefficients
 are evaluated.
-5) `print(results)` Print the results of an analysis wity
+5) `print(results)` Print the results of an analysis with
 `bain`.
 6) `summary(results, ci=0.95)` Present descriptives for the
 parameters used to specify `hypotheses`. `ci` can be used to specify
 the confidence level of the credibility intervals.
+
+
+
+
+
+
+
+
+## Using `bain` with a `lavaan` object 
+
+The following steps need to be executed:
+
+1) `x <- sem()` or `x <- cfa()` or `x <- growth()`. 
+Execute an analysis with the sem, cfa, or growth functions
+implemented in `lavaan`. Note that, by default, 
+`lavaan` will apply list-wise deletion if there are cases with
+missing values in the variables used. However, other options are
+available.
+2) Specify a model using the `model <- ...` command.
+3) Display the estimates and their names using the command `coef(x)`. 
+Only parameters who's names contain `~` (regression coefficients),
+`~1` (intercepts), or `=~` (factor loadings) can be used in the 
+specification of hypotheses. (Unique abbreviations of) the names 
+can be used to specify `hypotheses`. For multiple group analyses
+the names have to end with a group label `.grp`. Group labels
+can be assigned using commands like
+`sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))`.
+4) `set.seed(seed)`. Set `seed` equal to an integer
+number to create a repeatable random number sequence.
+5) `results <- bain(x,hypotheses,fraction = 1,standardize = TRUE)`.
+With `standardize = TRUE` hypotheses with respect
+to standardized regression coefficients are evaluated. With `standarize
+= FALSE` hypotheses with respect to unstandardized regression coefficients
+are evaluated.
+6) `print(results)` Print the results of an analysis with
+`bain`.
+7) `summary(results, ci=0.95)` Present descriptives for the
+parameters used to specify `hypotheses`. `ci` can be used to specify
+the confidence level of the credibility intervals.
+
+
+
+
+
+
+
+
+
+
+
 
 ## Using `bain` with a named vector 
 
@@ -138,19 +199,22 @@ c) per group the sample size.
 using `names(estimates)<-names`. Note that, `names` is a
 character vector containing new names for the estimates in `estimates`.
 Each name has to start with a letter, and may consist of "letters",
-"numbers", ".", and "_". These names are used to specify `hypotheses`
+"numbers", "`.`", "`_`", "`:`", "`~`", "`=~`", and "`~1`". 
+These names are 
+used to specify `hypotheses`
 (see below). An example is `names <- c("a", "b", "c")`.
 3) `set.seed(seed)`. Set `seed` equal to an integer
 number to create a repeatable random number sequence.
 4) `results <- bain(estimates, hypotheses, n=., Sigma=.,
-group_parameters = 2, joint_parameters = 0)` executes `bain` with the
-followiong arguments:
+group_parameters = 2, joint_parameters = 0, fraction = 1)` 
+executes `bain` with the
+following arguments:
 
 a) `estimates` A named vector with parameter estimates.
 b) `hypotheses` A character string containing the informative
 hypotheses to evaluate (the specification is elaborated below).
 c) `n` A vector containing the sample size of each group in the
-analysis. See, Hoijtink, Gu, and Mulder (2018), for an elaboration of the
+analysis. See, Hoijtink, Gu, and Mulder (2019), for an elaboration of the
 difference between one and multiple group analyses. A multiple group
 analysis is required when group specific parameters are used to formulate
 `hypotheses`. Examples are the Student's and Welch's t-test, ANOVA, and
@@ -159,7 +223,7 @@ multiple group analyses when a named vector is input for `bain`.
 d) `Sigma` A list of covariance matrices. In case of one group
 analyses the list contains one covariance matrix. In case of multiple group
 analyses the list contains one covariance matrix for each group. See the
-Examples section and Hoijtink, Gu, and Mulder (2018) for further instructions.
+Examples section and Hoijtink, Gu, and Mulder (2019) for further instructions.
 e) `group_parameters` The number of group specific parameters.  In,
 for example, an ANOVA with three groups, `estimates` will contain three
 sample means, `group_parameters = 1` because each group is characterized
@@ -181,6 +245,10 @@ f) `joint_parameters` In case of one group `joint_parameters =
 0`. In case of two or more groups, the number of parameters in
 `estimates` shared by the groups. In, for example, an ANCOVA, the number
 of `joint_parameters` equals the number of covariates.
+g) `fraction = 1` A number representing the fraction of information in the 
+data used to construct the prior distribution (see Hoijtink, Mulder, 
+van Lissa, and Gu, 2019): The default value 1 denotes the minimal fraction, 
+2 denotes twice the minimal fraction, etc. 
 
 5) `print(results)` Print the results of an analysis wity
 `bain`.
@@ -198,8 +266,10 @@ names "a", "b", and "c", respectively.
 The hypotheses specified have to adhere to the following rules **`bain` may still run if you
 deviate from the rules, however, the output will be nonsense**:
 
-* When using `bain` with a `lm` or `t_test` object, (unique abbreviations of) the names
-displayed by `coef(x)` have to be used. If, for example, the names are `cat` and `dog`, `c`
+* When using `bain` with a `lm` or `t_test` or `lavaan` object, (unique abbreviations of) the names
+displayed by `coef(x)` have to be used (but see the section "Using bain
+with a lavaan object" for additional instructions if multiple group
+analyses are executed). If, for example, the names are `cat` and `dog`, `c`
 and `d ` would be unique abreviations. If, for example, the names are `cato` and `cata` the whole
 names have to be used.
 * When using `bain` with a named vector, parameters are referred to using the names specified in `names()`.
@@ -229,7 +299,7 @@ these terms mean will be elaborated below.
 
 
 **The set of hypotheses has to be compatible.** For the statistical
-background of this requirement see Gu, Mulder, Hoijtink (2018). Usually the
+background of this requirement see Gu, Mulder, Hoijtink (2019). Usually the
 sets of hypotheses specified by researchers are compatible, and if not,
 `bain` will return an error message. The following steps can be used to
 determine if a set of hypotheses is compatible:
@@ -241,7 +311,7 @@ range, that is, `a1 = 2`.
 > a3 > a4`  becomes `a1 = a2 = a3 = a4`.
 3) The hypotheses are compatible if there is at least one solution to the
 resulting set of equations. For the two hypotheses considered under 1. and
-2., the solution is a1 = a2 = a3 = a4 = 2. An example of two non-compatible
+2., the solution is `a1 = a2 = a3 = a4 = 2`. An example of two non-compatible
 hypotheses is `hypotheses <- "a = 0; a > 2;"` because there is no
 solution to the equations `a=0` and `a=2`.
 
@@ -269,11 +339,11 @@ error message or render an output table containing `Inf`'s.
 The commands `bain()` or `results<-bain()` followed by
 `results` or `print(results)` will render the default (most
 important) output from `bain`. These concern for each hypothesis
-specified in `hypothesis` the fit, complexity, Bayes factor versus its
-complement, posterior model probability (based on equal prior model
+specified in `hypothesis` the fit, complexity, **Bayes factor versus its
+complement**, posterior model probability (based on equal prior model
 probabilities) excluding the unconstrained hypothesis, and posterior model
 probability including the unconstrained hypothesis. In Hoijtink, Mulder,
-van Lissa, and Gu (2018) it is elaborated how these quantities (and the other
+van Lissa, and Gu (2019) it is elaborated how these quantities (and the other
 output presented below) should be interpreted. Additionally, using
 `summary(results, ci=0.95)`, a descriptives matrix can be obtained
 in which for each estimate, the name, the value, and a 95\% central
@@ -342,7 +412,19 @@ age)
 year)
 * postnumb (score on a numbers test after watching Sesame Street for a
 year)
-* funumb (follow up numbers test score measured one year after postnumb).
+* funumb (follow up numbers test score measured one year after postnumb)
+* Bb Knowledge of body parts before
+* Bl Knowledge of letters before
+* Bf Knowledge of forms before
+* Bn Knowledge of numbers before
+* Br Knowledge of relations before
+* Bc Knowledge of classifications before
+* Ab Knowledge of body parts after
+* Al Knowledge of letters after
+* Af Knowledge of forms after
+* An Knowledge of numbers after
+* Ar Knowledge of relations after
+* Ac Knowledge of classifications after
 
 The examples that follow below are organized in three categories:
 
@@ -379,13 +461,26 @@ factor. **Note that calls to `lm` using interactions between groups and
 covariates or functions of the covariates (interactions or squared covariates)
 can not be processed by `bain`.**
 c) Bayesian multiple regression. **Note that calls to `lm` using 
-functions of the predictors (for example, interactions or squared
+functions of the predictors (for example, squared
 predictors)
-can not be processed by `bain`.** However, one can compute a new variable
-(for example, an interaction) and add this variable to the model specification
-of `lm`.
+can not be processed by `bain`.** However, note that interactions 
+between predictors can
+be processed. Note furthermore, that one can compute a new variable
+(for example, a squared predictor) and add this variable to the 
+model specification of `lm`.
+d) Bayesian ANOVA. Sensitivity analysis. See Hoijtink, Mulder, 
+van Lissa, and Gu (2019) for elaborations.
 
-**3. Examples Using a Named Vector**
+**3. Examples Using a `lavaan` Object**
+
+a) Bayesian confirmatory factor analysis
+b) Bayesian latent regression
+c) Bayesian multiple group latent regression
+
+Additional examples can be found in Gu, Hoijtink, Mulder,
+and Rosseel (2019).
+
+**4. Examples Using a Named Vector**
 
 a) Bayesian ANOVA
 b) Bayesian ANCOVA
@@ -396,14 +491,16 @@ regression)
 f) Bayesian multiple group logistic regression (counterpart of ANCOVA)
 g) Bayesian robust ANOVA (unequal within groups variances)
 h) Bayesian multiple regression with missing data
-i) Bayesian structural equation modelling
+i) Bayesian confirmatory factor analysis
 
 Additional examples are available in `BFTutorial.R` downloadable from 
 the bain website at
 https://informative-hypotheses.sites.uu.nl/software/bain/.
 
-* Executing a sensitivity analysis with `bain`
-* Executing Bayesian updating with `bain`
+* Executing a sensitivity analysis with `bain` using a
+named vector object
+* Executing Bayesian updating with `bain` using
+a named vector object
 
 **1. Examples Using a `t_test` Object**
 
@@ -609,11 +706,319 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-**3. Examples Using a named vector**
+d) An example of the Bayesian ANOVA: Sensitivity Analysis
+
+```{r ttest_ex9, eval=FALSE}
+# load the bain package which includes the simulated sesamesim data set
+library(bain)
+# make a factor of variable site
+sesamesim$site <- as.factor(sesamesim$site)
+# execute an analysis of variance using lm() which, due to the -1, returns
+# estimates of the means per group
+anov <- lm(postnumb~site-1,sesamesim)
+# take a look at the estimated means and their names
+coef(anov)
+# set a seed value
+set.seed(100)
+# test hypotheses with bain
+results1 <- bain(anov, "site1=site2=site3=site4=site5; site2>site5>site1>
+site3>site4", fraction = 1)
+# display the results
+print(results1)
+# obtain the descriptives table
+summary(results1, ci = 0.95)
+# execute a sensitivity analysis. See Hoijtink, Mulder, 
+# van Lissa, and Gu (2019) for elaborations.
+set.seed(100)
+results2 <- bain(anov, "site1=site2=site3=site4=site5; site2>site5>site1>
+site3>site4",fraction = 2)
+print(results2)
+set.seed(100)
+results3 <- bain(anov, "site1=site2=site3=site4=site5; site2>site5>site1>
+site3>site4",fraction = 3)
+print(results3)
+```
+
+**3. Examples Using a `lavaan` object**
+
+a) An example of Bayesian confirmatory factor analysis.
+See van Lissa et al. (2019) for further elaborations
+
+```{r ttest_ex10, eval=FALSE}
+# Load the bain and lavaan libraries. Visit www.lavaan.org for 
+# lavaan mini-tutorials, examples, and elaborations
+library(bain)
+library(lavaan)
+
+#  Specify and fit the confirmatory factor model
+model1 <- '
+    A =~ Ab + Al + Af + An + Ar + Ac 
+    B =~ Bb + Bl + Bf + Bn + Br + Bc 
+'
+# Use the lavaan sem function to execute the confirmatory factor analysis
+fit1 <- sem(model1, data = sesamesim, std.lv = TRUE)
+
+# Inspect the parameter names
+coef(fit1)
+
+# Formulate hypotheses, call bain, obtain summary stats
+hypotheses1 <-
+" A=~Ab > .6 & A=~Al > .6 & A=~Af > .6 & A=~An > .6 & A=~Ar > .6 & A=~Ac >.6 & 
+B=~Bb > .6 & B=~Bl > .6 & B=~Bf > .6 & B=~Bn > .6 & B=~Br > .6 & B=~Bc >.6"
+set.seed(100)
+y <- bain(fit1,hypotheses1,fraction=1,standardized=TRUE)
+sy <- summary(y, ci = 0.95)
+
+```
+
+b) An example of Bayesian latent regression.
+See van Lissa et al. (2019) for further elaborations.
+
+```{r ttest_ex11, eval=FALSE}
+# Load the bain and lavaan libraries. Visit www.lavaan.org for 
+# lavaan mini-tutorials, examples, and elaborations
+library(bain)
+library(lavaan)
+
+# Specify and fit the latent regression model
+model2 <- '
+    A  =~ Ab + Al + Af + An + Ar + Ac 
+    B =~ Bb + Bl + Bf + Bn + Br + Bc
+
+    A ~ B + age + peabody
+'
+fit2 <- sem(model2, data = sesamesim, std.lv = TRUE)
+
+# Inspect the parameter names
+coef(fit2)
+
+# Formulate hypotheses, call bain, obtain summary stats
+
+hypotheses2 <- "A~B > A~peabody = A~age = 0; 
+               A~B > A~peabody > A~age = 0; 
+A~B > A~peabody > A~age > 0"
+set.seed(100)
+y1 <- bain(fit2, hypotheses2, fraction = 1, standardized = TRUE)
+sy1 <- summary(y1, ci = 0.99)
+```
+
+c) An example of Bayesian multiple group latent regression.
+See van Lissa et al. (2019) for further elaborations.
+
+```{r ttest_ex12, eval=FALSE}
+# Load the bain and lavaan libraries. Visit www.lavaan.org for 
+# lavaan mini-tutorials, examples, and elaborations
+library(bain)
+library(lavaan)
+
+# Specify the multiple group latent regression model
+
+model3 <- '
+    A  =~ Ab + Al + Af + An + Ar + Ac 
+    B =~ Bb + Bl + Bf + Bn + Br + Bc 
+
+    A ~ B + age + peabody
+'
+# Assign labels to the groups to be used when formulating
+# hypotheses
+sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
+# Fit the multiple group latent regression model
+fit3 <- sem(model3, data = sesamesim, std.lv = TRUE, group = "sex")
+# Inspect the parameter names
+coef(fit3)
+
+# Formulate and evaluate two sets of hypotheses
+
+# Compute the mean of the intercepts in both groups for both factors
+parest <- parameterEstimates(fit3, standardized = TRUE)
+ints <- parest[ parest$op == "~1", "std.all"]
+intAboy <- ints[1:6]
+intBboy <- ints[7:12]
+intAgirl <- ints[17:22]
+intBgirl <- ints[23:28]
+iAb <- mean(intAboy)
+iBb <- mean(intBboy)
+iAg <- mean(intAgirl)
+iBg <- mean(intBgirl)
+
+# Print the means so you can include these numbers
+# in the hypotheses in order to make the intercepts
+# comparable between both groups
+iAb
+iBb
+iAg
+iBg
+
+# Compute the geometric mean of the loadings in both groups for both factors
+load <- parest[ parest$op == "=~", "std.all"]
+loadAboy <- load[1:6]
+loadBboy <- load[7:12]
+loadAgirl <- load[13:18]
+loadBgirl <- load[19:24]
+lAb <- prod(loadAboy)**(1/6)
+lBb <- prod(loadBboy)**(1/6)
+lAg <- prod(loadAgirl)**(1/6)
+lBg <- prod(loadBgirl)**(1/6)
+
+# Print the inverse geometric means so you can include these numbers
+# in the hypotheses in order to make the slopes comparable
+# between both groups. Note: to specify hypotheses, 
+# the * can be used, but the / CANNOT be used.
+1/lAb
+1/lBb
+1/lAg
+1/lBg
+
+# Specify and evaluate the two sets of hypotheses
+hypotheses31 <-
+"1.214269 *A=~Ab.boy = 1.276502 *A=~Ab.girl&
+1.214269 *A=~Al.boy = 1.276502 *A=~Al.girl &
+1.214269 *A=~Af.boy = 1.276502 *A=~Af.girl &
+1.214269 *A=~An.boy = 1.276502 *A=~An.girl &
+1.214269 *A=~Ar.boy = 1.276502 *A=~Ar.girl &
+1.214269 *A=~Ac.boy = 1.276502 *A=~Ac.girl &
+1.26346 *B=~Bb.boy = 1.32143 *B=~Bb.girl &
+1.26346 *B=~Bl.boy = 1.32143 *B=~Bl.girl &
+1.26346 *B=~Bf.boy = 1.32143 *B=~Bf.girl &
+1.26346 *B=~Bn.boy = 1.32143 *B=~Bn.girl &
+1.26346 *B=~Br.boy = 1.32143 *B=~Br.girl &
+1.26346 *B=~Bc.boy = 1.32143 *B=~Bc.girl &
+Ab~1.boy -3.20752= Ab~1.girl -3.37765&
+Al~1.boy -3.20752= Al~1.girl -3.37765&
+Af~1.boy -3.20752= Af~1.girl -3.37765&
+An~1.boy -3.20752= An~1.girl -3.37765&
+Ar~1.boy -3.20752= Ar~1.girl -3.37765&
+Ac~1.boy -3.20752= Ac~1.girl -3.37765&
+Bb~1.boy -2.682939= Bb~1.girl -2.620678&
+Bl~1.boy -2.682939= Bl~1.girl -2.620678&
+Bf~1.boy -2.682939= Bf~1.girl -2.620678&
+Bn~1.boy -2.682939= Bn~1.girl -2.620678&
+Br~1.boy -2.682939= Br~1.girl -2.620678&
+Bc~1.boy -2.682939= Bc~1.girl -2.620678
+"
+set.seed(100)
+y1 <- bain(fit3, hypotheses31, standardized = TRUE)
+sy1 <- summary(y1, ci = 0.90)
+
+hypotheses32 <-
+"1.214269 *A=~Ab.boy = 1.276502 *A=~Ab.girl &
+1.214269 *A=~Al.boy = 1.276502 *A=~Al.girl &
+1.214269 *A=~Af.boy = 1.276502 *A=~Af.girl &
+1.214269 *A=~An.boy = 1.276502 *A=~An.girl &
+1.214269 *A=~Ar.boy = 1.276502 *A=~Ar.girl &
+1.214269 *A=~Ac.boy = 1.276502 *A=~Ac.girl &
+1.26346 *B=~Bb.boy = 1.32143 *B=~Bb.girl &
+1.26346 *B=~Bl.boy = 1.32143 *B=~Bl.girl &
+1.26346 *B=~Bf.boy = 1.32143 *B=~Bf.girl &
+1.26346 *B=~Bn.boy = 1.32143 *B=~Bn.girl &
+1.26346 *B=~Br.boy = 1.32143 *B=~Br.girl &
+1.26346 *B=~Bc.boy = 1.32143 *B=~Bc.girl &
+Ab~1.boy -3.20752= Ab~1.girl -3.37765&
+Al~1.boy -3.20752= Al~1.girl -3.37765&
+Af~1.boy -3.20752= Af~1.girl -3.37765&
+An~1.boy -3.20752= An~1.girl -3.37765&
+Ar~1.boy -3.20752= Ar~1.girl -3.37765&
+Ac~1.boy -3.20752= Ac~1.girl -3.37765&
+Bb~1.boy -2.682939= Bb~1.girl -2.620678&
+Bl~1.boy -2.682939= Bl~1.girl -2.620678&
+Bf~1.boy -2.682939= Bf~1.girl -2.620678&
+Bn~1.boy -2.682939= Bn~1.girl -2.620678&
+Br~1.boy -2.682939= Br~1.girl -2.620678&
+Bc~1.boy -2.682939= Bc~1.girl -2.620678 &
+A~age.boy < A~age.girl  &
+A~peabody.boy < A~peabody.girl  &
+A~B.boy < A~B.girl;
+1.214269 *A=~Ab.boy = 1.276502 *A=~Ab.girl &
+1.214269 *A=~Al.boy = 1.276502 *A=~Al.girl &
+1.214269 *A=~Af.boy = 1.276502 *A=~Af.girl &
+1.214269 *A=~An.boy = 1.276502 *A=~An.girl &
+1.214269 *A=~Ar.boy = 1.276502 *A=~Ar.girl &
+1.214269 *A=~Ac.boy = 1.276502 *A=~Ac.girl &
+1.26346 *B=~Bb.boy = 1.32143 *B=~Bb.girl &
+1.26346 *B=~Bl.boy = 1.32143 *B=~Bl.girl &
+1.26346 *B=~Bf.boy = 1.32143 *B=~Bf.girl &
+1.26346 *B=~Bn.boy = 1.32143 *B=~Bn.girl &
+1.26346 *B=~Br.boy = 1.32143 *B=~Br.girl &
+1.26346 *B=~Bc.boy = 1.32143 *B=~Bc.girl &
+Ab~1.boy -3.20752= Ab~1.girl -3.37765&
+Al~1.boy -3.20752= Al~1.girl -3.37765&
+Af~1.boy -3.20752= Af~1.girl -3.37765&
+An~1.boy -3.20752= An~1.girl -3.37765&
+Ar~1.boy -3.20752= Ar~1.girl -3.37765&
+Ac~1.boy -3.20752= Ac~1.girl -3.37765&
+Bb~1.boy -2.682939= Bb~1.girl -2.620678&
+Bl~1.boy -2.682939= Bl~1.girl -2.620678&
+Bf~1.boy -2.682939= Bf~1.girl -2.620678&
+Bn~1.boy -2.682939= Bn~1.girl -2.620678&
+Br~1.boy -2.682939= Br~1.girl -2.620678&
+Bc~1.boy -2.682939= Bc~1.girl -2.620678 &
+A~age.boy = A~age.girl  &
+A~peabody.boy < A~peabody.girl  &
+A~B.boy < A~B.girl;
+1.214269 *A=~Ab.boy = 1.276502 *A=~Ab.girl &
+1.214269 *A=~Al.boy = 1.276502 *A=~Al.girl &
+1.214269 *A=~Af.boy = 1.276502 *A=~Af.girl &
+1.214269 *A=~An.boy = 1.276502 *A=~An.girl &
+1.214269 *A=~Ar.boy = 1.276502 *A=~Ar.girl &
+1.214269 *A=~Ac.boy = 1.276502 *A=~Ac.girl &
+1.26346 *B=~Bb.boy = 1.32143 *B=~Bb.girl &
+1.26346 *B=~Bl.boy = 1.32143 *B=~Bl.girl &
+1.26346 *B=~Bf.boy = 1.32143 *B=~Bf.girl &
+1.26346 *B=~Bn.boy = 1.32143 *B=~Bn.girl &
+1.26346 *B=~Br.boy = 1.32143 *B=~Br.girl &
+1.26346 *B=~Bc.boy = 1.32143 *B=~Bc.girl &
+Ab~1.boy -3.20752= Ab~1.girl -3.37765&
+Al~1.boy -3.20752= Al~1.girl -3.37765&
+Af~1.boy -3.20752= Af~1.girl -3.37765&
+An~1.boy -3.20752= An~1.girl -3.37765&
+Ar~1.boy -3.20752= Ar~1.girl -3.37765&
+Ac~1.boy -3.20752= Ac~1.girl -3.37765&
+Bb~1.boy -2.682939= Bb~1.girl -2.620678&
+Bl~1.boy -2.682939= Bl~1.girl -2.620678&
+Bf~1.boy -2.682939= Bf~1.girl -2.620678&
+Bn~1.boy -2.682939= Bn~1.girl -2.620678&
+Br~1.boy -2.682939= Br~1.girl -2.620678&
+Bc~1.boy -2.682939= Bc~1.girl -2.620678 &
+A~age.boy = A~age.girl  &
+A~peabody.boy = A~peabody.girl  &
+A~B.boy < A~B.girl;
+1.214269 *A=~Ab.boy = 1.276502 *A=~Ab.girl &
+1.214269 *A=~Al.boy = 1.276502 *A=~Al.girl &
+1.214269 *A=~Af.boy = 1.276502 *A=~Af.girl &
+1.214269 *A=~An.boy = 1.276502 *A=~An.girl &
+1.214269 *A=~Ar.boy = 1.276502 *A=~Ar.girl &
+1.214269 *A=~Ac.boy = 1.276502 *A=~Ac.girl &
+1.26346 *B=~Bb.boy = 1.32143 *B=~Bb.girl &
+1.26346 *B=~Bl.boy = 1.32143 *B=~Bl.girl &
+1.26346 *B=~Bf.boy = 1.32143 *B=~Bf.girl &
+1.26346 *B=~Bn.boy = 1.32143 *B=~Bn.girl &
+1.26346 *B=~Br.boy = 1.32143 *B=~Br.girl &
+1.26346 *B=~Bc.boy = 1.32143 *B=~Bc.girl &
+Ab~1.boy -3.20752= Ab~1.girl -3.37765&
+Al~1.boy -3.20752= Al~1.girl -3.37765&
+Af~1.boy -3.20752= Af~1.girl -3.37765&
+An~1.boy -3.20752= An~1.girl -3.37765&
+Ar~1.boy -3.20752= Ar~1.girl -3.37765&
+Ac~1.boy -3.20752= Ac~1.girl -3.37765&
+Bb~1.boy -2.682939= Bb~1.girl -2.620678&
+Bl~1.boy -2.682939= Bl~1.girl -2.620678&
+Bf~1.boy -2.682939= Bf~1.girl -2.620678&
+Bn~1.boy -2.682939= Bn~1.girl -2.620678&
+Br~1.boy -2.682939= Br~1.girl -2.620678&
+Bc~1.boy -2.682939= Bc~1.girl -2.620678 &
+A~age.boy = A~age.girl  &
+A~peabody.boy = A~peabody.girl  &
+A~B.boy = A~B.girl"
+set.seed(100)
+y2 <- bain(fit3, hypotheses32,standardized=TRUE)
+
+```
+
+**4. Examples Using a named vector**
 
 a) An example of the Bayesian ANOVA using a named vector as input for bain
 
-```{r ttest_ex9, eval=FALSE}
+```{r ttest_ex13, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data se
 library(bain)
 # make a factor of variable site
@@ -634,7 +1039,7 @@ ngroup <- table(sesamesim$site)
 # for the ANOVA this is simply a list containing for each group the variance
 # of the mean note that, the within group variance as estimated using lm is
 # used to compute the variance of each of the means! See, Hoijtink, Gu, and
-# Mulder (2018) for further elaborations.
+# Mulder (2019) for further elaborations.
 var <- summary(anov)$sigma**2
 cov1 <- matrix(var/ngroup[1], nrow=1, ncol=1)
 cov2 <- matrix(var/ngroup[2], nrow=1, ncol=1)
@@ -658,7 +1063,7 @@ summary(results, ci = 0.95)
 
 b) An example of the Bayesian ANCOVA using a named vector as input for bain
 
-```{r ttest_ex10, eval=FALSE}
+```{r ttest_ex14, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data se
 library(bain)
 # make a factor of variable site
@@ -685,7 +1090,7 @@ ngroup <- table(sesamesim$site)
 var <- (summary(ancov2)$sigma)**2
 # below, for each group, the covariance matrix of the adjusted mean and
 # covariate is computed
-# see Hoijtink, Gu, and Mulder (2018) for further explanation and elaboration
+# see Hoijtink, Gu, and Mulder (2019) for further explanation and elaboration
 cat1 <- subset(cbind(sesamesim$site,sesamesim$prenumb), sesamesim$site == 1)
 cat1[,1] <- 1
 cat1 <- as.matrix(cat1)
@@ -727,7 +1132,7 @@ summary(results2, ci = 0.95)
 
 c) An example of the Bayesian one within factor repeated measures analysis
 
-```{r ttest_ex11, eval=FALSE}
+```{r ttest_ex15, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
 # estimate the means of three repeated measures of number knowledge
@@ -762,7 +1167,7 @@ summary(results, ci = 0.95)
 d) An example of the Bayesian one between factor and one within factor
 repeated measures analysis
 
-```{r ttest_ex12, eval=FALSE}
+```{r ttest_ex16, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
 # make a factor of the variable sex
@@ -809,7 +1214,7 @@ summary(results, ci = 0.95)
 e) An example of the Bayesian logistic regression as the counterpart of
 Bayesian multiple regression
 
-```{r ttest_ex13, eval=FALSE}
+```{r ttest_ex17, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
 # regression coefficients can only be mutually compared if the
@@ -847,13 +1252,13 @@ summary(results, ci = 0.95)
 ```
 
 f) An example of the Bayesian logistic regression as the counterpart of
-an ANCOVA. This is Example 3 from  Hoijtin, Gu, and Mulder (2018).
+an ANCOVA. This is Example 3 from  Hoijtink, Gu, and Mulder (2019).
 The research question concerns the probability of encouragement to view
 sesame street (a dichotomous 0/1 meaning no/yes dependent variable) for
 boys (sex=1) and girls (sex=2) adjusted for their age. This is a kind of
 ANCOVA with a dichotomous instead of a continuous dependent variable.
 
-```{r ttest_ex14, eval=FALSE}
+```{r ttest_ex18, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
 # load the numDeriv package which will be used to compute the covariance
@@ -945,7 +1350,7 @@ summary(results, ci = 0.95)
 g) An example of the Bayesian robust ANOVA with unequal within group
 variances. Robust ANOVA is elaborated in Bosman and Hoijtink (unpublished).
 
-```{r ttest_ex15, eval=FALSE}
+```{r ttest_ex19, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
 # load the WRS2 package which renders the trimmed sample mean and
@@ -990,11 +1395,11 @@ summary(results, ci = 0.95)
 
 h) An example of the Bayesian Regression with missing data. The computation
 of Bayes factors in the presence of missing data is elaborated in
-Hoijtink, Gu, Mulder, and Rosseel (2018).
+Hoijtink, Gu, Mulder, and Rosseel (2019).
 
 RUNNING THIS EXAMPLE WILL TAKE ABOUT 60 SECONDS
 
-```{r ttest_ex16, eval=FALSE}
+```{r ttest_ex20, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
 # load the mice (multiple imputation of missing data), psych
@@ -1048,14 +1453,14 @@ covwithin <- matrix(0,nrow=2,ncol=2)
 # execute 1000 multiple regressions using the imputed data matrices and store the estimates 
 # of only the regression coefficients of funumb on prenumb and postnumband and the average 
 # of the 1000 covariance matrices.
-# See Hoijtink, Gu, Mulder, and Rosseel (2018) for an explanation of the latter.
+# See Hoijtink, Gu, Mulder, and Rosseel (2019) for an explanation of the latter.
 for(i in 1:M) {
 mulres <- lm(funumb~prenumb+postnumb,complete(out,i))
 mulest[i,]<-coef(mulres)[2:3]
 covwithin<-covwithin + 1/M * vcov(mulres)[2:3,2:3]
 }
 # Compute the average of the estimates and assign names, the between and total covariance matrix.
-# See Hoijtink, Gu, Mulder, and Rosseel (2018) for an explanation.
+# See Hoijtink, Gu, Mulder, and Rosseel (2019) for an explanation.
 estimates <- colMeans(mulest)
 names(estimates) <- c("prenumb", "postnumb")
 covbetween <- cov(mulest)
@@ -1063,7 +1468,7 @@ covariance <- covwithin + (1+1/M)*covbetween
 # determine the sample size
 samp <- nrow(sesamesim)
 # compute the effective sample size
-# See Hoijtink, Gu, Mulder, and Rosseel (2018) for an explanation.
+# See Hoijtink, Gu, Mulder, and Rosseel (2019) for an explanation.
 nucom<-samp-length(estimates)
 lam <- (1+1/M)*(1/length(estimates))* tr(covbetween %*% ginv(covariance))
 nuold<-(M-1)/(lam^2)
@@ -1082,54 +1487,74 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-i) An example of the Bayesian structural equation modelling. For this
-topic additional
-examples are elaborated in Gu, Hoijtink, Mulder, and Rosseel (unpublished).
+i) An example of Bayesian confirmatory factor analysis with
+a named vector object. See van Lissa et al. (2019) for further elaborations
 
-```{r ttest_ex17, eval=FALSE}
-# load the bain package
+
+```{r ttest_ex21, eval=FALSE}
+# Load the bain and lavaan libraries. Visit www.lavaan.org for 
+# lavaan mini-tutorials, examples, and elaborations
 library(bain)
-# load the lavaan package - look at the lavaan help file to obtain 
-# further information - also surf to # lavaan.ugent.be to obtain 
-# further information and references for lavaan - this example uses the
-# HolzingerSwineford1939 data set which is included with lavaan.
 library(lavaan)
-# Specify a latent regression model
-model <- 'visual  =~ x1 + x2 + x3
-textual =~ x4 + x5 + x6
-speed   =~ x7 + x8 + x9
-speed ~ textual + visual'
-# Estimate the parameters of the latent regression model with lavaan
-fit<-sem(model,data=HolzingerSwineford1939,std.lv = TRUE)
-# determine the sample size
-ngroup<-nobs(fit)
-# collect the "standardized" estimates of the latent regression
-# coefficients in a vector, typing standardizedSolution(fit) 
-# in the console pane shows that the estimates can be
-# found in the fourth column of rows 10 and 11.
-estimate<-standardizedSolution(fit)[10:11,4]
-# assign names to the estimates
-names(estimate) <- c("textual","visual")
-# determine the covariance matrix of the estimates typing 
-# lavInspect(fit, "vcov.std.all") in the console pane shows that the 
-# estimates can be found in the rows 10 and 11 crossed with 
-# columns 10 and 11
-covariance<-list(lavInspect(fit, "vcov.std.all")[10:11,10:11])
-# set a seed value
+
+# Specify and fit the confirmatory factor model
+model1 <- '
+A =~ Ab + Al + Af + An + Ar + Ac
+B =~ Bb + Bl + Bf + Bn + Br + Bc
+'
+fit1 <- sem(model1, data = sesamesim, std.lv = TRUE)
+
+# Obtain the required input for bain:
+
+# the sample size
+ngroup1 <- nobs(fit1)
+
+# The parameterEstimates() function presents the estimated parameters
+# in a data.frame; the additional argument standardized = TRUE add
+# extra columns with standardized versions of these parameter estimates;
+# for our purposes, we need the 'std.all' column, which means that both
+# the observed and the latent variables have been standardized.
+#
+# we capture the output of parameterEstimates() in an object 'PE'
+PE1 <- parameterEstimates(fit1, standardized = TRUE)
+
+# We only need the rows that correspond to factor loadings (ie op == "=~")
+# and the column "std.all":
+estimate1 <- PE1[ PE1$op == "=~", "std.all"]
+
+# Assign names to the estimates of the standardized factor loadingts
+names(estimate1) <- c("Ab", "Al", "Af", "An", "Ar", "Ac",
+                     "Bb", "Bl", "Bf", "Bn", "Br", "Bc")
+
+# We will compute the full covariance matrix of standardized parameter
+# estimates, and only extract the part we need: the rows/cols that
+# correspond to the factor loadings
+#
+# to find out which rows/cols we need, we can look at the full parameter
+# table:
+PT1 <- parTable(fit1)
+# and extract the parameter numbers (in the "free" column) that correspond
+# to the factor loadings:
+par.idx1 <- PT1$free[ PT1$op == "=~" ]
+# Obtain the covariance matrix of the standardized factor loadings
+covariance1 <- list(lavInspect(fit1, "vcov.std.all")[par.idx1, par.idx1])
+
+# Specify the hypotheses using the syntax implementen in bain. Note that
+# the & is used to combine different parts into one hypothesis. Note
+# furthermore, that the ; is used to separate hypotheses
+hypotheses1 <-
+   " Ab > .6 & Al > .6 & Af > .6 & An > .6 & Ar > .6 & Ac >.6 &
+     Bb > .6 & Bl > .6 & Bf > .6 & Bn > .6 & Br > .6 & Bc >.6"
+
+# Evaluate the hypotheses using bain, the command used has been explained in
+# the paper. Don't forget to set the seed first in order to obtain results
+# that can be reproduced exactly.
 set.seed(100)
-# test hypotheses with bain
-results <- bain(estimate,"visual=textual=0; visual > textual >
-0",n=ngroup,Sigma=covariance,group_parameters=2,joint_parameters = 0)
-# display the results
-print(results)
-# obtain the descriptives table
-summary(results, ci = 0.95)
+y <- bain(estimate1, hypotheses1, n =ngroup1, Sigma = covariance1,
+                group_parameters = 12, joint_parameters = 0, fraction = 1,
+                standardized = TRUE)
+
+# print the results of the bain analysis and obtain the estimates and 95%
+# central credibility intervals
+sy <- summary(z, ci = 0.95)
 ```
-
-
- 
-
-
-
-
-

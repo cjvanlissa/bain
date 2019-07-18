@@ -1,114 +1,5 @@
 # This R code contains a number of tests of the bain default function
 
-#==============================================================================================
-# compute c and f for an about equality constrained hypothesis with bain and with R")
-#==============================================================================================
-
-
-
-set.seed(124)
-x <- rnorm(20,-.3,.7)
-y <- rnorm(40,.2,1.3)
-
-#estimate of parameters
-estimate<-c(mean(x),mean(y))
-names(estimate)<-c("a","b")
-sampN<-c(20,40)
-cov1<-matrix(c(sd(x)^2/20),1,1)
-cov2<-matrix(c(sd(y)^2/40),1,1)
-covmat<-list(cov1,cov2)
-
-# testing an about equality constraint
-
-set.seed(100)
-y<-bain(estimate,"a-b > -.5 & b - a > -.5",n=sampN,Sigma=covmat,group_parameters=1,joint_parameters = 0)
-
-# x-y has prior mean zero
-# x-y has prior variance 1.155 and sd 1.07475
-
-sampc <- rnorm(100000,0,1.07475)
-for (i in 1:100000){
-  if (sampc[i] < .5 & sampc[i] > -.5) {sampc[i] <-1} else {sampc[i]<- 0}
-}
-
-test_that("bain default", {expect_equal(y$fit$Com[1],mean(sampc), tolerance = .01)})
-
-# x-y has posterior mean -.289637 and posterior variance .039 and sd .19728
-
-sampf <- rnorm(100000,-.289637,.19728)
-for (i in 1:100000){
-  if (sampf[i] < .5 & sampf[i] > -.5) {sampf[i] <-1} else {sampf[i]<- 0}
-}
-
-test_that("bain default", {expect_equal(y$fit$Fit[1], mean(sampf), tolerance = .004)})
-
-#==============================================================================================")
-# compute c and f for a range constrained hypothesis with bain and with R - a variation of the previous test")
-#==============================================================================================")
-
-# specify hypotheses for a range constraints and check
-
-set.seed(100)
-z<-bain(estimate,"a-b > -.3 & b - a > 0",n=sampN,Sigma=covmat,group_parameters=1,joint_parameters = 0)
-
-# x-y has prior mean zero
-# x-y has prior variance 1.155 and sd 1.0747
-
-sampcc <- rnorm(50000,0,1.0747)
-for (i in 1:50000){
-  if (sampcc[i] < 0 & sampcc[i] > -.3) {sampcc[i] <-1} else {sampcc[i]<- 0}
-}
-
-test_that("bain default", {expect_equal(z$fit$Com[1], mean(sampcc), tolerance = .01)})
-
-# x-y has posterior mean -.292 and posterior variance .039 and sd .1975
-
-sampff <- rnorm(50000,-.29,.1975)
-for (i in 1:50000){
-  if (sampff[i] < 0 & sampff[i] > -.3) {sampff[i] <-1} else {sampff[i]<- 0}
-}
-
-test_that("bain default", {expect_equal(z$fit$Fit[1], mean(sampff), tolerance = .01)})
-
-#==============================================================================================")
-# compute c and f for a range constrained hypothesis where range is determined by another parameter")
-#==============================================================================================")
-
-
-
-#estimate of parameters
-estimate<-c(2,4)
-names(estimate)<-c("a","b")
-sampN<-c(20,40)
-cov1<-matrix(1,1,1)
-cov2<-matrix(1,1,1)
-covmat<-list(cov1,cov2)
-
-# specify hypotheses for a range constraints and check
-
-set.seed(100)
-y<-bain(estimate,"a  > -b & a < b",n=sampN,Sigma=covmat,group_parameters=1,joint_parameters = 0)
-
-# a and b have prior mean 0
-# a has prior variance 20 sd 4.47  and b has prior variance 40 sd 6.32
-
-countc <- 0
-sampa <- rnorm(500000,0,4.472136)
-sampb <- rnorm(500000,0,6.324555)
-for (i in 1:500000){
-  if (sampa[i] > -sampb[i] & sampa[i] < sampb[i]) {countc = 1/500000 + countc}
-}
-
-test_that("bain default", {expect_equal(y$fit$Com[1], countc, tolerance = .004)})
-
-countf <- 0
-sampa <- rnorm(50000,2,1)
-sampb <- rnorm(50000,4,1)
-for (i in 1:50000){
-  if (sampa[i] > -sampb[i] & sampa[i] < sampb[i]) {countf = 1/50000 + countf}
-}
-
-test_that("bain default", {expect_equal(y$fit$Fit[1], countf, tolerance = .01)})
 
 #========================================================================================")
 # compute c=, f=, and f>|= for an hypothesis with 1 = and 1 > restriction with Bain and R")
@@ -508,8 +399,8 @@ for (i in 1:100000){
   if (3 * a[i] + 1 > 2 * b[i] & 2 * b[i] > c[i]-2) {propf <- propf + 1/100000}
 }
 test_that("bain default", {expect_equal(y$fit$Fit[1], propf,tolerance = .01)})
-a <- rnorm(100000,0,50)
-b <- rnorm(100000,1,50)
+a <- rnorm(100000,-1/3,50)
+b <- rnorm(100000,0,50)
 c <- rnorm(100000,2,50)
 propc <- 0
 for (i in 1:100000){
