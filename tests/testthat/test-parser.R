@@ -4,6 +4,25 @@
 # 2) USE & TO COMBINE DIFFERENT PARTS OF AN HYPOTHESIS
 # 3) USE (,) TO CREATE SET OF COMBINATIONS
 
+# TESTING THE USE OF : =~ ~ AND ~1
+
+varnames <- c("a:", "b::", "c:::")
+hyp1 <- "a: > b:: > c:::"
+x<-bain:::parse_hypothesis(varnames, hyp1)
+test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(1,-1,0,0,0,1,-1,0))})
+test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,2))})
+
+varnames <- c("a~", "b=~", "c~1")
+hyp1 <- "a~ > b=~ > c~1"
+x<-bain:::parse_hypothesis(varnames, hyp1)
+test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(1,-1,0,0,0,1,-1,0))})
+test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,2))})
+
+varnames <- c("a.~a_", "a:=~b_:", "a_~1c_:.")
+hyp1 <- "a.~a_ > a:=~b_: > a_~1c_:."
+x<-bain:::parse_hypothesis(varnames, hyp1)
+test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(1,-1,0,0,0,1,-1,0))})
+test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,2))})
 
 
 # TESTING THE NAMING OF THE PARAMETERS
