@@ -2,9 +2,6 @@
 # TEST1: FRACTION FOR BAIN DEFAULT
 # ===================================================
 
-library(bain)
-library(testthat)
-
 sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(sesamesim$postnumb~sesamesim$site-1)
 
@@ -92,8 +89,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 # TEST2: FRACTION FOR ANOVA
 # ===================================================
 
-library(bain)
-library(testthat)
 
 sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(sesamesim$postnumb~sesamesim$site-1)
@@ -155,9 +150,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 # ===================================================
 # TEST3: FRACTION FOR ANCOVA
 # ===================================================
-
-library(bain)
-library(testthat)
 
 # ANCOVA VIA LM OBJECT
 sesamesim$site <- as.factor(sesamesim$site)
@@ -223,8 +215,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 # TEST4: FRACTION FOR TTESTS
 # ===================================================
 
-library(bain)
-library(testthat)
 
 # THE ONE SAMPLE T-TEST WITH A T.TEST OBJECT
 
@@ -472,8 +462,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(z1$BFmatrix)), as.vector(t(z2
 # TEST5: FRACTION FOR REGRESSION
 # ===================================================
 
-library(bain)
-library(testthat)
 
 regr <- lm(postnumb ~ prenumb + funumb + peabody, sesamesim)
 regr$call$formula

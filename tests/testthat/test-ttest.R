@@ -68,8 +68,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 
 # THE INDEPENDENT GROUPS T-TEST WITH A T.TEST OBJECT
 
-
-
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 
@@ -78,7 +76,7 @@ set.seed(100)
 z <- bain(ttest, "x=y; x>y; x<y")
 
 # THE INDEPENDENT GROUPS T-TEST WITH BAIN DEFAULT
-
+ttest$v
 pooled <- ((length(x)-1)*sd(x)^2+(length(y)-1)*sd(y)^2)/(length(x)-1+length(y)-1)
 cov1<-list(matrix(c(pooled),1,1)/length(x),matrix(c(pooled),1,1)/length(y))
 estimate<-c(mean(x),mean(y))

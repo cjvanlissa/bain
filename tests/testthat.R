@@ -1,5 +1,4 @@
 library(testthat)
-library(bain)
 library(lavaan)
-data(sesamesim)
-test_check("bain")
+library(bain)
+test_package("bain")

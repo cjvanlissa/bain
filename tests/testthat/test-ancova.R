@@ -1,4 +1,5 @@
 # ANCOVA VIA LM OBJECT
+data(sesamesim)
 sesamesim$site <- as.factor(sesamesim$site)
 ancov <- lm(postnumb ~ site + prenumb + peabody -1, data = sesamesim)
 

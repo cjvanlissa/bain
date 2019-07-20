@@ -2,10 +2,6 @@
 # TEST NUMBER 2: PARAMETER FIXED AT A VALUE
 # ==============================================================================
 
-library(bain)
-library(lavaan)
-library(testthat)
-
 # read in the simulated sesamestreet data
 sesamedata <- sesamesim
 
@@ -51,10 +47,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y2$BFmatrix)), as.vector(t(z2
 # TEST NUMBER 3A: ABBREVIATIONS OF THE NAMES - SINGLE GROUP SHORT NAMES
 # ==============================================================================
 
-library(bain)
-library(lavaan)
-library(testthat)
-
 # read in the simulated sesamestreet data
 sesamedata <- sesamesim
 
@@ -98,10 +90,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y1$BFmatrix)), as.vector(t(z1
 # TEST NUMBER 3B: ABBREVIATIONS OF THE NAMES - MULTIPLE GROUP SHORT NAMES
 # ==============================================================================
 
-library(bain)
-library(lavaan)
-library(testthat)
-
 model1 <- 'age ~ peabody + 1'
 
 sesamesim$sex <- factor(sesamesim$sex)
@@ -130,14 +118,11 @@ test_that("Bain mutual", {expect_equal(y2$fit$BF,y3$fit$BF)})
 # TEST NUMBER 4: EXAMPLE 2 ZONDER STDLV = TRUE
 # ==============================================================================
 
-library(bain)
-library(lavaan)
-library(testthat)
 
 sesamedata <- sesamesim
 
 model2 <- '
-A  =~ Ab + Al + Af + An + Ar + Ac 
+A  =~ Ab + Al + Af + An + Ar + Ac
 B =~ Bb + Bl + Bf + Bn + Br + Bc
 
 A ~ B + age + peabody
@@ -146,8 +131,8 @@ fit2 <- sem(model2, data = sesamedata, std.lv = FALSE)
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION:
 
-hypotheses2 <- "A~B > A~peabody = A~age = 0; 
-A~B > A~peabody > A~age = 0; 
+hypotheses2 <- "A~B > A~peabody = A~age = 0;
+A~B > A~peabody > A~age = 0;
 A~B > A~peabody > A~age > 0"
 
 set.seed(100)
@@ -168,8 +153,8 @@ par.idx2 <- PT2$free[ PT2$op == "~" ]
 
 covariance2 <- list(lavInspect(fit2, "vcov.std.all")[par.idx2, par.idx2])
 
-hypotheses2 <- "before > pea = age = 0; 
-before > pea > age = 0; 
+hypotheses2 <- "before > pea = age = 0;
+before > pea > age = 0;
 before > pea > age > 0"
 
 set.seed(100)
@@ -194,9 +179,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y1$BFmatrix)), as.vector(t(z1
 # TEST NUMBER 7: A MULTIPLE GROUP MODEL WITH BETWEEN CONSTRAINTS
 # ==============================================================================
 
-library(bain)
-library(lavaan)
-library(testthat)
 
 model1 <- 'age ~ peabody + 1'
 
@@ -207,26 +189,23 @@ sesamesim$sex <- factor(sesamesim$sex)
 fit1 <- sem(model1, data = sesamesim, group = "sex",group.equal = c("intercepts"))
 hypotheses1 <-"age~peabody.1 = age~peabody.2"
 set.seed(100)
-y1 <- bain(fit1,hypotheses1,standardized = TRUE)
+test_that("Multiple group model throws error", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))
 
 # ==============================================================================
 # TEST NUMBER 8: TEST THAT DEFINED PARAMETERS ARE DROPPED
 # ==============================================================================
 
-library(bain)
-library(lavaan)
-library(testthat)
 
 # BELOW THE CALCULATED PAR IS CORRECTLY NOT RECOGNIZED
 # HOW TO TRANSLATE THAT IN A TESTTHAT STATEMENT?
 
 sesamedata <- sesamesim
-model1 <- 'age ~ a*peabody + b*sex + 1 
+model1 <- 'age ~ a*peabody + b*sex + 1
            def := a*b'
 fit1 <- sem(model1, data = sesamedata)
-hypotheses1 <-"def = .4"
+
 set.seed(100)
-y1 <- bain(fit1,hypotheses1,standardized = TRUE)
+test_that("Defined parameters are excluded", expect_error(y1 <- bain(fit1, "def = .4", standardized = TRUE)))
 
 # ==============================================================================
 # TEST NUMBER 9: TEST THAT MULTILEVEL MODELS DO NOT WORK
@@ -234,9 +213,6 @@ y1 <- bain(fit1,hypotheses1,standardized = TRUE)
 
 # THIS ONE GIVES THE CORRECT ERROR MESSAGE. HOW TO TRANSLATE
 # THAT INTO A TESTTHAT STATEMENT?
-
-library(lavaan)
-library(bain)
 
 model <- '
 level: 1
@@ -249,8 +225,8 @@ fb ~ w1 + w2
 fit1 <- sem(model, data = Demo.twolevel, cluster = "cluster")
 hypotheses1 <-"fw~x1=0"
 set.seed(100)
-y1 <- bain(fit1,hypotheses1,standardized = TRUE)
 
+test_that("Multilevel models return error", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))
 
 
 
