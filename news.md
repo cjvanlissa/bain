@@ -1,3 +1,8 @@
+# bain 0.2.2
+
+* Added S3 function for lavaan structural equation models
+* Updated sesamesim data set
+  
 # bain 0.2.1
 
 * Fixed compilation error of F90 source code on r-patched-solaris-x86, by 
