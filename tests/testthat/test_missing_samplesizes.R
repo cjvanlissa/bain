@@ -43,7 +43,7 @@ B =~ Bb + Bl + Bf + Bn + Br + Bc
 '
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-fit1 <- sem(model1, data = d, std.lv = TRUE)
+fit1 <- lavaan::sem(model1, data = d, std.lv = TRUE)
 
 # formulate hypotheses, call bain, obtain summary stats
 
@@ -61,11 +61,11 @@ B =~ Bb + Bl + Bf + Bn + Br + Bc
 '
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-test_that("Grouping var with missing values returns warning", expect_warning(fit1 <- sem(model1, data = d, std.lv = TRUE, group = "sex")))
+test_that("Grouping var with missing values returns warning", expect_warning(fit1 <- lavaan::sem(model1, data = d, std.lv = TRUE, group = "sex")))
 
 # formulate hypotheses, call bain, obtain summary stats
 
-suppressWarnings(fit1 <- sem(model1, data = d, std.lv = TRUE, group = "sex"))
+suppressWarnings(fit1 <- lavaan::sem(model1, data = d, std.lv = TRUE, group = "sex"))
 set.seed(100)
 y <- bain(fit1, hypothesis = " A=~Ab.1 > .6")
 test_that("bain default", {expect_equal(y$n,c(112,123))})

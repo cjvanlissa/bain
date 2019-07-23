@@ -4,7 +4,15 @@ lav_getParameterLabels <-
 
 #' @importFrom lavaan lavInspect parametertable standardizedsolution
 lav_get_est <- function(x, standardize) {
-  estims <- cbind(parametertable(x),
+  unst_pars <- parametertable(x)
+  if(length(unique(unst_pars$group)) > 1){
+    if(any(unst_pars$op == "==")){
+      if(any(unst_pars$op == "==" & unst_pars$group == 0)){
+        stop("Bain cannot evaluate hypotheses for multiple group lavaan models with between-group constraints.", call. = FALSE)
+      }
+    }
+  }
+  estims <- cbind(unst_pars,
                   standardizedsolution(x))
   #standardizedsolution(x)[, c("est.std", "se")]
   ## Only the free parameters or parameters explicitly defined by user.
@@ -22,13 +30,12 @@ lav_get_vcov <- function(x, param_labels, standardize) {
   } else {
     covv <- lavInspect(x, "vcov")
   }
-  list(covv[param_labels, param_labels])
+  list(covv[param_labels, param_labels, drop = FALSE])
 }
 
 
 
 lav_get_estimates <- function(x, standardize) {
-
   parameter_table <- lav_get_est(x, standardize)
   # Drop coefficients we cannot handle
   #parameter_table <- parameter_table[!parameter_table$op %in% c("~~", ":="), ]
@@ -39,7 +46,6 @@ lav_get_estimates <- function(x, standardize) {
     estims <- parameter_table$est
   }
   names(estims) <- parameter_table$parameter_label
-
   covv       <- lav_get_vcov(x, parameter_table$parameter_label, standardize)
   out_list <- list(x = estims,
                    n = lavInspect(x, what = "ntotal"),
@@ -74,8 +80,8 @@ lav_get_estimates <- function(x, standardize) {
 lav_label_multi_group <- function(x, out_list, parameter_table) {
   ## Repeat label suffices for number of parameters in each group
   group_labels <- lavInspect(x, what = "group.label")
-  n_groups <- lavInspect(x, what = "ngroups")
-  suffix <- rep(group_labels, each = length(out_list$x) / n_groups)
+  #n_groups <- lavInspect(x, what = "ngroups")
+  #suffix <- rep(group_labels, each = length(out_list$x) / n_groups)
 
   ## Boolean indexing for the user-named parameters
   custompara <- parameter_table$label
@@ -89,9 +95,9 @@ lav_label_multi_group <- function(x, out_list, parameter_table) {
 
   if (any(which_custom)){
     names(out_list$x)[!which_custom]     <-
-      paste0(names(out_list$x)[!which_custom], ".", suffix[!which_custom])
+      paste0(names(out_list$x)[!which_custom], ".", group_labels[parameter_table$group][!which_custom])
   } else{
-    names(out_list$x) <- paste0(names(out_list$x), ".", suffix)
+    names(out_list$x) <- paste0(names(out_list$x), ".", group_labels[parameter_table$group])
   }
   out_list$Sigma <- lapply(out_list$Sigma, function(x){
     rownames(x) <- colnames(x)  <- names(out_list$x)
@@ -104,7 +110,7 @@ lav_label_multi_group <- function(x, out_list, parameter_table) {
 
 
 lav_bain_multi_group_constraints <- function(x, out_list) {
-    n_by_group <- lavInspect(x, what = "nobs")
+    n_by_group <- lavInspect(x, what = "nobs")#[match(lavInspect(fit1, what = "group.label"))]
     N_total <- lavInspect(x, what = "ntotal")
     # Warning is given when the groups size is not perfectly equal.
     if (sum(diff(n_by_group)) != 0) {
@@ -140,3 +146,26 @@ lav_bain_multi_group_free <- function(x, out_list) {
   out_list$group_parameters <- pars_per_group
   out_list
 }
+
+#' @method coef lavaan
+#' @export
+coef.lavaan <- function(object, standardize = FALSE, ...){
+  pars <- lav_get_est(object, standardize)
+  out <- pars[[c("est", "est.std")[standardize+1]]]
+  names(out) <- pars$parameter_label
+  out
+}
+
+#' @method vcov lavaan
+#' @export
+vcov.lavaan <- function(object, standardize = FALSE, ...){
+  pars <- lav_get_est(object, standardize)
+  lav_get_vcov(object, pars$parameter_label, standardize)[[1]]
+}
+
+#' @method nobs lavaan
+#' @export
+nobs.lavaan <- function(object, ...){
+  lavInspect(object, what = "ntotal")
+}
+

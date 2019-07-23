@@ -109,9 +109,11 @@ bain.lm <-
            fraction = 1,
            ...,
            standardize = FALSE) {
-
     cl <- match.call()
     Args <- as.list(cl[-1])
+    if(!class(x$coefficients) == "numeric"){
+      stop("It appears that you are trying to run a multivariate linear model. Your call to lm() should contain only one dependent variable. See vignette('Introduction_to_bain') for further information")
+    }
     # Checken of het factor OF ordered factor is!!!!!!
     # Nu wordt overal (?) factor_variables[-1] gebruikt. Kan het niet gewoon één keer hier [-1]?
     factor_variables <- sapply(x$model[-1], inherits, what = "factor")
@@ -125,14 +127,14 @@ bain.lm <-
              !grepl(":", paste(names(x$coefficients), collapse = ""))){ # AND no interactions between that factor and continuous predictors
             "ANCOVA"
           } else {
-            "mixed_predictors"
             Warnings <- c(Warnings,
                           "Calling bain on an object of type 'lm' with mixed predictors (factors and numeric predictors) may result in untrustworthy results. Please interpret with caution."
             )
+            "mixed predictors"
           }
         }
       } else {
-        "continuous_predictors"
+        "continuous predictors"
       }
 
     switch(which_model,
@@ -232,6 +234,7 @@ bain.lm <-
       Bain_res$Warnings <- Warnings
     }
     class(Bain_res) <- c("bain_lm", class(Bain_res))
+    attr(Bain_res, "which_model") <- which_model
     Bain_res
   }
 
@@ -260,7 +263,6 @@ bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = TRUE) {
 
   Args[c("x", "n", "Sigma", "group_parameters", "joint_parameters")] <- lav_get_estimates(x, standardize)
   Args$hypothesis <-  hypothesis
-
   Bain_res <- do.call(bain, Args)
   Bain_res$call <- cl
   Bain_res$model <- x
@@ -372,8 +374,7 @@ bain.default <- function(x,
     }
     if (checkcov(Sigma) == 1) {
       # CJ: Please give a more informative error here DONE-HH
-      stop("Your covariance matrix is not positive definite, that is, it cannot exist
-and therefore contains errors")
+      stop("Your covariance matrix ('Sigma') is not positive definite.")
     }
 
     b <- rank_hyp / (n / fraction)
@@ -389,7 +390,7 @@ and therefore contains errors")
     }
     if (any(unlist(lapply(Sigma, checkcov)) == 1)) {
       # CJ: Please replace with a more informative error message
-      stop("the covariance matrix 'Sigma' you entered contains errors since it cannot exist")
+      stop("One of your covariance matrices ('Sigma') is not positive definite.")
     }
 
     dim_group_parameters <- sapply(Sigma, dim)
@@ -558,8 +559,11 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
         }
       }
     }
-
-    invbetadiagpost <- diag(solve(as.matrix(betacovpost)))
+    invbetadiagpost <- tryCatch({
+        diag(solve(as.matrix(betacovpost)))
+      }, error = function(e) {
+        stop(paste(e, "\nOne or more of the constraints you specified is redundant. You have to delete one or more of the constraints without changing the hypothesis. For example, a = b & a > 0 & b > 0 is equivalent to a = b & a > 0."), call. = FALSE)
+      })
     invbetadiagpri <- diag(solve(as.matrix(betacovpri)))
     Bpost <-
       diag(1, n_constraints[2 * h - 1] + rowrank) - solve(diag(invbetadiagpost, n_constraints[2 *

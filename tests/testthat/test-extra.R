@@ -9,7 +9,7 @@ sesamedata <- sesamesim
 model1 <- 'Ab ~ .5 * Bb + Bl + 1'
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-fit1 <- sem(model1, data = sesamedata)
+fit1 <- lavaan::sem(model1, data = sesamedata)
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION WITH UNSTANDARDIZED PARAMETERS
 
@@ -54,7 +54,7 @@ sesamedata <- sesamesim
 model1 <- 'age ~ peabody + sex + 1'
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-fit1 <- sem(model1, data = sesamedata)
+fit1 <- lavaan::sem(model1, data = sesamedata)
 
 hypotheses1 <-"age~pe > age~s"
 set.seed(100)
@@ -93,19 +93,19 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y1$BFmatrix)), as.vector(t(z1
 model1 <- 'age ~ peabody + 1'
 
 sesamesim$sex <- factor(sesamesim$sex)
-fit1 <- sem(model1, data = sesamesim, group = "sex")
+fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"age~peabody.1 = age~peabody.2"
 set.seed(100)
 y1 <- bain(fit1,hypotheses1,standardized = TRUE)
 
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
-fit1 <- sem(model1, data = sesamesim, group = "sex")
+fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"age~peabody.boy = age~peabody.girl"
 set.seed(100)
 y2 <- bain(fit1,hypotheses1,standardized = TRUE)
 
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
-fit1 <- sem(model1, data = sesamesim, group = "sex")
+fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"age~peabody.b = age~peabody.gi"
 set.seed(100)
 y3 <- bain(fit1,hypotheses1,standardized = TRUE)
@@ -127,7 +127,7 @@ B =~ Bb + Bl + Bf + Bn + Br + Bc
 
 A ~ B + age + peabody
 '
-fit2 <- sem(model2, data = sesamedata, std.lv = FALSE)
+fit2 <- lavaan::sem(model2, data = sesamedata, std.lv = FALSE)
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION:
 
@@ -186,7 +186,7 @@ model1 <- 'age ~ peabody + 1'
 # INTO A TESTTHAT STATEMENT?
 
 sesamesim$sex <- factor(sesamesim$sex)
-fit1 <- sem(model1, data = sesamesim, group = "sex",group.equal = c("intercepts"))
+fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex",group.equal = c("intercepts"))
 hypotheses1 <-"age~peabody.1 = age~peabody.2"
 set.seed(100)
 test_that("Multiple group model throws error", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))
@@ -202,7 +202,7 @@ test_that("Multiple group model throws error", expect_error(y1 <- bain(fit1,hypo
 sesamedata <- sesamesim
 model1 <- 'age ~ a*peabody + b*sex + 1
            def := a*b'
-fit1 <- sem(model1, data = sesamedata)
+fit1 <- lavaan::sem(model1, data = sesamedata)
 
 set.seed(100)
 test_that("Defined parameters are excluded", expect_error(y1 <- bain(fit1, "def = .4", standardized = TRUE)))
@@ -222,7 +222,7 @@ level: 2
 fb =~ y1 + y2 + y3
 fb ~ w1 + w2
 '
-fit1 <- sem(model, data = Demo.twolevel, cluster = "cluster")
+fit1 <- lavaan::sem(model, data = Demo.twolevel, cluster = "cluster")
 hypotheses1 <-"fw~x1=0"
 set.seed(100)
 

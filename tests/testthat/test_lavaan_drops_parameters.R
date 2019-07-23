@@ -8,9 +8,7 @@ A~~B
 calculatedpar := para+parb'
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-fit1 <- sem(model1, data = sesameCFA, std.lv = TRUE)
-partable(fit1)
-
+fit1 <- lavaan::sem(model1, data = sesameCFA, std.lv = TRUE)
 
 set.seed(100)
 test_that("Can use parameter labels", expect_error({y <- bain(fit1,"para > parb",standardized = TRUE)}, NA))

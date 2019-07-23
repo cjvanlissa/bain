@@ -37,14 +37,18 @@ print.bain <- function(x, stats = c("Fit_eq", "Com_eq", "Fit_in", "Com_in", "Fit
   miss_val <- is.na(dat)
   dat <- formatC(dat, digits = digits, format = "f")
   dat[miss_val] <- ""
-  cat("Bayesian informative hypothesis testing for an object of class ", class(x$model)[1], ":\n\n", sep = "")
+  model_type <- class(x$model)[1]
+  if(model_type == "lm"){
+    model_type <- paste0(model_type, " (", attr(x, "which_model"), ")")
+  }
+  cat("Bayesian informative hypothesis testing for an object of class ", model_type, ":\n\n", sep = "")
 
   prmatrix(dat,
            quote = FALSE,
            na.print = na.print)
 
   cat("\nHypotheses:\n ", paste(rownames(dat)[-nrow(dat)], ": ", x$hypotheses, sep = "", collapse = "\n  "))
-
+  cat("\n\nNote: BF denotes the Bayes factor of the hypothesis at hand versus its complement.")
   if(!is.null(x[["warnings"]])){
     warning("Bain analysis returned the following warnings:\n  ", paste(1:length(x$warnings), ". ", x$warnings, sep = "", collapse = "\n  "))
   }

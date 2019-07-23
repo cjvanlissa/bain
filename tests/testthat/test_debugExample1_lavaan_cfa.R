@@ -7,7 +7,7 @@ B =~ Bb + Bl + Bf + Bn + Br + Bc
 '
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-fit1 <- sem(model1, data = sesameCFA, std.lv = TRUE)
+fit1 <- lavaan::sem(model1, data = sesameCFA, std.lv = TRUE)
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION:
 
@@ -34,7 +34,7 @@ ngroup1 <- nobs(fit1)
 # the observed and the latent variables have been standardized.
 #
 # we capture the output of parameterEstimates() in an object 'PE'
-PE1 <- parameterEstimates(fit1, standardized = TRUE)
+PE1 <- lavaan::parameterEstimates(fit1, standardized = TRUE)
 
 # we only need the rows that correspond to factor loadings (ie op == "=~")
 # and the column "std.all":

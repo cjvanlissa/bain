@@ -11,7 +11,7 @@ model3 <- '
 
 df$sex <- factor(df$sex, labels = c("boy", "girl"))
 # fit a multiple group latent regression model
-fit3 <- sem(model3, data = df, std.lv = TRUE, group = "sex")
+fit3 <- lavaan::sem(model3, data = df, std.lv = TRUE, group = "sex")
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION:
 
@@ -165,7 +165,7 @@ y2 <- bain(fit3, hypotheses32, standardized = TRUE)
 ngroup3 <- table(sesameCFA$sex)
 
 # obtain the standardized estimates per group.
-PE3 <- parameterEstimates(fit3, standardized = TRUE)
+PE3 <- lavaan::parameterEstimates(fit3, standardized = TRUE)
 # here, we only need the rows that correspond to regressions (ie op == "~") and factor loadings
 # (ie op == "=~"). Note that, contained in estimate are first the factor loadings of Group 1,
 # then the regression coefficients of Group 1 the the factor intercepts of Group 1, followed by the

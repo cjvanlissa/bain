@@ -178,6 +178,7 @@ test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,4))})
 
 varnames <- c("a","b","c","d","e","f")
 hyp1 <- "(b-a)>(c-d)>(d-f,e-f)"
+hyp1 <- "b-a>c-d>(d-f,e-f)"
 x<-bain:::parse_hypothesis(varnames, hyp1)
 test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(-1, 1, -1,  1,  0, 0, 0,
                                                              0, 0,  1, -2,  0, 1, 0,
@@ -185,7 +186,7 @@ test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(-1,
 test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,3))})
 
 varnames <- c("a","b","c","d","e","f")
-hyp1 <- "(2a -3b) > (4f-c)"
+hyp1 <- "2a -3b > 4f-c"
 x<-bain:::parse_hypothesis(varnames, hyp1)
 test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(2, -3, 1, 0, 0, -4, 0))})
 test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,1))})

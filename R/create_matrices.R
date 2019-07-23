@@ -1,4 +1,10 @@
 parse_hypothesis <- function(varnames, hyp){
+
+# Check hypothesis syntax -------------------------------------------------
+
+  if(grepl("\\([^,]+?\\)", hyp)){
+    stop("Bain hypothesis contains a syntax error: Parentheses did not contain a comma to separate named parameters.", call. = FALSE)
+  }
   names_est <- varnames
   # Clean varnames and hyp, to turn parameter names into legal object names
   # Might be better to do this elsewhere

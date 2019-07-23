@@ -8,6 +8,7 @@ Authors@R: c(
     person(c("Herbert"), "Hoijtink", role = c("aut"), email = "h.hoijtink@uu.nl"),
     person(c("Joris"), "Mulder", role = c("aut"), email = "jomulder@gmail.com"),
     person(c("Caspar", "J"), "van Lissa", role = c("aut", "cre"), email = "c.j.vanlissa@uu.nl"),
+    person(c("Van Zundert"), "Camiel", role = "ctb"),
     person(c("Jeff"), "Jones", role = "ctb"),
     person(c("Niels"), "Waller", role = "ctb"),
     person("The R Core Team", role = "cph")

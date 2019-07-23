@@ -2,6 +2,10 @@
 
 * Added S3 function for lavaan structural equation models
 * Updated sesamesim data set
+* Improved documentation
+* Added informative error messages
+* Added checks for legal input
+* Added Camiel van Zundert as contributor
   
 # bain 0.2.1
 

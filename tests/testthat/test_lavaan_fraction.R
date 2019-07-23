@@ -8,7 +8,7 @@ model2 <- '
 
     A ~ B + age + pea
 '
-fit2 <- sem(model2, data = sesameCFA, std.lv = TRUE)
+fit2 <- lavaan::sem(model2, data = sesameCFA, std.lv = TRUE)
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION:
 

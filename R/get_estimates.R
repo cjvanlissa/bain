@@ -107,6 +107,7 @@ rename_estimate <- function(estimate){
 #' }
 #' @rdname get_estimates
 #' @export
+#' @keywords internal
 get_estimates <- function(x, ...){
   UseMethod("get_estimates", x)
 }

@@ -1,4 +1,5 @@
+rm(list=ls())
 library(testthat)
 library(lavaan)
 library(bain)
-test_package("bain")
+test_check("bain")
