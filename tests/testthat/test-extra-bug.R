@@ -16,7 +16,7 @@ sesamedata <- sesamesim
 model1 <- 'Ab ~ Bb + Bl + 1'
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-fit1 <- lavaan::sem(model1, data = sesamedata)
+fit1 <- sem(model1, data = sesamedata)
 
 tmp <- bain:::lav_get_estimates(fit1, standardize = TRUE)
 tmp2 <- bain:::lav_get_estimates(fit1, standardize = FALSE)
@@ -68,7 +68,7 @@ model1 <- 'age ~ peabody + 1'
 
 sesamesim$sex <- factor(sesamesim$sex)
 
-fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex")
+fit1 <- sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"age~peabody.1 = age~peabody.2"
 set.seed(100)
 y1 <- bain(fit1,hypotheses1,standardize = TRUE)
@@ -76,13 +76,13 @@ y1 <- bain(fit1,hypotheses1,standardize = TRUE)
 model1 <- 'age ~ c(a1, a2)*peabody + c(b1, b2)*1'
 
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
-fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex")
+fit1 <- sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"a1 = a2"
 set.seed(100)
 y2 <- bain(fit1,hypotheses1,standardize = TRUE)
 
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
-fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex")
+fit1 <- sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"a1 = a2"
 set.seed(100)
 y3 <- bain(fit1,hypotheses1,standardize = TRUE)
@@ -150,13 +150,13 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y2$BFmatrix)), as.vector(t(z2
 data(sesamesim)
 model1 <- 'age ~ peabody + 1'
 
-fit1 <- lavaan::sem(model1, data = sesamesim, group = "site")
+fit1 <- sem(model1, data = sesamesim, group = "site")
 hypotheses1 <-"age~peabody.1 = age~peabody.2 = age~peabody.3 = age~peabody.4 = age~peabody.5"
 set.seed(100)
 y2 <- bain(fit1,hypotheses1,standardized = TRUE)
 
 sesamesim$site <- factor(sesamesim$site, labels = c("a", "b", "c", "d", "e"))
-fit1 <- lavaan::sem(model1, data = sesamesim, group = "site")
+fit1 <- sem(model1, data = sesamesim, group = "site")
 hypotheses1 <-"age~peabody.a = age~peabody.b = age~peabody.c = age~peabody.d = age~peabody.e"
 set.seed(100)
 y3 <- bain(fit1,hypotheses1,standardized = TRUE)
@@ -225,7 +225,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y3$BFmatrix)), as.vector(t(z2
 model1 <- 'age ~ peabody + 1'
 
 sesamesim$sex <- factor(sesamesim$sex)
-fit1 <- lavaan::sem(model1, data = sesamesim, group = "sex",group.equal = c("intercepts"))
+fit1 <- sem(model1, data = sesamesim, group = "sex",group.equal = c("intercepts"))
 hypotheses1 <-"age~peabody.1 = age~peabody.2"
 set.seed(100)
 test_that("Multi-group models with between constraints fail", expect_error(y1 <- bain(fit1,hypotheses1,standardize = TRUE)))
@@ -245,7 +245,7 @@ test_that("Multi-group models with between constraints fail", expect_error(y1 <-
 sesamedata <- sesamesim
 model1 <- 'age ~ a*peabody + b*sex + 1
            def := a*b'
-fit1 <- lavaan::sem(model1, data = sesamedata)
+fit1 <- sem(model1, data = sesamedata)
 hypotheses1 <-"def = .4"
 set.seed(100)
 test_that("Defined pars are removed", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))
@@ -267,7 +267,7 @@ level: 2
 fb =~ y1 + y2 + y3
 fb ~ w1 + w2
 '
-fit1 <- lavaan::sem(model, data = Demo.twolevel, cluster = "cluster")
+fit1 <- sem(model, data = Demo.twolevel, cluster = "cluster")
 hypotheses1 <-"fw~x1=0"
 set.seed(100)
 test_that("Multilevel gives error", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))
