@@ -28,12 +28,6 @@ fit <- lm(prenumb ~sex + age -1, data = d)
 res <- bain(fit, hypothesis = "sex1 > sex2")
 test_that("bain default", {expect_equal(res$n,c(112,123))})
 
-# ttest independent groups
-d$sex <- as.factor(d$sex)
-fit <- t_test(prenumb ~sex, data = d)
-res <- bain(fit, hypothesis = "group1 > group2")
-test_that("bain default", {expect_equal(res$n,c(113,123))})
-
 # lavaan single group
 
 # use lavaan syntax to specify the confirmatory factor model

@@ -17,7 +17,7 @@ B=~Bb > .6 & B=~Bl > .6 & B=~Bf > .6 & B=~Bn > .6 & B=~Br > .6 & B=~Bc >.6"
 
 set.seed(100)
 
-y <- bain(fit1,hypotheses1,standardized = TRUE)
+y <- bain(fit1,hypotheses1,standardize = TRUE)
 sy <- summary(y, ci = 0.95)
 
 # HERE FOLLOWS THE CALL TO BAIN DEFAULT
@@ -28,23 +28,23 @@ sy <- summary(y, ci = 0.95)
 ngroup1 <- nobs(fit1)
 
 # the parameterEstimates() function presents the estimated parameters
-# in a data.frame; the additional argument standardized = TRUE add
-# extra columns with standardized versions of these parameter estimates;
+# in a data.frame; the additional argument standardize = TRUE add
+# extra columns with standardize versions of these parameter estimates;
 # for our purposes, we need the 'std.all' column, which means that both
-# the observed and the latent variables have been standardized.
+# the observed and the latent variables have been standardize.
 #
 # we capture the output of parameterEstimates() in an object 'PE'
-PE1 <- lavaan::parameterEstimates(fit1, standardized = TRUE)
+PE1 <- lavaan::parameterEstimates(fit1, standardize = TRUE)
 
 # we only need the rows that correspond to factor loadings (ie op == "=~")
 # and the column "std.all":
 estimate1 <- PE1[ PE1$op == "=~", "std.all"]
 
-# assign names to the estimates of the standardized factor loadingts
+# assign names to the estimates of the standardize factor loadingts
 names(estimate1) <- c("Ab", "Al", "Af", "An", "Ar", "Ac",
                      "Bb", "Bl", "Bf", "Bn", "Br", "Bc")
 
-# we will compute the full covariance matrix of standardized parameter
+# we will compute the full covariance matrix of standardize parameter
 # estimates, and only extract the part we need: the rows/cols that
 # correspond to the factor loadings
 #
@@ -55,7 +55,7 @@ PT1 <- parTable(fit1)
 # to the factor loadings:
 par.idx1 <- PT1$free[ PT1$op == "=~" ]
 
-# obtain the covariance matrix of the standardized factor loadings
+# obtain the covariance matrix of the standardize factor loadings
 covariance1 <- list(lavInspect(fit1, "vcov.std.all")[par.idx1, par.idx1])
 
 # specify the hypotheses using the syntax implementen in bain. Note that

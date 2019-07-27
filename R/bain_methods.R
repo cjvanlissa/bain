@@ -112,7 +112,7 @@ bain.lm <-
     cl <- match.call()
     Args <- as.list(cl[-1])
     if(!class(x$coefficients) == "numeric"){
-      stop("It appears that you are trying to run a multivariate linear model. Your call to lm() should contain only one dependent variable. See vignette('Introduction_to_bain') for further information")
+      stop("It appears that you are trying to run a multivariate linear model. This cannot be done using a lm() object as input for bain. Instead use a named object. See vignette('Introduction_to_bain') for further information")
     }
     # Checken of het factor OF ordered factor is!!!!!!
     # Nu wordt overal (?) factor_variables[-1] gebruikt. Kan het niet gewoon één keer hier [-1]?
@@ -242,7 +242,7 @@ bain.lm <-
 
 #' @method bain lavaan
 #' @export
-bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = TRUE) {
+bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = FALSE) {
   cl <- match.call()
   Args <- as.list(cl[-1])
 
@@ -562,7 +562,13 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
     invbetadiagpost <- tryCatch({
         diag(solve(as.matrix(betacovpost)))
       }, error = function(e) {
-        stop(paste(e, "\nOne or more of the constraints you specified is redundant. You have to delete one or more of the constraints without changing the hypothesis. For example, a = b & a > 0 & b > 0 is equivalent to a = b & a > 0."), call. = FALSE)
+        stop(paste(e, "\nOne or more of the constraints you specified is redundant. You have to delete one or more of the constraints without changing the hypothesis. For example, a = b & a > 0 & b > 0 is equivalent to a = b & a > 0,
+                   OR,
+Your hypotheses are not compatible, that is, they cannot be jointly evaluated,
+                   OR,
+one of your hypotheses is impossible. See the vignette for an explanation of compatibility and possibility.
+                   OR,
+Your covariance matrix is not positive definite, that is, it cannot exist and therefore contains errors. See the vignette for further explanations."), call. = FALSE)
       })
     invbetadiagpri <- diag(solve(as.matrix(betacovpri)))
     Bpost <-

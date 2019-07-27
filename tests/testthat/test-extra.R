@@ -11,15 +11,15 @@ model1 <- 'Ab ~ .5 * Bb + Bl + 1'
 # use the lavaan sem function to execute the confirmatory factor analysis
 fit1 <- sem(model1, data = sesamedata)
 
-# HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION WITH UNSTANDARDIZED PARAMETERS
+# HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION WITH UNstandardize PARAMETERS
 
 hypotheses1 <-" Ab~Bl = 0; Ab~Bl > 0"
 set.seed(100)
-y2 <- bain(fit1,hypotheses1,standardized = TRUE)
+y2 <- bain(fit1,hypotheses1,standardize = TRUE)
 
 
-# HERE FOLLOWS THE CALL TO BAIN DEFAULT WITH STANDARDIZED PARAMETERS
-PE1 <- parameterEstimates(fit1, standardized = TRUE)
+# HERE FOLLOWS THE CALL TO BAIN DEFAULT WITH standardize PARAMETERS
+PE1 <- parameterEstimates(fit1, standardize = TRUE)
 estimate1 <- PE1[ PE1$op == "~", "std.all"][2]
 names(estimate1) <- c("b")
 cov<- matrix(lavInspect(fit1, "vcov.std.all")[1, 1],1,1)
@@ -58,10 +58,10 @@ fit1 <- sem(model1, data = sesamedata)
 
 hypotheses1 <-"age~pe > age~s"
 set.seed(100)
-y1 <- bain(fit1,hypotheses1,standardized = TRUE)
+y1 <- bain(fit1,hypotheses1,standardize = TRUE)
 
-# HERE FOLLOWS THE CALL TO BAIN DEFAULT WITH UNSTANDARDIZED PARAMETERS
-PE1 <- parameterEstimates(fit1, standardized = TRUE)
+# HERE FOLLOWS THE CALL TO BAIN DEFAULT WITH UNstandardize PARAMETERS
+PE1 <- parameterEstimates(fit1, standardize = TRUE)
 estimate1 <- PE1[ PE1$op == "~", "std.all"][1:2]
 names(estimate1) <- c("a","b")
 cov<- matrix(lavInspect(fit1, "vcov.std.all")[1:2, 1:2],2,2)
@@ -74,7 +74,7 @@ z1 <- bain(estimate1, hypotheses1, n =ngroup1, Sigma = covariance1,
 
 # HERE FOLLOWS THE CHECK IF S3 GIVES THE SAME RESULTS AS DEFAULT
 
-# TEST RESULTS UNSTANDARDIZED
+# TEST RESULTS UNstandardize
 
 test_that("Bain mutual", {expect_equal(y1$fit$Fit , z1$fit$Fit)})
 test_that("Bain mutual", {expect_equal(y1$fit$Com , z1$fit$Com)})
@@ -96,19 +96,19 @@ sesamesim$sex <- factor(sesamesim$sex)
 fit1 <- sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"age~peabody.1 = age~peabody.2"
 set.seed(100)
-y1 <- bain(fit1,hypotheses1,standardized = TRUE)
+y1 <- bain(fit1,hypotheses1,standardize = TRUE)
 
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
 fit1 <- sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"age~peabody.boy = age~peabody.girl"
 set.seed(100)
-y2 <- bain(fit1,hypotheses1,standardized = TRUE)
+y2 <- bain(fit1,hypotheses1,standardize = TRUE)
 
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
 fit1 <- sem(model1, data = sesamesim, group = "sex")
 hypotheses1 <-"age~peabody.b = age~peabody.gi"
 set.seed(100)
-y3 <- bain(fit1,hypotheses1,standardized = TRUE)
+y3 <- bain(fit1,hypotheses1,standardize = TRUE)
 
 test_that("Bain mutual", {expect_equal(y1$fit$BF,y2$fit$BF)})
 test_that("Bain mutual", {expect_equal(y2$fit$BF,y3$fit$BF)})
@@ -136,13 +136,13 @@ A~B > A~peabody > A~age = 0;
 A~B > A~peabody > A~age > 0"
 
 set.seed(100)
-y1 <- bain(fit2, hypotheses2, scalefactor = 1, standardized = TRUE)
+y1 <- bain(fit2, hypotheses2, scalefactor = 1, standardize = TRUE)
 
 # HERE FOLLOWS THE CALL TO BAIN DEFAULT
 
 ngroup2 <- nobs(fit2)
 
-PE2 <- parameterEstimates(fit2, standardized = TRUE)
+PE2 <- parameterEstimates(fit2, standardize = TRUE)
 # here, we only need the rows that correspond to regressions (ie op == "~"):
 estimate2 <- PE2[ PE2$op == "~", "std.all"]
 
@@ -189,7 +189,7 @@ sesamesim$sex <- factor(sesamesim$sex)
 fit1 <- sem(model1, data = sesamesim, group = "sex",group.equal = c("intercepts"))
 hypotheses1 <-"age~peabody.1 = age~peabody.2"
 set.seed(100)
-test_that("Multiple group model throws error", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))
+test_that("Multiple group model throws error", expect_error(y1 <- bain(fit1,hypotheses1,standardize = TRUE)))
 
 # ==============================================================================
 # TEST NUMBER 8: TEST THAT DEFINED PARAMETERS ARE DROPPED
@@ -205,7 +205,7 @@ model1 <- 'age ~ a*peabody + b*sex + 1
 fit1 <- sem(model1, data = sesamedata)
 
 set.seed(100)
-test_that("Defined parameters are excluded", expect_error(y1 <- bain(fit1, "def = .4", standardized = TRUE)))
+test_that("Defined parameters are excluded", expect_error(y1 <- bain(fit1, "def = .4", standardize = TRUE)))
 
 # ==============================================================================
 # TEST NUMBER 9: TEST THAT MULTILEVEL MODELS DO NOT WORK
@@ -226,7 +226,7 @@ fit1 <- sem(model, data = Demo.twolevel, cluster = "cluster")
 hypotheses1 <-"fw~x1=0"
 set.seed(100)
 
-test_that("Multilevel models return error", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))
+test_that("Multilevel models return error", expect_error(y1 <- bain(fit1,hypotheses1,standardize = TRUE)))
 
 
 

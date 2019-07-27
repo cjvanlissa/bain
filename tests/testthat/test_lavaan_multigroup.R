@@ -42,7 +42,7 @@ Br~1.boy = Br~1.girl &
 Bc~1.boy = Bc~1.girl
 "
 set.seed(100)
-y1 <- bain(fit3, hypotheses31, standardized = TRUE)
+y1 <- bain(fit3, hypotheses31, standardize = TRUE)
 
 sy1 <- summary(y1, ci = 0.90)
 
@@ -157,15 +157,15 @@ A~pea.boy = A~pea.girl  &
 A~B.boy = A~B.girl"
 
 set.seed(100)
-y2 <- bain(fit3, hypotheses32, standardized = TRUE)
+y2 <- bain(fit3, hypotheses32, standardize = TRUE)
 
 # HERE FOLLOWS THE CALL TO BAIN DEFAULT
 
 # determine the sample size per group
 ngroup3 <- table(sesameCFA$sex)
 
-# obtain the standardized estimates per group.
-PE3 <- lavaan::parameterEstimates(fit3, standardized = TRUE)
+# obtain the standardize estimates per group.
+PE3 <- lavaan::parameterEstimates(fit3, standardize = TRUE)
 # here, we only need the rows that correspond to regressions (ie op == "~") and factor loadings
 # (ie op == "=~"). Note that, contained in estimate are first the factor loadings of Group 1,
 # then the regression coefficients of Group 1 the the factor intercepts of Group 1, followed by the
@@ -184,12 +184,12 @@ names(estimate3) <- c("A=~Ab.boy", "A=~Al.boy", "A=~Af.boy", "A=~An.boy", "A=~Ar
                       "A~B.girl", "A~age.girl", "A~pea.girl",
                       "Ab~1.girl","Al~1.girl", "Af~1.girl", "An~1.girl", "Ar~1.girl", "Ac~1.girl","Bb~1.girl","Bl~1.girl", "Bf~1.girl", "Bn~1.girl", "Br~1.girl", "Bc~1.girl")
 
-# obtain the covariance matrix of the standardized parameters for the boys
+# obtain the covariance matrix of the standardize parameters for the boys
 boy_covs <- gsub("\\.boy", "", names(estimate3)[grepl("\\.boy$", names(estimate3))])
 boy_covs <- match(boy_covs, colnames(lavInspect(fit3, "vcov.std.all")))
 covarianceb3 <- lavInspect(fit3, "vcov.std.all")[boy_covs, boy_covs]
 
-# obtain the covariance matrix of the standardized parameters for the girls
+# obtain the covariance matrix of the standardize parameters for the girls
 girl_covs <- gsub("girl$", "g2", names(estimate3)[grepl("\\.girl$", names(estimate3))])
 girl_covs <- match(girl_covs, colnames(lavInspect(fit3, "vcov.std.all")))
 covarianceg3 <- lavInspect(fit3, "vcov.std.all")[girl_covs, girl_covs]
