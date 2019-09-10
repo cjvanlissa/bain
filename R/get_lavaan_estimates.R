@@ -147,25 +147,25 @@ lav_bain_multi_group_free <- function(x, out_list) {
   out_list
 }
 
-#' @method coef lavaan
-#' @export
-coef.lavaan <- function(object, standardize = FALSE, ...){
-  pars <- lav_get_est(object, standardize)
-  out <- pars[[c("est", "est.std")[standardize+1]]]
-  names(out) <- pars$parameter_label
-  out
-}
+# @method coef lavaan
+# @export
+#coef.lavaan <- function(object, standardize = FALSE, ...){
+#  pars <- lav_get_est(object, standardize)
+#  out <- pars[[c("est", "est.std")[standardize+1]]]
+#  names(out) <- pars$parameter_label
+#  out
+#}
 
-#' @method vcov lavaan
-#' @export
-vcov.lavaan <- function(object, standardize = FALSE, ...){
-  pars <- lav_get_est(object, standardize)
-  lav_get_vcov(object, pars$parameter_label, standardize)[[1]]
-}
+# @method vcov lavaan
+# @export
+#vcov.lavaan <- function(object, standardize = FALSE, ...){
+#  pars <- lav_get_est(object, standardize)
+#  lav_get_vcov(object, pars$parameter_label, standardize)[[1]]
+#}
 
-#' @method nobs lavaan
-#' @export
-nobs.lavaan <- function(object, ...){
-  lavInspect(object, what = "ntotal")
-}
+# @method nobs lavaan
+# @export
+#nobs.lavaan <- function(object, ...){
+#  lavInspect(object, what = "ntotal")
+#}
 

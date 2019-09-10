@@ -15,49 +15,68 @@
 #' @seealso \code{\link[stats]{t.test}}
 #' @keywords htest
 #' @examples
-#' tmp <- t_test2(extra ~ group, data = sleep)
+#' tmp <- t_test(extra ~ group, data = sleep)
 #' tmp$n
 #' tmp$v
 #' tmp2 <- t_test(extra ~ group, data = sleep)
 #' tmp2$n
 #' tmp2$v
-#' tmp <- t_test2(extra ~ group, data = sleep, paired = TRUE)
+#' tmp <- t_test(extra ~ group, data = sleep, paired = TRUE)
 #' tmp$n
 #' tmp$v
 #' tmp2 <- t_test(extra ~ group, data = sleep, paired = TRUE)
 #' tmp2$n
 #' tmp2$v
-#' t_test2(sesamesim$postnumb)
-#' tmp <- t_test2(sesamesim$prenumb)
+#' t_test(sesamesim$postnumb)
+#' tmp <- t_test(sesamesim$prenumb)
 #' tmp$n
 #' tmp$v
 #' tmp2 <- t_test(sesamesim$prenumb)
 #' tmp2$n
 #' tmp2$v
-#' tmp <- t_test2(sesamesim$prenumb, sesamesim$postnumb)
+#' tmp <- t_test(sesamesim$prenumb, sesamesim$postnumb)
 #' tmp$n
 #' tmp$v
 #' tmp2 <- t_test(sesamesim$prenumb, sesamesim$postnumb)
 #' tmp2$n
 #' tmp2$v
-#' tmp <- t_test2(sesamesim$prenumb, sesamesim$postnumb, paired = TRUE)
+#' tmp <- t_test(sesamesim$prenumb, sesamesim$postnumb, paired = TRUE)
 #' tmp$n
 #' tmp$v
 #' tmp2 <- t_test(sesamesim$prenumb, sesamesim$postnumb, paired = TRUE)
 #' tmp2$n
 #' tmp2$v
 #' @export
-t_test2 <- function(x, ...)
-  UseMethod("t_test2")
+t_test <- function(x, ...)
+  UseMethod("t_test")
 
-#' @method t_test2 default
+#' @method t_test default
 #' @export
-t_test2.default <- function(x, ...) {
+t_test.default <- function(x, ...) {
   cl <- match.call()
   cl[[1]] <- as.name("t.test")
+  var_eq <- FALSE
+  if("var.equal" %in% names(cl)){
+    var_eq <- cl[["var.equal"]]
+  } else {
+    if(length(cl) > 6){
+      if(names(cl)[7] == "") {
+        var_eq <- cl[["var.equal"]]
+      }
+    }
+  }
   rval <- eval.parent(cl)
   if (!rval$method == "One Sample t-test") { # If it's a two sample t-test
-    if(!hasArg("y")) y <- eval.parent(cl[[3]])
+    if("y" %in% names(cl)){
+      y <- eval.parent(cl[["y"]])
+    } else {
+      if(!is.null(cl[[3]])){
+        if(names(cl)[3] == ""){
+          y <- eval.parent(cl[[3]])
+        }
+      }
+    }
+    #if(!hasArg("y")) y <- eval.parent(cl[[3]])
     if (rval$method == "Paired t-test"){
       complete_data <- complete.cases(x, y)
       x <- x[complete_data] - y[complete_data]
@@ -67,30 +86,43 @@ t_test2.default <- function(x, ...) {
       y <- y[!is.na(y)]
       x <- x[!is.na(x)]
       rval$n <- c(length(x), length(y))
-      rval$v <- c(var(x), var(y))
+      #browser()
+      if (var_eq) {
+        df <- length(x) + length(y) - 2
+        v <- 0
+        if (length(x) > 1)
+          v <- v + (length(x) - 1) * var(x)
+        if (length(y) > 1)
+          v <- v + (length(y) - 1) * var(y)
+        v <- v/df
+        rval$v <- v
+        rval$v <- c(var(x), var(y))
+      } else {
+        rval$v <- c(var(x), var(y))
+      }
     }
   } else {
     x <- x[!is.na(x)]
     rval$n <- length(x)
     rval$v <- var(x)
   }
-
   class(rval) <- c("bain_htest", "htest")
   return(rval)
 }
 
 
 #' @importFrom stats terms
-#' @method t_test2 formula
+#' @method t_test formula
 #' @export
-t_test2.formula <- function(x, ...) {
+t_test.formula <- function(x, ...) {
   cl <- match.call()
   cl[[1]] <- as.name("t.test")
   names(cl)[match("x", names(cl))] <- "formula"
   rval <- eval.parent(cl)
   data <- as.data.frame(eval.parent(cl[["data"]]))
   model_frame <- stats::model.frame(cl[["formula"]], data)
-
+  response <- attr(attr(model_frame, "terms"), "response")
+  g <- factor(model_frame[[-response]])
   if (!rval$method == "One Sample t-test") { # If it's a two sample t-test
     if (rval$method == "Paired t-test"){
       x <- model_frame[model_frame[[2]] == unique(model_frame[[2]])[1], 1] - model_frame[model_frame[[2]] == unique(model_frame[[2]])[2], 1]
@@ -106,6 +138,8 @@ t_test2.formula <- function(x, ...) {
     rval$n <- length(model_frame[[1]])
     rval$v <- var(model_frame[[1]])
   }
+  if (length(rval$estimate) == 2L)
+    names(rval$estimate) <- paste0("mean of group", levels(g))
   class(rval) <- c("bain_htest", "htest")
   return(rval)
 }

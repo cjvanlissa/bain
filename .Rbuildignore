@@ -7,3 +7,5 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^\.travis\.yml$
+dev/
+news.md

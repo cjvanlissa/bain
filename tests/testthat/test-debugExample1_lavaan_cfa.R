@@ -1,3 +1,4 @@
+library(lavaan)
 data(sesamesim)
 sesameCFA <- sesamesim
 names(sesameCFA)[6] <- "pea"
@@ -25,7 +26,7 @@ sy <- summary(y, ci = 0.95)
 # obtain the required input for bain:
 
 # the sample size
-ngroup1 <- nobs(fit1)
+ngroup1 <- lavaan::nobs(fit1)
 
 # the parameterEstimates() function presents the estimated parameters
 # in a data.frame; the additional argument standardized = TRUE add
@@ -34,7 +35,7 @@ ngroup1 <- nobs(fit1)
 # the observed and the latent variables have been standardized.
 #
 # we capture the output of parameterEstimates() in an object 'PE'
-PE1 <- lavaan::parameterEstimates(fit1, standardized = TRUE)
+PE1 <- parameterEstimates(fit1, standardized = TRUE)
 
 # we only need the rows that correspond to factor loadings (ie op == "=~")
 # and the column "std.all":

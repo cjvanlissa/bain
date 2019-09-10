@@ -1,3 +1,4 @@
+library(lavaan)
 # ==============================================================================
 # TEST NUMBER 2: PARAMETER FIXED AT A VALUE
 # ==============================================================================
@@ -24,7 +25,7 @@ estimate1 <- PE1[ PE1$op == "~", "std.all"][2]
 names(estimate1) <- c("b")
 cov<- matrix(lavInspect(fit1, "vcov.std.all")[1, 1],1,1)
 covariance1 <- list(cov)
-ngroup1 <- nobs(fit1)
+ngroup1 <- lavaan::nobs(fit1)
 hypotheses1 <-"b=0; b>0"
 z2 <- bain(estimate1, hypotheses1, n =ngroup1, Sigma = covariance1,
            group_parameters = 1, joint_parameters = 0)
@@ -66,7 +67,7 @@ estimate1 <- PE1[ PE1$op == "~", "std.all"][1:2]
 names(estimate1) <- c("a","b")
 cov<- matrix(lavInspect(fit1, "vcov.std.all")[1:2, 1:2],2,2)
 covariance1 <- list(cov)
-ngroup1 <- nobs(fit1)
+ngroup1 <- lavaan::nobs(fit1)
 hypotheses1 <-" a > b"
 set.seed(100)
 z1 <- bain(estimate1, hypotheses1, n =ngroup1, Sigma = covariance1,
@@ -140,7 +141,7 @@ y1 <- bain(fit2, hypotheses2, scalefactor = 1, standardized = TRUE)
 
 # HERE FOLLOWS THE CALL TO BAIN DEFAULT
 
-ngroup2 <- nobs(fit2)
+ngroup2 <- lavaan::nobs(fit2)
 
 PE2 <- parameterEstimates(fit2, standardized = TRUE)
 # here, we only need the rows that correspond to regressions (ie op == "~"):

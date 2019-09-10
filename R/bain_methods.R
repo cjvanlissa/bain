@@ -303,7 +303,7 @@ bain.bain_htest <-
         Args$group_parameters <- 0
         Args$joint_parameters <- 1
       } else {
-        if (!x$method == " Two Sample t_test") {
+        if (!x$method %in% c(" Two Sample t_test", " Two Sample t-test")) {
           Args$Sigma <- lapply(x$v/x$n, as.matrix)
         } else {
           df <- sum(x$n) - 2
