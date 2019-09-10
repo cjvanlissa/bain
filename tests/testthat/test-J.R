@@ -8,7 +8,7 @@ cov <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 set.seed(100)
 y<-bain(estimate,"a>-.96 & a < 2.96 & b>-.96 & b < 2.96 & c>-.96 & c < 2.96",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
-test_that("bain default", {expect_equal(y$fit$Fit_in, c(.837375,NA), tolerance = .014)})
+test_that("bain default", {expect_equal(y$fit$Fit_in, c(0.8560805, NA), tolerance = .016)})
 
 # =============================================
 
@@ -20,9 +20,9 @@ cov <- matrix(c(.04,0,0,0,.04,0,0,0,.04),nrow=3,ncol=3)
 set.seed(100)
 y<-bain(estimate,"a>-.96 & a < 2.96 & b>-.96 & b < 2.96 & c>-.96 & c < 2.96",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
-test_that("bain default", {expect_equal(y$fit$Com_in, c(.837375,NA), tolerance = .016)})
-test_that("Bain mutual", {expect_equal(y$b,.04)})
-test_that("Bain mutual", {expect_equal(y$independent_restrictions,4)})
+test_that("bain default", {expect_equal(y$fit$Com_in, c(0.8532082, NA), tolerance = .016)})
+test_that("Bain mutual", {expect_equal(y$b, .04)})
+test_that("Bain mutual", {expect_equal(y$independent_restrictions, 4)})
 
 # ==========================================
 
@@ -32,7 +32,7 @@ sampN <- 100
 covariance <- list(matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3))
 set.seed(199)
 y<-bain(estimate,"a = 1 & b = 2 & c = 3 ",n=sampN,Sigma=covariance,group_parameters=3,joint_parameters = 0)
-test_that("Bain mutual", {expect_equal(y$independent_restrictions,3)})
+test_that("Bain mutual", {expect_equal(y$independent_restrictions, 3)})
 
 #==============================================================================================
 # compute c and f for an about equality constrained hypothesis with bain and with R")
@@ -63,7 +63,7 @@ for (i in 1:100000){
   if (sampc[i] < .5 & sampc[i] > -.5) {sampc[i] <-1} else {sampc[i]<- 0}
 }
 
-test_that("bain default", {expect_equal(y$fit$Com[1],mean(sampc), tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Com[1], mean(sampc), tolerance = .01)})
 
 # x-y has posterior mean -.289637 and posterior variance .039 and sd .19728
 
