@@ -19,20 +19,20 @@ hypotheses2 <- "A~B > A~pea = A~age = 0;
 A~B > A~pea > A~age > 0"
 
 set.seed(100)
-y1 <- bain(fit2, hypotheses2, fraction = 1, standardized = TRUE)
+y1 <- bain(fit2, hypotheses2, fraction = 1, standardize = TRUE)
 
 sy1 <- summary(y1, ci = 0.99)
 
 set.seed(100)
-y2 <- bain(fit2, hypotheses2, fraction = 2, standardized = TRUE)
+y2 <- bain(fit2, hypotheses2, fraction = 2, standardize = TRUE)
 set.seed(100)
-y3 <- bain(fit2, hypotheses2, fraction = 3, standardized = TRUE)
+y3 <- bain(fit2, hypotheses2, fraction = 3, standardize = TRUE)
 
 # HERE FOLLOWS THE CALL TO BAIN DEFAULT
 
 ngroup2 <- lavaan::nobs(fit2)
 
-PE2 <- parameterEstimates(fit2, standardized = TRUE)
+PE2 <- parameterEstimates(fit2, standardize = TRUE)
 # here, we only need the rows that correspond to regressions (ie op == "~"):
 estimate2 <- PE2[ PE2$op == "~", "std.all"]
 

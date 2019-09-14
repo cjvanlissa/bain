@@ -59,9 +59,9 @@ Factors from Data with Missing Values. Psychological Methods,
 24, 253-268. DOI: 10.1037/met0000187
 
 Van Lissa, C.J., Gu, X., Mulder, J., Rosseel, Y.,
-van Zundert, C, and Hoijtink, H. (2019). Teacher's 
+van Zundert, C, and Hoijtink, H. (unpublished). Teacher's 
 corner: Evaluating informative hypotheses using the
-Bayes factor in structural equation models. DOI: PsyArchiv
+Bayes factor in structural equation models.  
 
 ## Usage
 
@@ -73,12 +73,13 @@ Bayes factor in structural equation models. DOI: PsyArchiv
 An R object containing the outcome of a statistical analysis. Currently, the following objects can be processed:
 
 1) `t_test()` objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test, equivalence test). Note that, `t_test` can be used in the same way as `t.test`.
-2) `lm()` objects (anova, ancova, multiple regression). **In the Examples section it is elaborated which calls to lm can be processed by bain (other calls cannot be processed).**
+2) `lm()` objects (anova, ancova, multiple regression).
 3) `lavaan` objects generated with the `sem()`, `cfa()`, and
 `growth` functions.
-4) A named vector containing the estimates resulting from a statistical analysis. Note that, named means that each estimate has to be nameled such that it can be referred to in hypotheses.
+4) A named vector containing the estimates resulting from a statistical analysis. Note that, named means that each estimate has to be named such that it can be referred to in hypotheses.
 
-`hypothesis` A character string containing the informative hypotheses to evaluate (see Details).
+`hypothesis` A character string containing the informative hypotheses to evaluate 
+(see below the section on "The Specification of Hypotheses").
 
 `fraction = 1` A number representing the fraction of information in the data used to construct the prior distribution (see Hoijtink, Mulder, van Lissa, and Gu, 2019): The default value 1 denotes the minimal fraction, 2 denotes twice the minimal fraction, etc. 
 
@@ -104,7 +105,7 @@ bain(x,hypotheses,fraction = 1,standardize = FALSE)`. The first call to
 in case of `lm` implementations of anova, ancova, and `t_test`. The
 second call to `bain` is used in case of `lm` implementations of
 multiple regression. With `standardize = TRUE` hypotheses with respect
-to standardized regression coefficients are evaluated. With `standarize
+to standardized regression coefficients are evaluated. With `standardize
 = FALSE` hypotheses with respect to unstandardized regression coefficients
 are evaluated.
 5) `print(results)` Print the results of an analysis with
@@ -126,11 +127,14 @@ The following steps need to be executed:
 
 1) `x <- sem()` or `x <- cfa()` or `x <- growth()`. 
 Execute an analysis with the sem, cfa, or growth functions
-implemented in `lavaan`. Note that, by default, 
+implemented in `lavaan` (http://lavaan.org/) . Note that, by default, 
 `lavaan` will apply list-wise deletion if there are cases with
 missing values in the variables used. However, other options are
 available.
-2) Specify a model using the `model <- ...` command.
+2) Specify a `lavaan` model using the `model <- ...` command. In case
+of multiple group models, only models **without** between group 
+restrictions can be processed by `bain` with a `lavaan` object
+as input.
 3) Display the estimates and their names using the command `coef(x)`. 
 Only parameters who's names contain `~` (regression coefficients),
 `~1` (intercepts), or `=~` (factor loadings) can be used in the 
@@ -138,13 +142,16 @@ specification of hypotheses. (Unique abbreviations of) the names
 can be used to specify `hypotheses`. For multiple group analyses
 the names have to end with a group label `.grp`. Group labels
 can be assigned using commands like
-`sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))`.
+`sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))`. 
+If in a `lavaan` model specification parameters are labelled, e.g., as in 
+`model <- 'age ~ c(a1, a2)*peabody + c(b1, b2)*1` then the labels
+have to be used in the specification of hypotheses.
 4) `set.seed(seed)`. Set `seed` equal to an integer
 number to create a repeatable random number sequence.
-5) `results <- bain(x,hypotheses,fraction = 1,standardize = TRUE)`.
+5) `results <- bain(x,hypotheses,fraction = 1,standardize = FALSE)`.
 With `standardize = TRUE` hypotheses with respect
-to standardized regression coefficients are evaluated. With `standarize
-= FALSE` hypotheses with respect to unstandardized regression coefficients
+to standardized coefficients are evaluated. With `standardize
+= FALSE` hypotheses with respect to unstandardized coefficients
 are evaluated.
 6) `print(results)` Print the results of an analysis with
 `bain`.
@@ -176,7 +183,9 @@ supplied to `bain`:
 a) A vector containing estimates of the parameters
 used to specify `hypotheses`; 
 b) A list containing the covariance matrix of these parameters; and, 
-c) the sample size. 
+c) The sample size used for estimation of the parameters. Note that,
+due to missing values this sample size may be smaller than the total sample
+size.
 
 In case of a multiple group
 analysis, the following information has to be extracted from the statistical
@@ -193,7 +202,9 @@ matrix of the parameters corresponding to the group at hand and, possibly,
 the augmented parameters. In the rows and colums of each covariance matrix 
 the parameters of the group at hand come first, possibly followed by the 
 augmented parameters.
-c) per group the sample size.
+c) Per group the sample size used for estimation of the parameters. Note that,
+due to missing values this sample size may be smaller than the total sample
+size per group.
 
 2) Assign names to the estimates
 using `names(estimates)<-names`. Note that, `names` is a
@@ -266,13 +277,17 @@ names "a", "b", and "c", respectively.
 The hypotheses specified have to adhere to the following rules **`bain` may still run if you
 deviate from the rules, however, the output will be nonsense**:
 
-* When using `bain` with a `lm` or `t_test` or `lavaan` object, (unique abbreviations of) the names
+* When using `bain` with a `lm` or `t_test` or `lavaan` object, 
+(unique abbreviations of) the names
 displayed by `coef(x)` have to be used (but see the section "Using bain
 with a lavaan object" for additional instructions if multiple group
-analyses are executed). If, for example, the names are `cat` and `dog`, `c`
-and `d ` would be unique abreviations. If, for example, the names are `cato` and `cata` the whole
+analyses are executed and/or parameters are labelled). If, 
+for example, the names are `cat` and `dog`, `c`
+and `d ` would be unique abreviations. If, for example, the names are `cato` 
+and `cata` the whole
 names have to be used.
-* When using `bain` with a named vector, parameters are referred to using the names specified in `names()`.
+* When using `bain` with a named vector, parameters are referred to using 
+the names specified in `names()`.
 * Linear combinations of parameters must be specified adhering to the
 following rules:
 
@@ -339,7 +354,7 @@ error message or render an output table containing `Inf`'s.
 The commands `bain()` or `results<-bain()` followed by
 `results` or `print(results)` will render the default (most
 important) output from `bain`. These concern for each hypothesis
-specified in `hypothesis` the fit, complexity, **Bayes factor versus its
+specified in `hypotheses` the fit, complexity, **Bayes factor versus its
 complement**, posterior model probability (based on equal prior model
 probabilities) excluding the unconstrained hypothesis, and posterior model
 probability including the unconstrained hypothesis. In Hoijtink, Mulder,
@@ -358,7 +373,8 @@ object:
 contains only the column containing the fit of each hypothesis. In the last
 command `Fit` can be replaced by `Com`, `BF`, `PMPa`,
 `PMPb` to obtain the information in the corresponding columns of the
-default output.
+default output. Note that, in the column `BF` the Bayes factor of the
+hypothesis at hand versus its complement is displayed.
 * `results$BFmatrix` contains the matrix containing the mutual Bayes
 factors of the hypotheses specified in `hypotheses`.
 * `results$b` contains for each of the groups in the analysis the
@@ -373,7 +389,10 @@ posterior distribution.
 function rendering the R object that is input to `bain`.
 * `results$n` displays the sample sizes per group.
 * `results$independent_restrictions` displays the number of
-independent constraints in the set of hypotheses under consideration.
+independent constraints in the set of hypotheses under consideration. Note that,
+in Gu, Mulder, and Hoijtink (2018) en Hoijtink, Gu, and Mulder (2019) the
+definition given was misprinted (besides R and S also r and s should have been
+added to the definition).
 * `results$fit$Fit_eq` displays the fit of the equality constrained
 part of each hypothesis. Replacing `Fit_eq` by `Fit_in`, renders
 the fit of the inequality constrained part of an hypothesis conditional on
@@ -386,9 +405,7 @@ repectively, are the complexity counterparts of `Fit_eq`, and
 
 
 Note that, each of the examples given below can be run by copy pasting them
-into the Source screen of `RStudio`. An `Examples.R` file can also be
-downloaded from the `bain` website at
-https://informative-hypotheses.sites.uu.nl/software/bain/ 
+into the Source screen of `RStudio`. 
 
 Unless indicated otherwise, the examples that follow below use a simulated
 data set inspired by the Sesame Street data set from:
@@ -438,6 +455,10 @@ as input for `bain`. Below you will find the following examples:
 
 **1. Examples Using a `t_test` Object**
 
+If a `t_test` object is used, the main output table is 
+labelled: "Bayesian informative hypothesis testing for an object 
+of class t_test"
+
 a) BayesianStudent's t-test (equal within group variances)
 b) Bayesian Welch's t-test (unequal within group variances
 c) Bayesian paired samples t-test
@@ -446,41 +467,64 @@ e) Bayesian Equivalence test
 
 **2. Examples Using a `lm` Object**
 
-Note that, **only the type of calls to `lm` presented in the examples can be
-processed by bain**. Calls structured in a different manner will either
-render an error message, or results that are meaningless.
-
 a) Bayesian ANOVA. The example concerns a one-way ANOVA. Two-way or higher
 order ANOVA's can only be handled by recoding all factors into one
 factor. If, for example, there is a factor `sex` with levels `man` and `woman`,
 and a factor `age` with levels `young` and `old`, these have to be recoded in a
-new factor `sexage` with levels `manyoung`, `manold`, `womanyoung`, `womanold`
+new factor `sexage` with levels `manyoung`, `manold`, `womanyoung`, `womanold`. 
+If a `lm` "ANOVA"object is used, the main output table is 
+labelled: "Bayesian informative hypothesis testing for an object 
+of class lm (ANOVA)"
 b) Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher
 order ANCOVA's can only be handled by recoding all factors into one
-factor. **Note that calls to `lm` using interactions between groups and
-covariates or functions of the covariates (interactions or squared covariates)
-can not be processed by `bain`.**
-c) Bayesian multiple regression. **Note that calls to `lm` using 
-functions of the predictors (for example, squared
-predictors)
-can not be processed by `bain`.** However, note that interactions 
-between predictors can
-be processed. Note furthermore, that one can compute a new variable
+factor. **Note that calls to `lm` using functions of the predictors 
+(for example, adding squared predictors to the model using commands like
+`y ~ x + I(x^2)`)
+can not be processed by `bain`.** However, one can compute a new variable
 (for example, a squared predictor) and add this variable to the 
-model specification of `lm`.
+model specification of `lm`. If a `lm` "ANCOVA"object is used, the 
+main output table is 
+labelled: "Bayesian informative hypothesis testing for an object 
+of class lm (ANCOVA)"
+c) Bayesian multiple regression. **Note that calls to `lm` using 
+functions of the predictors (for example, adding squared predictors 
+to the model using commands like `y ~ x + I(x^2)`)
+can not be processed by `bain`.** However, one can compute a new variable
+(for example, a squared predictor) and add this variable to the 
+model specification of `lm`. Note furthermore, that only if 
+`standardize = FALSE` interactions between predictors can
+be processed. If a `lm` "regression with only continuous predictors" 
+object is used, the main output table is 
+labelled: "Bayesian informative hypothesis testing for an object 
+of class lm (continuous predictors)". If a `lm` object contains 
+**two or more**
+factors and, optionally, continuous predictors, the main output table is
+labelled: "Bayesian informative hypothesis testing for an object of 
+class lm (mixed predictors)". In case of mixed predictors, the one group
+approach to computing Bayes factors is used (see, Hoijtink, Gu, and 
+Mulder, 2019). This may render inferior results if group sizes are unequal.
 d) Bayesian ANOVA. Sensitivity analysis. See Hoijtink, Mulder, 
 van Lissa, and Gu (2019) for elaborations.
 
 **3. Examples Using a `lavaan` Object**
 
+If a `lavaan` object is used, the main output table is labelled: 
+"Bayesian informative hypothesis testing for an object 
+of class lavaan".
+
 a) Bayesian confirmatory factor analysis
 b) Bayesian latent regression
-c) Bayesian multiple group latent regression
+c) Bayesian multiple group latent regression. Note that, multiple group 
+models with between group restrictions cannot be processed. 
 
 Additional examples can be found in Gu, Hoijtink, Mulder,
 and Rosseel (2019).
 
 **4. Examples Using a Named Vector**
+
+If a `named vector` object is used, the main output table is labelled: 
+"Bayesian informative hypothesis testing for an object 
+of class named vector".
 
 a) Bayesian ANOVA
 b) Bayesian ANCOVA
@@ -684,7 +728,7 @@ regr <- lm(postnumb ~ age + peabody + prenumb,sesamesim)
 coef(regr)
 # set a seed value
 set.seed(100)
-# test hypotheses with bain. Note that standardized = FALSE denotes that the
+# test hypotheses with bain. Note that standardize = FALSE denotes that the
 # hypotheses are in terms of unstandardized regression coefficients
 results<-bain(regr, "age = 0 & peab=0 & pre=0 ; age > 0 & peab > 0 & pre > 0"
 , standardize = FALSE)
@@ -697,7 +741,7 @@ summary(results, ci = 0.95)
 # coefficients (based on the seBeta function by Jeff Jones and Niels Waller):
 # set a seed value
 set.seed(100)
-# test hypotheses with bain. Note that standardized = TRUE denotes that the
+# test hypotheses with bain. Note that standardize = TRUE denotes that the
 # hypotheses are in terms of standardized regression coefficients
 results<-bain(regr, "age = peab = pre ; pre > age > peab",standardize = TRUE)
 # display the results
@@ -742,7 +786,7 @@ print(results3)
 **3. Examples Using a `lavaan` object**
 
 a) An example of Bayesian confirmatory factor analysis.
-See van Lissa et al. (2019) for further elaborations
+See van Lissa et al. (unpublished) for further elaborations
 
 ```{r ttest_ex10, eval=FALSE}
 # Load the bain and lavaan libraries. Visit www.lavaan.org for 
@@ -766,13 +810,13 @@ hypotheses1 <-
 " A=~Ab > .6 & A=~Al > .6 & A=~Af > .6 & A=~An > .6 & A=~Ar > .6 & A=~Ac >.6 & 
 B=~Bb > .6 & B=~Bl > .6 & B=~Bf > .6 & B=~Bn > .6 & B=~Br > .6 & B=~Bc >.6"
 set.seed(100)
-y <- bain(fit1,hypotheses1,fraction=1,standardized=TRUE)
+y <- bain(fit1,hypotheses1,fraction=1,standardize=TRUE)
 sy <- summary(y, ci = 0.95)
 
 ```
 
 b) An example of Bayesian latent regression.
-See van Lissa et al. (2019) for further elaborations.
+See van Lissa et al. (unpublished) for further elaborations.
 
 ```{r ttest_ex11, eval=FALSE}
 # Load the bain and lavaan libraries. Visit www.lavaan.org for 
@@ -798,12 +842,12 @@ hypotheses2 <- "A~B > A~peabody = A~age = 0;
                A~B > A~peabody > A~age = 0; 
 A~B > A~peabody > A~age > 0"
 set.seed(100)
-y1 <- bain(fit2, hypotheses2, fraction = 1, standardized = TRUE)
+y1 <- bain(fit2, hypotheses2, fraction = 1, standardize = TRUE)
 sy1 <- summary(y1, ci = 0.99)
 ```
 
 c) An example of Bayesian multiple group latent regression.
-See van Lissa et al. (2019) for further elaborations.
+See van Lissa et al. (unpublished) for further elaborations.
 
 ```{r ttest_ex12, eval=FALSE}
 # Load the bain and lavaan libraries. Visit www.lavaan.org for 
@@ -830,7 +874,7 @@ coef(fit3)
 # Formulate and evaluate two sets of hypotheses
 
 # Compute the mean of the intercepts in both groups for both factors
-parest <- parameterEstimates(fit3, standardized = TRUE)
+parest <- parameterEstimates(fit3, standardize = TRUE)
 ints <- parest[ parest$op == "~1", "std.all"]
 intAboy <- ints[1:6]
 intBboy <- ints[7:12]
@@ -897,7 +941,7 @@ Br~1.boy -2.682939= Br~1.girl -2.620678&
 Bc~1.boy -2.682939= Bc~1.girl -2.620678
 "
 set.seed(100)
-y1 <- bain(fit3, hypotheses31, standardized = TRUE)
+y1 <- bain(fit3, hypotheses31, standardize = TRUE)
 sy1 <- summary(y1, ci = 0.90)
 
 hypotheses32 <-
@@ -1010,7 +1054,7 @@ A~age.boy = A~age.girl  &
 A~peabody.boy = A~peabody.girl  &
 A~B.boy = A~B.girl"
 set.seed(100)
-y2 <- bain(fit3, hypotheses32,standardized=TRUE)
+y2 <- bain(fit3, hypotheses32,standardize=TRUE)
 
 ```
 
@@ -1032,7 +1076,10 @@ coef(anov)
 estimate <- coef(anov)
 # give names to the estimates in anov
 names(estimate) <- c("site1", "site2", "site3","site4","site5")
-# create a vector containing the sample sizes of each group
+# create a vector containing the sample size of each group
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
 ngroup <- table(sesamesim$site)
 # compute for each group the covariance matrix of the parameters
 # of that group and collect these in a list
@@ -1083,6 +1130,9 @@ estimates <- coef(ancov2)
 # assign names to the estimates
 names(estimates)<- c("v.1", "v.2", "v.3", "v.4","v.5", "pre")
 # compute the sample size per group
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
 ngroup <- table(sesamesim$site)
 # compute for each group the covariance matrix of the parameters of that
 # group and collect these in a list note that, the residual variance as
@@ -1149,6 +1199,9 @@ estimate <- coef(within)[1:3]
 # give names to the estimates in anov
 names(estimate) <- c("pre", "post", "fu")
 # compute the sample size
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
 ngroup <- nrow(sesamesim)
 # compute the covariance matrix of the three means
 covmatr <- list(vcov(within))
@@ -1184,6 +1237,9 @@ estimate <- c(est1,est2)
 # give names to the estimates in anov
 names(estimate) <- c("pre1", "post1", "fu1","pre2", "post2", "fu2")
 # determine the sample size per group
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
 ngroup<-table(sesamesim$sex)
 # cov1 has to contain the covariance matrix of the three means in group 1.
 # cov2 has to contain the covariance matrix in group 2
@@ -1235,6 +1291,9 @@ estimate <- coef(logreg)
 # give names to the estimates
 names(estimate) <- c("int", "age", "peab" ,"pre" )
 # compute the sample size. Note that, this is an analysis with ONE group
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
 ngroup <- nrow(sesamesim)
 # compute the covariance matrix of the intercept and regression coefficients
 covmatr <- list(vcov(logreg))
@@ -1271,6 +1330,9 @@ sesamesim$sex <- factor(sesamesim$sex)
 # center the covariate age
 sesamesim$age <- sesamesim$age - mean(sesamesim$age)
 # determine sample size per sex group
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
 ngroup <- table(sesamesim$sex)
 # execute the logistic regression, -1 ensures that the coefficients
 # for boys and girl are estimated adjusted for the covariate age
@@ -1359,6 +1421,9 @@ library(WRS2)
 # make a factor of variable site
 sesamesim$site <- as.factor(sesamesim$site)
 # create a vector containing the sample sizes of each group
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
 ngroup <- table(sesamesim$site)
 # Compute the 20\% sample trimmed mean for each site
 estimates <- c(mean(sesamesim$postnumb[sesamesim$site == 1], tr = 0.2),
@@ -1488,7 +1553,8 @@ summary(results, ci = 0.95)
 ```
 
 i) An example of Bayesian confirmatory factor analysis with
-a named vector object. See van Lissa et al. (2019) for further elaborations
+a named vector object. See van Lissa et al. (unpublished) for further 
+elaborations
 
 
 ```{r ttest_ex21, eval=FALSE}
@@ -1552,7 +1618,7 @@ hypotheses1 <-
 set.seed(100)
 y <- bain(estimate1, hypotheses1, n =ngroup1, Sigma = covariance1,
                 group_parameters = 12, joint_parameters = 0, fraction = 1,
-                standardized = TRUE)
+                standardize = TRUE)
 
 # print the results of the bain analysis and obtain the estimates and 95%
 # central credibility intervals
