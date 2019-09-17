@@ -457,7 +457,7 @@ as input for `bain`. Below you will find the following examples:
 
 If a `t_test` object is used, the main output table is 
 labelled: "Bayesian informative hypothesis testing for an object 
-of class t_test"
+of class bain_htest" (which denotes that a `t-test` was executed).
 
 a) BayesianStudent's t-test (equal within group variances)
 b) Bayesian Welch's t-test (unequal within group variances
@@ -524,7 +524,7 @@ and Rosseel (2019).
 
 If a `named vector` object is used, the main output table is labelled: 
 "Bayesian informative hypothesis testing for an object 
-of class named vector".
+of class named numeric" (which denotes that `named vector` input was used).
 
 a) Bayesian ANOVA
 b) Bayesian ANCOVA
