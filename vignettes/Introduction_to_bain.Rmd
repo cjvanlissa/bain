@@ -524,7 +524,7 @@ and Rosseel (2019).
 
 If a `named vector` object is used, the main output table is labelled: 
 "Bayesian informative hypothesis testing for an object 
-of class named numeric" (which denotes that `named vector` input was used).
+of class numeric" (which denotes that `named vector` input was used).
 
 a) Bayesian ANOVA
 b) Bayesian ANCOVA
