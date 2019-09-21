@@ -33,9 +33,12 @@ hypotheses that are evaluated. See the \strong{tutorial} and the
 \code{bain} is an acronym for "Bayesian informative hypotheses evaluation".
 It uses the Bayes factor to evaluate hypotheses specified using equality and
 inequality constraints among (linear combinations of) parameters in a wide
-range of statistical models. A tutorial is provided by Hoijtink, Mulder,
-van Lissa, and Gu (2018) retrievable from the Psychological Methods website
-at \url{https://www.apa.org/pubs/journals/met/} or the bain website at
+range of statistical models. A tutorial by Hoijtink, Mulder, van Lissa,
+and Gu (2018), was published in
+\href{https://psycnet.apa.org/doiLanding?doi=10.1037\%2Fmet0000201}{
+Psychological Methods}. The preprint of that tutorial is available at
+\href{https://psyarxiv.com/v3shc/}{DOI:10.31234/osf.io/v3shc}, or on the bain
+website at
 \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
 \strong{Users are
 advised to read the tutorial AND the vignette that is provided

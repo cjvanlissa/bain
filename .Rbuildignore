@@ -9,3 +9,9 @@
 ^\.travis\.yml$
 dev/
 news.md
+bain-Ex_i386.Rout
+bain-Ex_x64.Rout
+examples_i386
+examples_x64
+tests_i386
+tests_x64
