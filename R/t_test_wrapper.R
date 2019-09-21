@@ -1,17 +1,30 @@
 #' Student's t-test
 #'
 #' This function is a wrapper for the function \code{\link[stats]{t.test}},
-#' which group-specific sample sizes and variances, in addition to the usual
-#' output of \code{\link[stats]{t.test}}.
+#' which returns group-specific sample sizes and variances, in addition to the
+#' usual output of \code{\link[stats]{t.test}}.
 #'
-#' This wrapper allows users to enjoy the functionality of bain with the familiar
-#' interface of the stats-function t.test.
+#' This wrapper allows users to enjoy the functionality of bain with the
+#' familiar interface of the stats-function t.test.
 #'
 #' For more documentation, see \code{\link[stats]{t.test}}.
 #' @param x An object for which an S3 method of t.test exists (vector or
 #' formula).
 #' @param \dots arguments passed to \code{\link[stats]{t.test}}.
-#' @return A list with class \code{"bain_htest"}.
+#' @return A list with class \code{"bain_htest"} containing the following
+#' components: \item{statistic}{the value of the t-statistic.}
+#' \item{parameter}{the degrees of freedom for the t-statistic.}
+#' \item{p.value}{the p-value for the test.} \item{conf.int}{a confidence
+#' interval for the mean appropriate to the specified alternative hypothesis.}
+#' \item{estimate}{the estimated mean or difference in means depending on
+#' whether it was a one-sample test or a two-sample test.}
+#' \item{null.value}{the specified hypothesized value of the mean or mean
+#' difference depending on whether it was a one-sample test or a two-sample
+#' test.} \item{alternative}{a character string describing the alternative
+#' hypothesis.} \item{method}{a character string indicating what type of t-test
+#' was performed.} \item{data.name}{a character string giving the name(s) of
+#' the data.}\item{v}{The variance or group-specific variances.}\item{n}{The
+#' sample size, or group-specific sample size.}
 #' @seealso \code{\link[stats]{t.test}}
 #' @keywords htest
 #' @examples

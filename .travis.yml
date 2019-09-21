@@ -3,7 +3,14 @@
 language: R
 sudo: false
 cache: packages
-r:
-  - oldrel
-  - release
-  - devel
+
+matrix:
+  include:
+    - os: linux
+      r: oldrel
+    - os: linux
+      r: release
+    - os: linux
+      r: devel
+    - os: osx
+      r: release

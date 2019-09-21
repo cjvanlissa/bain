@@ -1,4 +1,4 @@
-parse_hypothesis <- function(varnames, hyp){
+parse_hypothesis <- function(varnames, hyp, return_list = FALSE){
 
 # Check hypothesis syntax -------------------------------------------------
 
@@ -74,22 +74,40 @@ parse_hypothesis <- function(varnames, hyp){
 
   n_constraints <- as.vector(sapply(hyp_list, function(x){c(sum(grepl("=", x)), sum(grepl("[<>]", x)))}))
   nec_vec <- as.vector(sapply(hyp_list, function(x){sum(grepl("=", x))}))
-  hyp_mat <- lapply(1:length(hyp_list), function(i){
-    if(n_constraints[((i-1)*2)+1] == 0){
-      ERr <- NULL
-    } else {
-      ERr <- t(sapply(hyp_list[[i]][grep("=", hyp_list[[i]])],
-                      constraint_to_row, varnames = varnames))
-    }
-    if(n_constraints[((i-1)*2)+2] == 0){
-      IRr <- NULL
-    } else {
-      IRr <- t(sapply(hyp_list[[i]][grep("[<>]", hyp_list[[i]])],
-                      constraint_to_row, varnames = varnames))
-    }
-    rbind(ERr, IRr)
-  })
-
+  # Ultimately, make BFpack and gorica work with the list, not with the matrix (below)
+  if(return_list){
+    hyp_mat <- lapply(1:length(hyp_list), function(i){
+      if(n_constraints[((i-1)*2)+1] == 0){
+        ERr <- NULL
+      } else {
+        ERr <- t(sapply(hyp_list[[i]][grep("=", hyp_list[[i]])],
+                        constraint_to_row, varnames = varnames))
+      }
+      if(n_constraints[((i-1)*2)+2] == 0){
+        IRr <- NULL
+      } else {
+        IRr <- t(sapply(hyp_list[[i]][grep("[<>]", hyp_list[[i]])],
+                        constraint_to_row, varnames = varnames))
+      }
+      rbind(ERr, IRr)
+    })
+  } else {
+    hyp_mat <- do.call(rbind, lapply(1:length(hyp_list), function(i){
+      if(n_constraints[((i-1)*2)+1] == 0){
+        ERr <- NULL
+      } else {
+        ERr <- t(sapply(hyp_list[[i]][grep("=", hyp_list[[i]])],
+                        constraint_to_row, varnames = varnames))
+      }
+      if(n_constraints[((i-1)*2)+2] == 0){
+        IRr <- NULL
+      } else {
+        IRr <- t(sapply(hyp_list[[i]][grep("[<>]", hyp_list[[i]])],
+                        constraint_to_row, varnames = varnames))
+      }
+      rbind(ERr, IRr)
+    }))
+  }
   list(hyp_mat = hyp_mat, n_constraints = n_constraints, n_ec = nec_vec, original_hypothesis = original_hypothesis)
 }
 
