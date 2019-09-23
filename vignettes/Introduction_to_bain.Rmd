@@ -97,8 +97,10 @@ Note that, `lm` and `t_test` will apply list-wise deletion if there
 are cases with missing values in the variables used.
 2) Display the estimates and their names using the command `coef(x)`. 
 (Unique abbreviations of) the names will be used to specify `hypotheses`.
-3) `set.seed(seed)`. Set `seed` equal to an integer
-number to create a repeatable random number sequence.
+3) `set.seed(seed)`. Set `seed` equal to an integer 
+number to create a repeatable random number sequence. 
+It is recommended to run analyses with two different seeds 
+to ensure stability of the results.
 4) `results <- bain(x,hypotheses,fraction = 1)` or `results <-
 bain(x,hypotheses,fraction = 1,standardize = FALSE)`. The first call to 
 `bain` is used
@@ -148,6 +150,8 @@ If in a `lavaan` model specification parameters are labelled, e.g., as in
 have to be used in the specification of hypotheses.
 4) `set.seed(seed)`. Set `seed` equal to an integer
 number to create a repeatable random number sequence.
+It is recommended to run analyses with two different seeds 
+to ensure stability of the results.
 5) `results <- bain(x,hypotheses,fraction = 1,standardize = FALSE)`.
 With `standardize = TRUE` hypotheses with respect
 to standardized coefficients are evaluated. With `standardize
@@ -216,6 +220,8 @@ used to specify `hypotheses`
 (see below). An example is `names <- c("a", "b", "c")`.
 3) `set.seed(seed)`. Set `seed` equal to an integer
 number to create a repeatable random number sequence.
+It is recommended to run analyses with two different seeds 
+to ensure stability of the results.
 4) `results <- bain(estimates, hypotheses, n=., Sigma=.,
 group_parameters = 2, joint_parameters = 0, fraction = 1)` 
 executes `bain` with the
