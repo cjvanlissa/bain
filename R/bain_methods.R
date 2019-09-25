@@ -264,8 +264,9 @@ bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = FALSE) {
     )
   }
 
-  Args[c("x", "n", "Sigma", "group_parameters", "joint_parameters")] <- lav_get_estimates(x, standardize)
+  Args[c("x", "Sigma", "n", "group_parameters", "joint_parameters")] <- lav_get_estimates(x, standardize)
   Args$hypothesis <-  hypothesis
+  #browser()
   Bain_res <- do.call(bain, Args)
   Bain_res$call <- cl
   Bain_res$model <- x
@@ -288,9 +289,9 @@ bain.htest <-
     stop("The standard t.test() function from the 'stats' package does not return variance and sample size, which are required to run bain. Please use the function t_test() from the 'bain' package instead. It accepts the same arguments.")
 }
 
-#' @method bain bain_htest
+#' @method bain t_test
 #' @export
-bain.bain_htest <-
+bain.t_test <-
   function(x,
            hypothesis,
            fraction = 1,
@@ -325,7 +326,7 @@ bain.bain_htest <-
       Bain_res <- do.call(bain, Args)
       Bain_res$call <- cl
       Bain_res$model <- x
-      class(Bain_res) <- c("bain_htest", class(Bain_res))
+      class(Bain_res) <- c("t_test", class(Bain_res))
       Bain_res
 }
 

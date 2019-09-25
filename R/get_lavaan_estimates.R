@@ -48,8 +48,8 @@ lav_get_estimates <- function(x, standardize) {
   names(estims) <- parameter_table$parameter_label
   covv       <- lav_get_vcov(x, parameter_table$parameter_label, standardize)
   out_list <- list(x = estims,
-                   n = lavInspect(x, what = "ntotal"),
                    Sigma = covv,
+                   n = lavInspect(x, what = "ntotal"),
                    group_parameters = length(estims),
                    joint_parameters = 0
                    )

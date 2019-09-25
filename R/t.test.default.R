@@ -210,7 +210,7 @@ t_test_old.default <-
       rval$n <- nx
       rval$v <- vx
     }
-    class(rval) <- c("bain_htest", "htest")
+    class(rval) <- c("t_test", "htest")
     return(rval)
   }
 
@@ -257,16 +257,16 @@ t_test_old.formula <- function(formula, data, subset, na.action, ...)
 
 
 
-#' @method coef bain_htest
+#' @method coef t_test
 #' @export
-coef.bain_htest <- function (object, ...)
+coef.t_test <- function (object, ...)
 {
   rename_estimate(object$estimate)
 }
 
-#' @method vcov bain_htest
+#' @method vcov t_test
 #' @export
-vcov.bain_htest <- function (object, ...)
+vcov.t_test <- function (object, ...)
 {
   if(length(object$estimate) == 1){
     diag(object$v/object$n)

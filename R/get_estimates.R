@@ -145,9 +145,9 @@ get_estimates.lm <- function(x, ...){
   out
 }
 
-#' @method get_estimates bain_htest
+#' @method get_estimates t_test
 #' @export
-get_estimates.bain_htest <- function(x, ...){
+get_estimates.t_test <- function(x, ...){
   out <- list(estimate = coef(x),
               Sigma = vcov(x))
   class(out) <- "model_estimates"
@@ -155,6 +155,21 @@ get_estimates.bain_htest <- function(x, ...){
   out
 }
 
+#' @method get_estimates lavaan
+#' @export
+get_estimates.lavaan <- function(x, standardize = FALSE, ...){
+  cl <- as.list(match.call()[-1])
+  out <- do.call(lav_get_estimates, cl)
+  names(out)[which(names(out) == "x")] <- "estimate"
+  names(out$estimate) <- reverse_rename_function(names(out$estimate))
+  out$Sigma <- lapply(out$Sigma, function(x){
+    rownames(x) <- colnames(x) <- names(out$estimate)
+    x
+  })
+  class(out) <- "model_estimates"
+  attr(out, "analysisType") <- "lavaan"
+  out
+}
 
 #' @method get_estimates htest
 get_estimates.htest <- function(x, ...) {
@@ -223,8 +238,8 @@ label_estimates.lm <- function(x, labels, ...){
   x
 }
 
-#' @method label_estimates bain_htest
-label_estimates.bain_htest <- function(x, labels, ...){
+#' @method label_estimates t_test
+label_estimates.t_test <- function(x, labels, ...){
   names(x$estimate) <- labels
   invisible(get_estimates(x))
   x
@@ -234,4 +249,14 @@ label_estimates.bain_htest <- function(x, labels, ...){
 #' @method label_estimates htest
 label_estimates.htest <- function(x, labels, ...) {
   stop("To be able to run bain on the results of an object returned by t_test(), you must first load the 'bain' package, and then conduct your t_test. The standard t_test does not return group-specific variances and sample sizes, which are required by bain. When you load the bain package, the standard t_test is replaced by a version that does return this necessary information.")
+}
+
+#' @method print model_estimates
+#' @export
+print.model_estimates <- function(x,
+                                  digits = 3,
+                                  na.print = "", ...){
+  dat <- x$estimate
+  dat <- formatC(dat, digits = digits, format = "f")
+  print(dat, quote = FALSE)
 }

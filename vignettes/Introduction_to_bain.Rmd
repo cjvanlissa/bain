@@ -463,7 +463,7 @@ as input for `bain`. Below you will find the following examples:
 
 If a `t_test` object is used, the main output table is 
 labelled: "Bayesian informative hypothesis testing for an object 
-of class bain_htest" (which denotes that a `t-test` was executed).
+of class t_test" (which denotes that a `t-test` was executed).
 
 a) BayesianStudent's t-test (equal within group variances)
 b) Bayesian Welch's t-test (unequal within group variances

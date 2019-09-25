@@ -13,7 +13,7 @@ formula).}
 \item{\dots}{arguments passed to \code{\link[stats]{t.test}}.}
 }
 \value{
-A list with class \code{"bain_htest"} containing the following
+A list with class \code{"t_test"} containing the following
 components: \item{statistic}{the value of the t-statistic.}
 \item{parameter}{the degrees of freedom for the t-statistic.}
 \item{p.value}{the p-value for the test.} \item{conf.int}{a confidence

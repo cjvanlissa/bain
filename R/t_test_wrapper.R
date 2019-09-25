@@ -11,7 +11,7 @@
 #' @param x An object for which an S3 method of t.test exists (vector or
 #' formula).
 #' @param \dots arguments passed to \code{\link[stats]{t.test}}.
-#' @return A list with class \code{"bain_htest"} containing the following
+#' @return A list with class \code{"t_test"} containing the following
 #' components: \item{statistic}{the value of the t-statistic.}
 #' \item{parameter}{the degrees of freedom for the t-statistic.}
 #' \item{p.value}{the p-value for the test.} \item{conf.int}{a confidence
@@ -119,7 +119,7 @@ t_test.default <- function(x, ...) {
     rval$n <- length(x)
     rval$v <- var(x)
   }
-  class(rval) <- c("bain_htest", "htest")
+  class(rval) <- c("t_test", "htest")
   return(rval)
 }
 
@@ -153,6 +153,6 @@ t_test.formula <- function(x, ...) {
   }
   if (length(rval$estimate) == 2L)
     names(rval$estimate) <- paste0("mean of group", levels(g))
-  class(rval) <- c("bain_htest", "htest")
+  class(rval) <- c("t_test", "htest")
   return(rval)
 }
