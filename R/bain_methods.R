@@ -5,8 +5,8 @@
 #' inequality constraints among (linear combinations of) parameters in a wide
 #' range of statistical models. A tutorial by Hoijtink, Mulder, van Lissa,
 #' and Gu (2018), was published in
-#' \href{https://psycnet.apa.org/doiLanding?doi=10.1037\%2Fmet0000201}{
-#' Psychological Methods}. The preprint of that tutorial is available at
+#' \href{https://www.doi.org/10.1037\%2Fmet0000201}{Psychological Methods}.
+#' The preprint of that tutorial is available at
 #' \href{https://psyarxiv.com/v3shc/}{DOI:10.31234/osf.io/v3shc}, or on the bain
 #' website at
 #' \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
