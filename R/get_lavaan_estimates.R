@@ -35,11 +35,11 @@ lav_get_vcov <- function(x, param_labels, standardize) {
 
 
 
-lav_get_estimates <- function(x, standardize) {
+lav_get_estimates <- function(x, standardize, retain_which = c("=~", "~", "~1")) {
   parameter_table <- lav_get_est(x, standardize)
   # Drop coefficients we cannot handle
   #parameter_table <- parameter_table[!parameter_table$op %in% c("~~", ":="), ]
-  parameter_table <- parameter_table[parameter_table$op %in% c("=~", "~", "~1"), ]
+  parameter_table <- parameter_table[parameter_table$op %in% retain_which, ]
   if (standardize) {
     estims <- parameter_table$est.std
   } else {
