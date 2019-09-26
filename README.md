@@ -11,7 +11,7 @@ Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis
 
 # bain
 
-Bain is an abbreviation for BAyesian INformative hypothesis evaluation.
+Bain is an abbreviation for Bayesian informative hypothesis evaluation.
 It uses the Bayes factor to evaluate equality and inequality constraint
 hypotheses in a wide variety of statistical models.
 

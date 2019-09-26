@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 # bain
 
-Bain is an abbreviation for BAyesian INformative hypothesis evaluation. It uses the Bayes factor to evaluate equality and inequality constraint hypotheses in a wide variety of statistical models.
+Bain is an abbreviation for Bayesian informative hypothesis evaluation. It uses the Bayes factor to evaluate equality and inequality constraint hypotheses in a wide variety of statistical models.
 
 ## Installation
 

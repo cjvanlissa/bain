@@ -34,7 +34,7 @@ advised to read the tutorial and this vignette before using `bain`**.
 The full `bain` reference list (all retrievable from the `bain` website) is
 
 Bosman, M. and Hoijtink, H. (unpublished). Robust Bayes factors for Bayesian
-Anova: overcoming overcoming adverse effect of non-normality and outliers.
+ANOVA: overcoming overcoming adverse effect of non-normality and outliers.
 
 Gu, X., Mulder, J., and Hoijtink, H. (2018). Approximate adjusted fractional
 Bayes factors: A general method for testing informative hypotheses.
@@ -73,7 +73,7 @@ Bayes factor in structural equation models.
 An R object containing the outcome of a statistical analysis. Currently, the following objects can be processed:
 
 1) `t_test()` objects (Student's t-test, Welch's t-test, paired samples t-test, one-group t-test, equivalence test). Note that, `t_test` can be used in the same way as `t.test`.
-2) `lm()` objects (anova, ancova, multiple regression).
+2) `lm()` objects (ANOVA, ANCOVA, multiple regression).
 3) `lavaan` objects generated with the `sem()`, `cfa()`, and
 `growth` functions.
 4) A named vector containing the estimates resulting from a statistical analysis. Note that, named means that each estimate has to be named such that it can be referred to in hypotheses.
@@ -104,7 +104,7 @@ to ensure stability of the results.
 4) `results <- bain(x,hypotheses,fraction = 1)` or `results <-
 bain(x,hypotheses,fraction = 1,standardize = FALSE)`. The first call to 
 `bain` is used
-in case of `lm` implementations of anova, ancova, and `t_test`. The
+in case of `lm` implementations of ANOVA, ANCOVA, and `t_test`. The
 second call to `bain` is used in case of `lm` implementations of
 multiple regression. With `standardize = TRUE` hypotheses with respect
 to standardized regression coefficients are evaluated. With `standardize
@@ -145,7 +145,7 @@ can be used to specify `hypotheses`. For multiple group analyses
 the names have to end with a group label `.grp`. Group labels
 can be assigned using commands like
 `sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))`. 
-If in a `lavaan` model specification parameters are labelled, e.g., as in 
+If in a `lavaan` model specification parameters are labeled, e.g., as in 
 `model <- 'age ~ c(a1, a2)*peabody + c(b1, b2)*1` then the labels
 have to be used in the specification of hypotheses.
 4) `set.seed(seed)`. Set `seed` equal to an integer
@@ -203,7 +203,7 @@ of this vector is
 are joined by the groups];
 b) A list containing, per group, the covariance
 matrix of the parameters corresponding to the group at hand and, possibly,
-the augmented parameters. In the rows and colums of each covariance matrix 
+the augmented parameters. In the rows and columns of each covariance matrix 
 the parameters of the group at hand come first, possibly followed by the 
 augmented parameters.
 c) Per group the sample size used for estimation of the parameters. Note that,
@@ -267,7 +267,7 @@ data used to construct the prior distribution (see Hoijtink, Mulder,
 van Lissa, and Gu, 2019): The default value 1 denotes the minimal fraction, 
 2 denotes twice the minimal fraction, etc. 
 
-5) `print(results)` Print the results of an analysis wity
+5) `print(results)` Print the results of an analysis with
 `bain`.
 6) `summary(results, ci=0.95)` Present descriptives for the
 parameters used to specify `hypotheses`. `ci` can be used the specify
@@ -287,9 +287,9 @@ deviate from the rules, however, the output will be nonsense**:
 (unique abbreviations of) the names
 displayed by `coef(x)` have to be used (but see the section "Using bain
 with a lavaan object" for additional instructions if multiple group
-analyses are executed and/or parameters are labelled). If, 
+analyses are executed and/or parameters are labeled). If, 
 for example, the names are `cat` and `dog`, `c`
-and `d ` would be unique abreviations. If, for example, the names are `cato` 
+and `d ` would be unique abbreviations. If, for example, the names are `cato` 
 and `cata` the whole
 names have to be used.
 * When using `bain` with a named vector, parameters are referred to using 
@@ -403,7 +403,7 @@ added to the definition).
 part of each hypothesis. Replacing `Fit_eq` by `Fit_in`, renders
 the fit of the inequality constrained part of an hypothesis conditional on
 the fit of the equality constrained part. `Com_eq`, and `Com_in`,
-repectively, are the complexity counterparts of `Fit_eq`, and
+respectively, are the complexity counterparts of `Fit_eq`, and
 `Fit_in`.
 
 
@@ -462,10 +462,10 @@ as input for `bain`. Below you will find the following examples:
 **1. Examples Using a `t_test` Object**
 
 If a `t_test` object is used, the main output table is 
-labelled: "Bayesian informative hypothesis testing for an object 
+labeled: "Bayesian informative hypothesis testing for an object 
 of class t_test" (which denotes that a `t-test` was executed).
 
-a) BayesianStudent's t-test (equal within group variances)
+a) Bayesian Student's t-test (equal within group variances)
 b) Bayesian Welch's t-test (unequal within group variances
 c) Bayesian paired samples t-test
 d) Bayesian one group t-test
@@ -474,15 +474,15 @@ e) Bayesian Equivalence test
 **2. Examples Using a `lm` Object**
 
 a) Bayesian ANOVA. The example concerns a one-way ANOVA. Two-way or higher
-order ANOVA's can only be handled by recoding all factors into one
+order ANOVAs can only be handled by recoding all factors into one
 factor. If, for example, there is a factor `sex` with levels `man` and `woman`,
 and a factor `age` with levels `young` and `old`, these have to be recoded in a
 new factor `sexage` with levels `manyoung`, `manold`, `womanyoung`, `womanold`. 
 If a `lm` "ANOVA"object is used, the main output table is 
-labelled: "Bayesian informative hypothesis testing for an object 
+labeled: "Bayesian informative hypothesis testing for an object 
 of class lm (ANOVA)"
 b) Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher
-order ANCOVA's can only be handled by recoding all factors into one
+order ANCOVAs can only be handled by recoding all factors into one
 factor. **Note that calls to `lm` using functions of the predictors 
 (for example, adding squared predictors to the model using commands like
 `y ~ x + I(x^2)`)
@@ -490,7 +490,7 @@ can not be processed by `bain`.** However, one can compute a new variable
 (for example, a squared predictor) and add this variable to the 
 model specification of `lm`. If a `lm` "ANCOVA"object is used, the 
 main output table is 
-labelled: "Bayesian informative hypothesis testing for an object 
+labeled: "Bayesian informative hypothesis testing for an object 
 of class lm (ANCOVA)"
 c) Bayesian multiple regression. **Note that calls to `lm` using 
 functions of the predictors (for example, adding squared predictors 
@@ -501,11 +501,11 @@ model specification of `lm`. Note furthermore, that only if
 `standardize = FALSE` interactions between predictors can
 be processed. If a `lm` "regression with only continuous predictors" 
 object is used, the main output table is 
-labelled: "Bayesian informative hypothesis testing for an object 
+labeled: "Bayesian informative hypothesis testing for an object 
 of class lm (continuous predictors)". If a `lm` object contains 
 **two or more**
 factors and, optionally, continuous predictors, the main output table is
-labelled: "Bayesian informative hypothesis testing for an object of 
+labeled: "Bayesian informative hypothesis testing for an object of 
 class lm (mixed predictors)". In case of mixed predictors, the one group
 approach to computing Bayes factors is used (see, Hoijtink, Gu, and 
 Mulder, 2019). This may render inferior results if group sizes are unequal.
@@ -514,7 +514,7 @@ van Lissa, and Gu (2019) for elaborations.
 
 **3. Examples Using a `lavaan` Object**
 
-If a `lavaan` object is used, the main output table is labelled: 
+If a `lavaan` object is used, the main output table is labeled: 
 "Bayesian informative hypothesis testing for an object 
 of class lavaan".
 
@@ -528,7 +528,7 @@ and Rosseel (2019).
 
 **4. Examples Using a Named Vector**
 
-If a `named vector` object is used, the main output table is labelled: 
+If a `named vector` object is used, the main output table is labeled: 
 "Bayesian informative hypothesis testing for an object 
 of class numeric" (which denotes that `named vector` input was used).
 

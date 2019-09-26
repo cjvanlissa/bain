@@ -23,7 +23,7 @@
 #' to evaluate. See the vignette for elaborations.
 #' @param fraction A number representing the fraction of information
 #' in the data used to construct the prior distribution
-#' (see the tutorial doi: 10.1037/met0000201): The default value 1 denotes the
+#' (see the tutorial DOI: 10.1037/met0000201): The default value 1 denotes the
 #' minimal fraction, 2 denotes twice the minimal fraction, etc.
 #' @param ... Additional arguments. See the vignette for elaborations.
 #'
