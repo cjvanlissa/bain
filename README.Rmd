@@ -13,36 +13,38 @@ knitr::opts_chunk$set(
 ```
 
 
+[![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
+[![CRAN status](https://www.r-pkg.org/badges/version/bain)](https://cran.r-project.org/package=bain)
 [![Build Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis-ci.org/cjvanlissa/bain)
-<!--[![CRAN status](https://www.r-pkg.org/badges/version/tidyLPA)](https://cran.r-project.org/package=tidyLPA)-->
-<!--[![](https://cranlogs.r-pkg.org/badges/tidyLPA)](https://cran.r-project.org/package=tidyLPA)-->
-
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-<!-- [![DOI](http://joss.theoj.org/papers/10.21105/joss.00978/status.svg)](10.1111/bmsp.12110)--> 
+[![](https://cranlogs.r-pkg.org/badges/tidyLPA)](https://cran.r-project.org/package=tidyLPA)
 
 # bain
 
-Bain is an abbreviation for Bayesian informative hypothesis evaluation. It uses the Bayes factor to evaluate equality and inequality constraint hypotheses in a wide variety of statistical models.
+Bain stands for Bayesian informative hypothesis evaluation. It computes Bayes factors for informative hypotheses in a wide variety of statistical models. Just run your analysis as usual, and then apply bain to the output. A tutorial is available at [https://psyarxiv.com/v3shc/](DOI:10.31234/osf.io/v3shc).
 
 ## Installation
 
-You can install bain from github with:
+Install `bain` from CRAN:
 
-```{r gh-installation, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("cjvanlissa/bain", args = c("--no-multiarch", "--no-test-load"))
+```{r cran-installation, eval = FALSE}
+install.packages("bain")
 ```
 
 ## Workflow
 
 Add bain to your existing R workflow, and obtain Bayes factors for your familiar R analyses! Bain is compatible with the pipe operator. Here is an example for testing an informative hypothesis about mean differences in an ANOVA:
 
-```{r example, eval = FALSE}
-# Load dplyr to access the pipe operator
+```{r example, eval = TRUE, message = FALSE}
+# Load bain
+library(bain)
+# dplyr to access the %>% operator
 library(dplyr)
-iris %>%                                 # Example data
-  select(Sepal.Length, Species) %>%      # Select outcome and predictor variables
-  lm(Sepal.Length ~ -1 + Species, .) %>% # Add -1 to the formula to estimate group means, as in ANOVA
-  bain("setosa < versicolor = virginica; setosa < versicolor < virginica")
-
+# Iris as example data
+iris %>%
+  # Select outcome and predictor variables
+  select(Sepal.Length, Species) %>%      
+  # Add -1 to the formula to estimate group means, as in ANOVA
+  lm(Sepal.Length ~ -1 + Species, .) %>% 
+  bain("Speciessetosa < Speciesversicolor = Speciesvirginica;
+       Speciessetosa < Speciesversicolor < Speciesvirginica")
 ```
