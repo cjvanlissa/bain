@@ -14,7 +14,7 @@ Bain stands for Bayesian informative hypothesis evaluation. It computes
 Bayes factors for informative hypotheses in a wide variety of
 statistical models. Just run your analysis as usual, and then apply bain
 to the output. A tutorial is available at
-[https://psyarxiv.com/v3shc/](DOI:10.31234/osf.io/v3shc).
+[DOI:10.31234/osf.io/v3shc](https://psyarxiv.com/v3shc/).
 
 ## Installation
 
@@ -48,8 +48,8 @@ iris %>%
 #> 
 #>    Fit_eq Com_eq Fit_in Com_in Fit   Com   BF              PMPa  PMPb 
 #> H1 0.000  0.447  1.000  0.500  0.000 0.224 0.000           0.000 0.000
-#> H2 1.000  1.000  1.000  0.166  1.000 0.166 44626331172.777 1.000 0.858
-#> Hu                                                               0.142
+#> H2 1.000  1.000  1.000  0.168  1.000 0.168 83012471303.046 1.000 0.856
+#> Hu                                                               0.144
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
