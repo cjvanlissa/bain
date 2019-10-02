@@ -161,11 +161,6 @@ get_estimates.lavaan <- function(x, standardize = FALSE, ...){
   cl <- as.list(match.call()[-1])
   out <- do.call(lav_get_estimates, cl)
   names(out)[which(names(out) == "x")] <- "estimate"
-  names(out$estimate) <- reverse_rename_function(names(out$estimate))
-  out$Sigma <- lapply(out$Sigma, function(x){
-    rownames(x) <- colnames(x) <- names(out$estimate)
-    x
-  })
   class(out) <- "model_estimates"
   attr(out, "analysisType") <- "lavaan"
   out
