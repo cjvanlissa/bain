@@ -16,7 +16,8 @@ knitr::opts_chunk$set(
 [![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![CRAN status](https://www.r-pkg.org/badges/version/bain)](https://cran.r-project.org/package=bain)
 [![Build Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis-ci.org/cjvanlissa/bain)
-[![](https://cranlogs.r-pkg.org/badges/tidyLPA)](https://cran.r-project.org/package=tidyLPA)
+[![](https://cranlogs.r-pkg.org/badges/bain)](https://cran.r-project.org/package=bain)
+<!--[![Codecov test coverage](https://codecov.io/gh/cjvanlissa/bain/branch/master/graph/badge.svg)](https://codecov.io/gh/cjvanlissa/bain?branch=master)-->
 
 # bain
 

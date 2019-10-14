@@ -6,7 +6,8 @@
 status](https://www.r-pkg.org/badges/version/bain)](https://cran.r-project.org/package=bain)
 [![Build
 Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis-ci.org/cjvanlissa/bain)
-[![](https://cranlogs.r-pkg.org/badges/tidyLPA)](https://cran.r-project.org/package=tidyLPA)
+[![](https://cranlogs.r-pkg.org/badges/bain)](https://cran.r-project.org/package=bain)
+<!--[![Codecov test coverage](https://codecov.io/gh/cjvanlissa/bain/branch/master/graph/badge.svg)](https://codecov.io/gh/cjvanlissa/bain?branch=master)-->
 
 # bain
 
@@ -48,8 +49,8 @@ iris %>%
 #> 
 #>    Fit_eq Com_eq Fit_in Com_in Fit   Com   BF              PMPa  PMPb 
 #> H1 0.000  0.447  1.000  0.500  0.000 0.224 0.000           0.000 0.000
-#> H2 1.000  1.000  1.000  0.168  1.000 0.168 83012471303.046 1.000 0.856
-#> Hu                                                               0.144
+#> H2 1.000  1.000  1.000  0.165  1.000 0.165 66166997632.868 1.000 0.859
+#> Hu                                                               0.141
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
