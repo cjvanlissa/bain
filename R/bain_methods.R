@@ -207,19 +207,19 @@ bain.lm <-
                estimate <- coef(x)[coef_in_hyp]
                Sigma <- vcov(x)[coef_in_hyp, coef_in_hyp]
              } else{
-               # Hier moeten even de juiste namen meegegeven worden!!!
                ses <- seBeta(
-                 x$model[, -1],
-                 x$model[, 1],
-                 Nobs = nrow(x$model),
+                 predictor[,-1],
+                 dependent,
+                 Nobs = sum(complete.cases(x$model)),
                  alpha = .05,
                  estimator = 'Normal'
                )
-               select_parameters <- match(names(x$model)[-1], names(x$coefficients)[coef_in_hyp])
+               select_parameters <- match(colnames(predictor)[-1], names(x$coefficients)[coef_in_hyp])
+               select_parameters <- select_parameters[na.omit(select_parameters)]
                estimate <- ses$CIs$estimate[select_parameters]
-               # Check even of dit lekker loopt!
-               names(estimate) <- names(x$model)[-1][select_parameters]
+               names(estimate) <- colnames(predictor)[-1][select_parameters]
                Sigma <- ses$cov.mat[select_parameters, select_parameters]
+               rownames(Sigma) <- colnames(Sigma) <- names(estimate)
              }
              Args$x <- estimate
              Args$Sigma <- Sigma

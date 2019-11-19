@@ -1,6 +1,7 @@
 # bain 0.2.3
 
 * Fix lavaan bug: Within-group constraints were flagged as between-group constraints
+* Fix bain.lm bug: Parameters were not selected, leading to error if not all model parameters were mentioned in the hypothesis
 
 # bain 0.2.2
 
