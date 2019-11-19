@@ -35,7 +35,8 @@ lav_get_estimates <- function(x, standardize, retain_which = c("=~", "~", "~1"),
   parameter_table$bain_label <- parameter_table$parameter_label <- lav_getParameterLabels(partable = parameter_table)
   if(num_groups > 1){
     if(!is.null(constraints)){
-      between_group_constraints <- any(constraints$op == "==" & constraints$group == 0)
+      constraints
+      between_group_constraints <- any(!all(parameter_table$group[match(constraints$lhs, parameter_table$plabel)] == parameter_table$group[match(constraints$rhs, parameter_table$plabel)]))
     }
     if(between_group_constraints & !allow_between_constraints){
       stop("Cannot evaluate hypotheses for multiple group lavaan models with between-group constraints.", call. = FALSE)

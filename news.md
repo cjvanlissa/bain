@@ -1,3 +1,7 @@
+# bain 0.2.3
+
+* Fix lavaan bug: Within-group constraints were flagged as between-group constraints
+
 # bain 0.2.2
 
 * Added S3 function for lavaan structural equation models
