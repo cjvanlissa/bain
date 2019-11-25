@@ -214,11 +214,11 @@ bain.lm <-
                  alpha = .05,
                  estimator = 'Normal'
                )
-               select_parameters <- match(colnames(predictor)[-1], names(x$coefficients)[coef_in_hyp])
-               select_parameters <- select_parameters[na.omit(select_parameters)]
+               select_parameters <- match(names(x$coefficients)[coef_in_hyp], colnames(predictor)[-1], )
+               #select_parameters <- select_parameters[na.omit(select_parameters)]
                estimate <- ses$CIs$estimate[select_parameters]
                names(estimate) <- colnames(predictor)[-1][select_parameters]
-               Sigma <- ses$cov.mat[select_parameters, select_parameters]
+               Sigma <- ses$cov.mat[select_parameters, select_parameters, drop = FALSE]
                rownames(Sigma) <- colnames(Sigma) <- names(estimate)
              }
              Args$x <- estimate
