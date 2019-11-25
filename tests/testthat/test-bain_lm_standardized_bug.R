@@ -96,4 +96,42 @@ test_that("Bain mutual", {expect_equal(sy$fit$BF,sz$fit$BF)})
 test_that("Bain mutual", {expect_equal(sy$fit$PMPb , sz$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(sy$BFmatrix)), as.vector(t(sz$BFmatrix)))})
 
+# ===========================================================
+# test zoals de bovenstaande maar voor ancova en
+# multiple regression ZONDER standaardizering
+# ===========================================================
 
+
+# ===========================================================
+# ANCOVA TEST VOLGORDE INVOER COVS EN GROUPS
+# ===========================================================
+
+d <- as.data.frame(cbind(sesamesim$postnumb,
+                         sesamesim$prenumb,sesamesim$funumb,sesamesim$site))
+names(d)<-c("postnumb","prenumb","funumb","site")
+
+set.seed(900)
+d$site <- as.factor(d$site)
+d$prenumb <- d$prenumb-mean(d$prenumb)
+d$funumb <- d$funumb-mean(d$funumb)
+tt <- lm(postnumb ~ prenumb+site+funumb-1, d)
+ttout <-  bain(tt,"site1 = site2 = site3 = site4 = site5;
+               (site1, site3, site4) < (site2, site5)")
+
+test_that("Bain mutual",
+          {expect_equal(as.vector(ttout$posterior[1:5,1:5]), as.vector(vcov(tt)[2:6,2:6]))})
+
+# ========================================================
+# REGRESSIOIN
+# ========================================================
+
+gg1 <- lm(postnumb ~ prenumb+age+funumb, sesamesim)
+hh1 <- bain(gg1, "funumb=0")
+test_that("Bain mutual",
+          {expect_equal(as.vector(hh1$posterior[1,1]), as.vector(vcov(gg1)[4,4]))})
+
+
+gg2 <- lm(postnumb ~ prenumb+age+funumb+sex+peabody, sesamesim)
+hh2 <- bain(gg2, "funumb>0&prenumb>0&peabody>0")
+test_that("Bain mutual",
+          {expect_equal(as.vector(vcov(gg2)[c(4,2,6),c(4,2,6)]), as.vector(hh2$posterior))})
