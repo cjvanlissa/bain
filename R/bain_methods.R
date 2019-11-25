@@ -248,7 +248,9 @@ bain.lm <-
 bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = FALSE) {
   cl <- match.call()
   Args <- as.list(cl[-1])
-
+  if(standardize){
+    if(any(parTable(x)$op == "==")) stop("Cannot yet evaluate hypothesis on standardized model coefficients if there are equality constraints in the model.")
+  }
   num_levels         <- lavInspect(x, what = "nlevels")
   if(grepl("~~", hypothesis)){
     stop("Bain cannot yet handle hypotheses about (co)variance parameters in lavaan models.")
