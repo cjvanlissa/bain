@@ -135,3 +135,10 @@ gg2 <- lm(postnumb ~ prenumb+age+funumb+sex+peabody, sesamesim)
 hh2 <- bain(gg2, "funumb>0&prenumb>0&peabody>0")
 test_that("Bain mutual",
           {expect_equal(as.vector(vcov(gg2)[c(4,2,6),c(4,2,6)]), as.vector(hh2$posterior))})
+
+
+
+
+
+
+
