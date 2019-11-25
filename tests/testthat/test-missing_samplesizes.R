@@ -14,6 +14,12 @@ fit <- lm(postnumb ~ age, data = d)
 res <- bain(fit, hypothesis = "age > .5")
 test_that("bain default", {expect_equal(res$n,238)})
 
+
+fit1 <- lm(postnumb ~ age, data = d)
+res1 <- bain(fit1, hypothesis = "age > .5", standardize = TRUE)
+test_that("bain default", {expect_equal(res1$n,238)})
+
+
 # anova
 
 d$sex <- as.factor(d$sex)

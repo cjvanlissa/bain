@@ -1541,7 +1541,7 @@ samp <- nrow(sesamesim)
 # compute the effective sample size
 # See Hoijtink, Gu, Mulder, and Rosseel (2019) for an explanation.
 nucom<-samp-length(estimates)
-lam <- (1+1/M)*(1/length(estimates))* tr(covbetween %*% ginv(covariance))
+lam <- (1+1/M)*(1/length(estimates))* sum(diag(covbetween %*% ginv(covariance)))
 nuold<-(M-1)/(lam^2)
 nuobs<-(nucom+1)/(nucom+3)*nucom*(1-lam)
 nu<- nuold*nuobs/(nuold+nuobs)
@@ -1628,5 +1628,5 @@ y <- bain(estimate1, hypotheses1, n =ngroup1, Sigma = covariance1,
 
 # print the results of the bain analysis and obtain the estimates and 95%
 # central credibility intervals
-sy <- summary(z, ci = 0.95)
+sy <- summary(y, ci = 0.95)
 ```
