@@ -131,8 +131,11 @@ The following steps need to be executed:
 Execute an analysis with the sem, cfa, or growth functions
 implemented in `lavaan` (http://lavaan.org/) . Note that, by default, 
 `lavaan` will apply list-wise deletion if there are cases with
-missing values in the variables used. However, other options are
-available.
+missing values in the variables used. An imputation based method
+for dealing with missing values tailored to Bayesian hypothesis
+evaluation is illustrated in Section 4 "Examples Using 
+a Named Vector" in Example h. (based on Hoijtink, Gu, Mulder,
+and Rosseel, 2019).
 2) Specify a `lavaan` model using the `model <- ...` command. In case
 of multiple group models, only models **without** between group 
 restrictions can be processed by `bain` with a `lavaan` object
@@ -363,8 +366,12 @@ important) output from `bain`. These concern for each hypothesis
 specified in `hypotheses` the fit, complexity, **Bayes factor versus its
 complement**, posterior model probability (based on equal prior model
 probabilities) excluding the unconstrained hypothesis, and posterior model
-probability including the unconstrained hypothesis. In Hoijtink, Mulder,
-van Lissa, and Gu (2019) it is elaborated how these quantities (and the other
+probability including the unconstrained hypothesis. 
+Note that, the posterior model probabilities are computed from
+the Bayes factors of each hypothesis versus the unconstrained hypothesis.
+In Hoijtink, Mulder,
+van Lissa, and Gu (2019) it is elaborated how these quantities 
+(and the other
 output presented below) should be interpreted. Additionally, using
 `summary(results, ci=0.95)`, a descriptives matrix can be obtained
 in which for each estimate, the name, the value, and a 95\% central
@@ -379,8 +386,8 @@ object:
 contains only the column containing the fit of each hypothesis. In the last
 command `Fit` can be replaced by `Com`, `BF`, `PMPa`,
 `PMPb` to obtain the information in the corresponding columns of the
-default output. Note that, in the column `BF` the Bayes factor of the
-hypothesis at hand versus its complement is displayed.
+default output. Note that, in the column `BF` **the Bayes factor of the
+hypothesis at hand versus its complement** is displayed.
 * `results$BFmatrix` contains the matrix containing the mutual Bayes
 factors of the hypotheses specified in `hypotheses`.
 * `results$b` contains for each of the groups in the analysis the
@@ -491,7 +498,8 @@ can not be processed by `bain`.** However, one can compute a new variable
 model specification of `lm`. If a `lm` "ANCOVA"object is used, the 
 main output table is 
 labeled: "Bayesian informative hypothesis testing for an object 
-of class lm (ANCOVA)"
+of class lm (ANCOVA)". **Note that, in 
+the ANCOVA the covariates are centered!**
 c) Bayesian multiple regression. **Note that calls to `lm` using 
 functions of the predictors (for example, adding squared predictors 
 to the model using commands like `y ~ x + I(x^2)`)
