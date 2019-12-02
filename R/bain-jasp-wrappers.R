@@ -10,39 +10,41 @@ bain_ttest_cran<-function(x,y=NULL,nu=0,type=1,paired=FALSE,seed){
 
   # ONE GROUP
   if(is.null(y)&&!paired){
-    tres<-bain::t_test(x)
-    if(type == 1){c3 <- paste0("result <- bain::bain(tres,\"x=",nu,"\")")
-    result <- eval(parse(text = c3))}
-    if(type == 2){c3 <- paste0("result <- bain::bain(tres,\"x=",nu,"; x>",nu,"\")")
-    result <- eval(parse(text = c3))}
-    if(type == 3){c3 <- paste0("result <- bain::bain(tres,\"x=",nu,"; x<",nu,"\")")
-    result <- eval(parse(text = c3))}
-    if(type == 4){c3 <- paste0("result <- bain::bain(tres,\"x>",nu,"; x<",nu,"\")")
-    result <- eval(parse(text = c3))}
-    if(type == 5){c3 <- paste0("result <- bain::bain(tres,\"x=",nu,"; x>",nu,"; x<",nu,"\")")
-    result <- eval(parse(text = c3))}
+    tres <- t_test(x)
+    args <- list(
+      x = tres
+    )
+    switch(type,
+           1 = {
+             args$hypothesis <- paste0("x=", nu)
+           },
+           2 = {
+             args$hypothesis <- paste0("x=", nu, "; x>", nu)
+           },
+           3 = {
+             args$hypothesis <- paste0("x=", nu, "; x<", nu)
+           },
+           4 = {
+             args$hypothesis <- paste0("x>",nu,"; x<",nu)
+           },
+           5 = {
+             args$hypothesis <- paste0("x=", nu, "; x>", nu, "; x<", nu)
+           }
+    )
+    result <- do.call(bain, args)
   }
 
   # INDEPENDENT SAMPLES
   if(!is.null(y)&&!paired){
-    tres<-bain::t_test(x,y,paired = FALSE, var.equal = FALSE)
-    if(type == 1){result <- bain::bain(tres,"x=y")}
-    if(type == 2){result <- bain::bain(tres,"x=y; x>y")}
-    if(type == 3){result <- bain::bain(tres,"x=y; x<y")}
-    if(type == 4){result <- bain::bain(tres,"x>y; x<y")}
-    if(type == 5){result <- bain::bain(tres,"x=y; x>y; x<y")}
+    tres <- t_test(x,y,paired = FALSE, var.equal = FALSE)
+    result <- bain(tres, c("x=y", "x=y; x>y", "x=y; x<y", "x>y; x<y", "x=y; x>y; x<y")[type])
   }
 
   # PAIRED SAMPLE
   if(!is.null(y)&&paired){
-    tres<-bain::t_test(x,y,paired = TRUE)
-    if(type == 1){result <- bain::bain(tres,"difference=0")}
-    if(type == 2){result <- bain::bain(tres,"difference=0;difference>0")}
-    if(type == 3){result <- bain::bain(tres,"difference=0;difference<0")}
-    if(type == 4){result <- bain::bain(tres,"difference>0;difference<0")}
-    if(type == 5){result <- bain::bain(tres,"difference=0;difference>0;difference<0")}
+    tres <- t_test(x,y,paired = TRUE)
+    result <- bain(tres, c("difference=0", "difference=0;difference>0", "difference=0;difference<0", "difference>0;difference<0", "difference=0;difference>0;difference<0")[type])
   }
-
   return(invisible(result))
 }
 
