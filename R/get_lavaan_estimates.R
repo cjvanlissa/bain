@@ -1,4 +1,5 @@
 #' @importFrom utils getFromNamespace
+#' @importFrom lavaan parametertable lavInspect standardizedsolution
 lav_getParameterLabels <-
   getFromNamespace("getParameterLabels", "lavaan")
 

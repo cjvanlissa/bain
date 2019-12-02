@@ -244,6 +244,7 @@ bain.lm <-
 
 
 #' @method bain lavaan
+#' @importFrom lavaan parTable lavInspect
 #' @export
 bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = FALSE) {
   cl <- match.call()

@@ -57,8 +57,11 @@ bain_anova_cran<-function(X,dep,group,hyp,seed){
   c1 <- paste0("X$",group,"<- as.factor(X$",group,")")
   eval(parse(text = c1))
   # roep lm aan
-  c2 <- paste0("lmres <- lm(",dep,"~",group,"-1, data = X)")
-  eval(parse(text = c2))
+  args <- list(
+    formula = as.formula(paste0(dep, "~", group, "-1")),
+    data <- X
+  )
+  lmres <- do.call(lm, args)
 
   # construeer hyp als deze als NULL binnenkomt
   if (is.null(hyp)){
@@ -69,6 +72,11 @@ bain_anova_cran<-function(X,dep,group,hyp,seed){
   # roep bain aan met lmres en hyp als input
   c3 <- paste0("bain::bain(lmres,","\"",hyp,"\"",")")
   result <- eval(parse(text = c3))
+  args <- list(
+    x = lmres,
+    hypothesis = hyp
+  )
+  result <- do.call(bain, args)
 
   return(invisible(result))
 }
@@ -97,8 +105,11 @@ bain_ancova_cran<-function(X,dep,cov,group,hyp,seed){
   }
 
   # roep lm aan
-  c2 <- paste0("lmres <-lm(",dep,"~",group,"+",cov,"-1,data = X)")
-  eval(parse(text = c2))
+  args <- list(
+    formula = as.formula(paste0(dep, "~", group, "+", cov, "-1")),
+    data <- X
+  )
+  lmres <- do.call(lm, args)
 
   # construeer hyp als deze als NULL binnenkomt
   if (is.null(hyp)){
@@ -108,11 +119,11 @@ bain_ancova_cran<-function(X,dep,cov,group,hyp,seed){
   }
 
   # roep bain aan met lmres en hyp als input
-  c3 <- paste0("bain::bain(lmres,","\"",hyp,"\"",")")
-  result <- eval(parse(text = c3))
-
-  # return(invisible(result))
-  return(result)
+  args <- list(
+    x = lmres,
+    hypothesis = hyp
+  )
+  do.call(bain, args)
 }
 
 # ===============================================================
@@ -129,8 +140,11 @@ bain_regression_cran<-function(X,dep,pred,hyp,std,seed){
   pred <- paste0(pred,collapse = "+")
 
   # roep lm aan
-  c2 <- paste0("lmres <-lm(",dep,"~",pred,",data = X)")
-  eval(parse(text = c2))
+  args <- list(
+    formula = as.formula(paste0(dep, "~", pred)),
+    data <- X
+  )
+  lmres <- do.call(lm, args)
 
   # construeer hyp als deze als NULL binnenkomt
   if (is.null(hyp)){
@@ -140,11 +154,12 @@ bain_regression_cran<-function(X,dep,pred,hyp,std,seed){
   }
 
   # roep bain aan met lmres en hyp als input
-  c3 <- paste0("bain::bain(lmres,","\"",hyp,"\",","standardize =",std,")")
-  result <- eval(parse(text = c3))
-
-  # return(invisible(result))
-  return(result)
+  args <- list(
+    x = lmres,
+    hypothesis = hyp,
+    standardize = std
+  )
+  do.call(bain, args)
 }
 
 
