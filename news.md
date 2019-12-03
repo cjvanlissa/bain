@@ -2,6 +2,12 @@
 
 * Fix lavaan bug: Within-group constraints were flagged as between-group constraints
 * Fix bain.lm bug: Parameters were not selected, leading to error if not all model parameters were mentioned in the hypothesis
+* Fix bain.lm bug for standardize = TRUE: Sigma was not named correctly
+* Add internal functions to use the CRAN-version of bain in JASP
+* Simplified functions to get lavaan estimates, and made them more interoperable for dependent R-packages BFpack and gorica.
+* Add testthat test files
+* Update readme.md
+* Update Vignette
 
 # bain 0.2.2
 
