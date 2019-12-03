@@ -5,45 +5,46 @@
 # t-test
 
 bain_ttest_cran<-function(x,y=NULL,nu=0,type=1,paired=FALSE,seed){
-
-  set.seed(seed)
-
   # ONE GROUP
   if(is.null(y)&&!paired){
     tres <- t_test(x)
     args <- list(
-      x = tres
-    )
-    switch(type,
-           1 = {
-             args$hypothesis <- paste0("x=", nu)
-           },
-           2 = {
-             args$hypothesis <- paste0("x=", nu, "; x>", nu)
-           },
-           3 = {
-             args$hypothesis <- paste0("x=", nu, "; x<", nu)
-           },
-           4 = {
-             args$hypothesis <- paste0("x>",nu,"; x<",nu)
-           },
-           5 = {
-             args$hypothesis <- paste0("x=", nu, "; x>", nu, "; x<", nu)
-           }
-    )
+      x = tres,
+      hypothesis = switch(type,
+                          paste0("x=", nu),
+                          paste0("x=", nu, "; x>", nu),
+                          paste0("x=", nu, "; x<", nu),
+                          paste0("x>", nu, "; x<", nu),
+                          paste0("x=", nu, "; x>", nu, "; x<", nu))
+      )
+    set.seed(seed)
     result <- do.call(bain, args)
+
   }
 
   # INDEPENDENT SAMPLES
   if(!is.null(y)&&!paired){
     tres <- t_test(x,y,paired = FALSE, var.equal = FALSE)
-    result <- bain(tres, c("x=y", "x=y; x>y", "x=y; x<y", "x>y; x<y", "x=y; x>y; x<y")[type])
+    set.seed(seed)
+    args <- list(
+      x = tres,
+      hypothesis = switch(type, "x=y", "x=y; x>y", "x=y; x<y", "x>y; x<y", "x=y; x>y; x<y")
+
+    )
+    result <- do.call(bain, args)
   }
 
   # PAIRED SAMPLE
   if(!is.null(y)&&paired){
     tres <- t_test(x,y,paired = TRUE)
-    result <- bain(tres, c("difference=0", "difference=0;difference>0", "difference=0;difference<0", "difference>0;difference<0", "difference=0;difference>0;difference<0")[type])
+    set.seed(seed)
+    args <- list(
+      x = tres,
+      hypothesis = switch(type,
+                          "difference=0", "difference=0;difference>0", "difference=0;difference<0", "difference>0;difference<0", "difference=0;difference>0;difference<0"
+                          )
+    )
+    result <- do.call(bain, args)
   }
   return(invisible(result))
 }
@@ -52,9 +53,6 @@ bain_ttest_cran<-function(x,y=NULL,nu=0,type=1,paired=FALSE,seed){
 # ANOVA
 
 bain_anova_cran<-function(X,dep,group,hyp,seed){
-
-  set.seed(seed)
-
   # maak een factor van group
   c1 <- paste0("X$",group,"<- as.factor(X$",group,")")
   eval(parse(text = c1))
@@ -72,12 +70,13 @@ bain_anova_cran<-function(X,dep,group,hyp,seed){
   }
 
   # roep bain aan met lmres en hyp als input
-  c3 <- paste0("bain::bain(lmres,","\"",hyp,"\"",")")
-  result <- eval(parse(text = c3))
+  #c3 <- paste0("bain::bain(lmres,","\"",hyp,"\"",")")
+  #result <- eval(parse(text = c3))
   args <- list(
     x = lmres,
     hypothesis = hyp
   )
+  set.seed(seed)
   result <- do.call(bain, args)
 
   return(invisible(result))
@@ -87,8 +86,6 @@ bain_anova_cran<-function(X,dep,group,hyp,seed){
 # ANCOVA
 
 bain_ancova_cran<-function(X,dep,cov,group,hyp,seed){
-
-  set.seed(seed)
 
   # maak een factor van group en tel het aantal groepen
   c1 <- paste0("X$",group,"<- as.factor(X$",group,")")
@@ -125,6 +122,7 @@ bain_ancova_cran<-function(X,dep,cov,group,hyp,seed){
     x = lmres,
     hypothesis = hyp
   )
+  set.seed(seed)
   do.call(bain, args)
 }
 
@@ -133,7 +131,7 @@ bain_ancova_cran<-function(X,dep,cov,group,hyp,seed){
 
 bain_regression_cran<-function(X,dep,pred,hyp,std,seed){
 
-  set.seed(seed)
+
 
   # make an array of pred
   pred <- as.character(strsplit(pred," ")[[1]])
@@ -161,6 +159,7 @@ bain_regression_cran<-function(X,dep,pred,hyp,std,seed){
     hypothesis = hyp,
     standardize = std
   )
+  set.seed(seed)
   do.call(bain, args)
 }
 
