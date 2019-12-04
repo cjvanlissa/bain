@@ -114,7 +114,8 @@ bain.lm <-
            standardize = FALSE) {
     cl <- match.call()
     Args <- as.list(cl[-1])
-    if(class(x$coefficients) != "numeric"){
+    if(!"numeric" %in% class(x$coefficients)) {
+#    if(class(x$coefficients) != "numeric"){
       stop("It appears that you are trying to run a multivariate linear model. This cannot be done using a lm() object as input for bain. Instead use a named numeric vector. See vignette('Introduction_to_bain') for further information")
     }
     # Checken of het factor OF ordered factor is!!!!!!
