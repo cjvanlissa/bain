@@ -1,3 +1,9 @@
+# bain 0.2.4
+
+* Add bain_sensitivity() and S3 method summary.bain_sensitivity()
+* Change default stats for print.bain() to omit columns that are not relevant  
+  for applied researchers
+
 # bain 0.2.3
 
 * Fix lavaan bug: Within-group constraints were flagged as between-group constraints

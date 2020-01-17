@@ -28,7 +28,7 @@ print.Bain <- function(x,...){
 
 #' @method print bain
 #' @export
-print.bain <- function(x, stats = c("Fit_eq", "Com_eq", "Fit_in", "Com_in", "Fit", "Com", "BF", "PMPa", "PMPb"),
+print.bain <- function(x, stats = c("Fit", "Com", "BF", "PMPa", "PMPb"),
                        digits = 3,
                        na.print = "", ...){
 
