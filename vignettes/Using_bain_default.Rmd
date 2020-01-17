@@ -1,0 +1,103 @@
+---
+title: "Using bain.default()"
+author: "Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Camiel van Zundert, Xin Gu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using bain.default()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Bain has methods for many model types. When calling `bain()` on a model for which a method exists, the function has three arguments:
+
+```{r echo = FALSE, results = "asis"}
+knitr::kable(data.frame(Argument = c("`x`", "`hypothesis`", "`fraction`"),
+           Description = c("A model object for which a bain method exists",
+                           "The informative hypotheses to evaluate",
+                           "The fraction of information in the data used to construct the prior distribution")), escape = FALSE)
+```
+
+Sometimes, however, users might want to conduct a bain analysis on a model type for which no method exists. In such cases, users can call `bain.default()`: The computational formula at the heart of the bain analysis. The `bain.default()` function accepts the following arguments:
+
+```{r echo = FALSE, results = "asis"}
+knitr::kable(data.frame(Argument = c("`x`", "`hypothesis`", "`fraction`", "`n`", "`Sigma`", "`group_parameters`", "`joint_parameters`"),
+           Description = c("A named vector of parameter estimates (the names should correspond to parameters in the hypothesis)",
+                           "The informative hypotheses to evaluate",
+                           "The fraction of information in the data used to construct the prior distribution",
+                           "A vector of sample sizes (atomic vector for one sample)", 
+                           "A list of covariance matrices (one for each sample, in the case of a multi-group model)",
+                           "The number of between-group parameters, in the case of a multi-group model",
+                           "The number of parameters in the model, or the number of parameters common to all groups")), escape = FALSE)
+```
+
+When using `bain.default()`, the user must manually extract the required information. We provide an illustrative example. First, we fit a structural equation model using `lavaan`:
+
+```{r, eval = TRUE, echo = TRUE, results='hide', message=FALSE, warning=FALSE}
+library(bain)
+library(lavaan)
+model1 <- 'A =~ Ab + Al + Af + An + Ar + Ac 
+           B =~ Bb + Bl + Bf + Bn + Br + Bc'
+fit1 <- sem(model1, data = sesamesim, std.lv = TRUE)
+```
+
+We want to specify the following hypotheses:
+
+```{r eval = TRUE, echo = TRUE}
+hypotheses <- "(Ab, Al, Af, An, Ar, Ac) >.6 &
+               (Bb, Bl, Bf, Bn, Br, Bc) >.6"
+```
+
+Next, we extract the required information from the `lavaan` model object, in the order of the parameter table above:
+
+```{r}
+# Extract standardized parameter estimates (argument x)
+PE1 <- parameterEstimates(fit1, standardized = TRUE)
+# Identify which parameter estimates are factor loadings
+loadings <- which(PE1$op == "=~")
+# Collect the standardized "std.all" factor loadings "=~"
+estimates <- PE1$std.all[loadings]
+# Assign names to the standardized factor loadings
+names(estimates) <- c("Ab", "Al", "Af", "An", "Ar", "Ac", 
+                      "Bb", "Bl", "Bf", "Bn", "Br", "Bc")
+
+# Extract sample size (argument n)
+n <- nobs(fit1)
+
+# Extract the standardized model parameter covariance matrix,
+# selecting only the rows and columns for the loadings
+covariance <- lavInspect(fit1, "vcov.std.all")[loadings, loadings]
+
+# Give the covariance matrix the same names as the estimate
+dimnames(covariance) <- list(names(estimates), names(estimates))
+
+# Put the covariance matrix in a list
+covariance <- list(covariance)
+
+# Specify number of group parameters; this simply means that there 
+# are 12 parameters in the estimate.
+group_parameters <- 12
+
+# Then, the number of joint parameters. This is always 0 for evaluations of
+# SEM hypotheses:
+joint_parameters <- 0
+```
+
+Now, we can evaluate the hypotheses using `bain.default()`:
+
+```{r}
+bain(x = estimates,
+     hypothesis = hypotheses,
+     n = n,
+     Sigma = covariance,
+     group_parameters = group_parameters,
+     joint_parameters = joint_parameters)
+```
+
