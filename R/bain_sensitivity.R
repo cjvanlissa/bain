@@ -40,6 +40,8 @@ bain_sensitivity <- function(x, hypothesis, fractions = 1, ...){
   outlist
 }
 
+#' @method summary bain_sensitivity
+#' @export
 summary.bain_sensitivity  <- function(object, which_stat = "BF", ...){
   which_stat <- as.character(which_stat)[1]
   if(!grepl("BFmatrix\\[", which_stat)){
