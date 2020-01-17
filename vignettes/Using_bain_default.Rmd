@@ -1,6 +1,6 @@
 ---
 title: "Using bain.default()"
-author: "Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Camiel van Zundert, Xin Gu"
+author: "Herbert Hoijtink & Caspar J. van Lissa"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
