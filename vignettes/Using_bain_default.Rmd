@@ -4,7 +4,7 @@ author: "Herbert Hoijtink & Caspar J. van Lissa"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using bain.default()}
+  %\VignetteIndexEntry{bain_default}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
