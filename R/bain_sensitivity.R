@@ -30,13 +30,17 @@
 #' @export
 bain_sensitivity <- function(x, hypothesis, fractions = 1, ...){
   Args <- as.list(match.call()[-1])
+  if(!exists(".Random.seed")) set.seed(NULL)
+  the_seed <- .Random.seed[1]
+  Args$x <- force(x)
   outlist <- lapply(fractions, function(this_frac){
     Args[["fraction"]] <- this_frac
+    set.seed(the_seed)
     out <- do.call(bain, Args)
     out[["fraction"]] <- this_frac
     out
   })
-  class(outlist) <- c("bain_sensisitity", class(outlist))
+  class(outlist) <- c("bain_sensitivity", class(outlist))
   outlist
 }
 
