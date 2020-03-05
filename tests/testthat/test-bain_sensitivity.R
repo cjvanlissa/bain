@@ -3,16 +3,38 @@ sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(postnumb~site-1,sesamesim)
 
 set.seed(100)
-results <- bain(anov, "site1=site2=site3=site4=site5;
-                       site2>site5>site1>site3>site4")
 sensres <- bain_sensitivity(anov, "site1=site2=site3=site4=site5;
                        site2>site5>site1>site3>site4",
                        fractions = c(1,2,3,5))
 
+test_that("Inequality constraints all the same", expect_true(length(unique(sapply(sensres, function(x){round(x$fit$BF[2], 3)}))) == 1))
+test_that("Equality constraints not the same", expect_false(length(unique(sapply(sensres, function(x){round(x$fit$BF[1], 12)}))) == 1))
+
+
+tmp <- summary(sensres, which_stat = "BF")
+test_that("summary.bain_sensitivity works", expect_s3_class(tmp, "sum_sensitivity"))
+
+set.seed(100)
+sensres <- bain_sensitivity(anov, "site3=site4;
+                            site3 < site4",
+                            fractions = c(1,2,3,5))
 
 test_that("Inequality constraints all the same", expect_true(length(unique(sapply(sensres, function(x){round(x$fit$BF[2], 3)}))) == 1))
 test_that("Equality constraints not the same", expect_false(length(unique(sapply(sensres, function(x){round(x$fit$BF[1], 12)}))) == 1))
 
-tmp <- summary(sensres, which_stat = "BF")
-class(tmp)
-test_that("summary.bain_sensitivity works", expect_s3_class(tmp, "sum_sensitivity"))
+set.seed(100)
+ana1 <- bain(anov, "site3=site4;
+                            site3 < site4",
+             fraction = 1)
+
+test_that("correcte BFs", expect_equal(summary(sensres)[1,2], ana1$fit$BF[1]))
+test_that("correcte BFs", expect_equal(summary(sensres)[1,3],ana1$fit$BF[2]))
+
+
+set.seed(100)
+ana3 <- bain(anov, "site3=site4;
+                            site3 < site4",
+             fraction = 3)
+
+test_that("correcte BFs", expect_equal(summary(sensres)[3,2],ana3$fit$BF[1]))
+test_that("correcte BFs", expect_equal(summary(sensres)[3,3],ana3$fit$BF[2]))
