@@ -28,10 +28,9 @@ print.Bain <- function(x,...){
 
 #' @method print bain
 #' @export
-print.bain <- function(x, stats = c("Fit", "Com", "BF", "PMPa", "PMPb"),
+print.bain <- function(x, stats = c("Fit", "Com", "BF.u", "BF.c","PMPa", "PMPb"),
                        digits = 3,
                        na.print = "", ...){
-
   fits <- as.matrix(x$fit)
   dat <- fits[, stats]
   miss_val <- is.na(dat)
@@ -48,7 +47,7 @@ print.bain <- function(x, stats = c("Fit", "Com", "BF", "PMPa", "PMPb"),
            na.print = na.print)
 
   cat("\nHypotheses:\n ", paste(rownames(dat)[-nrow(dat)], ": ", x$hypotheses, sep = "", collapse = "\n  "))
-  cat("\n\nNote: BF denotes the Bayes factor of the hypothesis at hand versus its complement.")
+  cat("\n\nNote: BF.u denotes the Bayes factor of the hypothesis at hand versus the unconstrained hypothesis Hu. BF.c denotes the Bayes factor of the hypothesis at hand versus its complement.")
   if(!is.null(x[["warnings"]])){
     warning("Bain analysis returned the following warnings:\n  ", paste(1:length(x$warnings), ". ", x$warnings, sep = "", collapse = "\n  "))
   }

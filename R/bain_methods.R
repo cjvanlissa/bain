@@ -665,8 +665,10 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
   rownames(BFmatrix) <- colnames(BFmatrix) <- paste0("H", 1:n_hyp)
 
   # Create table of fit indices
-  res <- cbind("Fit_eq" = fiteq, "Com_eq" = comeq, "Fit_in" = fitin, "Com_in" = comin, "Fit" = fit, "Com" = com, "BF" = BF, "PMPa" = fit / com / sum(fit / com), "PMPb" = fit / com / (1 + sum(fit / com)))
-  res <- rbind(res, c(rep(NA, ncol(res)-1), 1 / (1 + sum(fit / com))))
+  res <- cbind("Fit_eq" = fiteq, "Com_eq" = comeq, "Fit_in" = fitin, "Com_in" = comin, "Fit" = fit, "Com" = com, "BF" = BF, "PMPa" = fit / com / sum(fit / com), "PMPb" = fit / com / (1 + sum(fit / com)), "BF.u" = fit / com, "BF.c" = BF)
+  res <- rbind(res, NA)
+  res[nrow(res), match("PMPb", colnames(res))] <- 1 / (1 + sum(fit / com))
+  #res <- rbind(res, c(rep(NA, ncol(res)-1), 1 / (1 + sum(fit / com))))
   rownames(res) <- c(paste("H", 1:n_hyp, sep = ""), "Hu")
   # Either provide these as rownames, but can take a lot of space, or print a 'legend' below the table
   # rownames(res) <- parsed_hyp$original_hypothesis
