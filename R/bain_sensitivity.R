@@ -14,7 +14,7 @@
 #' (see the tutorial DOI: 10.1037/met0000201): The default value 1 denotes the
 #' minimal fraction, 2 denotes twice the minimal fraction, etc.
 #' @param ... Additional arguments passed to \code{\link[bain]{bain}}.
-#' @return A \code{data.frame} of class \code{"sum_sensitivity"}.
+#' @return A \code{data.frame} of class \code{"bain_sensitivity"}.
 #' @details The Bayes factor for equality constraints is sensitive to a
 #' scaling factor applied to the prior distribution. The \code{fraction}
 #' argument adjusts this scaling factor. The function \code{bain_sensitivity}
@@ -52,6 +52,12 @@ bain_sensitivity <- function(x, hypothesis, fractions = 1, ...){
   outlist
 }
 
+#' @method print bain_sensitivity
+#' @export
+print.bain_sensitivity <- function(x, ...){
+  print(summary(x))
+}
+
 #' @method summary bain_sensitivity
 #' @export
 summary.bain_sensitivity  <- function(object, which_stat = "BF.c", ...){
@@ -85,7 +91,8 @@ summary.bain_sensitivity  <- function(object, which_stat = "BF.c", ...){
                         t(do.call(cbind,
                                   outlist)))
   empty_rows <- apply(out_tab, 1, function(x){all(is.na(x))})
-  out_tab <- out_tab[!empty_rows, ]
+  empty_cols <- apply(out_tab, 2, function(x){all(is.na(x))})
+  out_tab <- out_tab[!empty_rows, !empty_cols]
   rownames(out_tab) <- NULL
   class(out_tab) <- c("sum_sensitivity", class(out_tab))
   out_tab

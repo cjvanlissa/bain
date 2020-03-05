@@ -24,7 +24,7 @@ minimal fraction, 2 denotes twice the minimal fraction, etc.}
 \item{...}{Additional arguments passed to \code{\link[bain]{bain}}.}
 }
 \value{
-A \code{data.frame} of class \code{"sum_sensitivity"}.
+A \code{data.frame} of class \code{"bain_sensitivity"}.
 }
 \description{
 Conducts a sensitivity analysis for \code{\link[bain]{bain}},
