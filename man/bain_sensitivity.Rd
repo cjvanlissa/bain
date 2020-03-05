@@ -7,16 +7,24 @@
 bain_sensitivity(x, hypothesis, fractions = 1, ...)
 }
 \arguments{
-\item{x}{PARAM_DESCRIPTION}
+\item{x}{An R object containing the outcome of a statistical analysis.
+Currently, the following objects can be processed: \code{lm()},
+\code{t_test()}, \code{lavaan} objects created with the
+\code{sem()}, \code{cfa()}, and \code{growth()} functions, and named
+vector objects. See the vignette for elaborations.}
 
-\item{hypothesis}{PARAM_DESCRIPTION}
+\item{hypothesis}{A character string containing the informative hypotheses
+to evaluate. See the vignette for elaborations.}
 
-\item{fractions}{PARAM_DESCRIPTION, Default: 1}
+\item{fractions}{A numeric vector, representing the fractions of information
+in the data to be used to construct the prior distribution
+(see the tutorial DOI: 10.1037/met0000201): The default value 1 denotes the
+minimal fraction, 2 denotes twice the minimal fraction, etc.}
 
-\item{...}{PARAM_DESCRIPTION}
+\item{...}{Additional arguments passed to \code{\link[bain]{bain}}.}
 }
 \value{
-OUTPUT_DESCRIPTION
+A \code{data.frame} of class \code{"sum_sensitivity"}.
 }
 \description{
 Conducts a sensitivity analysis for \code{\link[bain]{bain}},
@@ -42,6 +50,6 @@ res <- t_test(extra ~ group, data = sleep)
 bain(res, hypothesis = "group1 - group2 = 1.5")
 bain_sens <- bain_sensitivity(res, hypothesis = "group1-group2 = 1.5",
                               fractions = c(1,2,3))
-summary(bain_sens, which_stat = "BF")
+summary(bain_sens, which_stat = "BF.c")
 summary(bain_sens, which_stat = "BFmatrix[1,1]")
 }

@@ -2,11 +2,19 @@
 #' @description Conducts a sensitivity analysis for \code{\link[bain]{bain}},
 #' see details.
 #' \code{fractions} argument, and returns a list of bain results objects.
-#' @param x PARAM_DESCRIPTION
-#' @param hypothesis PARAM_DESCRIPTION
-#' @param fractions PARAM_DESCRIPTION, Default: 1
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @param x An R object containing the outcome of a statistical analysis.
+#' Currently, the following objects can be processed: \code{lm()},
+#' \code{t_test()}, \code{lavaan} objects created with the
+#' \code{sem()}, \code{cfa()}, and \code{growth()} functions, and named
+#' vector objects. See the vignette for elaborations.
+#' @param hypothesis	A character string containing the informative hypotheses
+#' to evaluate. See the vignette for elaborations.
+#' @param fractions A numeric vector, representing the fractions of information
+#' in the data to be used to construct the prior distribution
+#' (see the tutorial DOI: 10.1037/met0000201): The default value 1 denotes the
+#' minimal fraction, 2 denotes twice the minimal fraction, etc.
+#' @param ... Additional arguments passed to \code{\link[bain]{bain}}.
+#' @return A \code{data.frame} of class \code{"sum_sensitivity"}.
 #' @details The Bayes factor for equality constraints is sensitive to a
 #' scaling factor applied to the prior distribution. The \code{fraction}
 #' argument adjusts this scaling factor. The function \code{bain_sensitivity}
@@ -24,7 +32,7 @@
 #' bain(res, hypothesis = "group1 - group2 = 1.5")
 #' bain_sens <- bain_sensitivity(res, hypothesis = "group1-group2 = 1.5",
 #'                               fractions = c(1,2,3))
-#' summary(bain_sens, which_stat = "BF")
+#' summary(bain_sens, which_stat = "BF.c")
 #' summary(bain_sens, which_stat = "BFmatrix[1,1]")
 #' @rdname bain_sensitivity
 #' @export
@@ -46,7 +54,7 @@ bain_sensitivity <- function(x, hypothesis, fractions = 1, ...){
 
 #' @method summary bain_sensitivity
 #' @export
-summary.bain_sensitivity  <- function(object, which_stat = "BF", ...){
+summary.bain_sensitivity  <- function(object, which_stat = "BF.c", ...){
   which_stat <- as.character(which_stat)[1]
   if(!grepl("BFmatrix\\[", which_stat)){
     outlist <- lapply(object, function(this_output){
@@ -76,6 +84,8 @@ summary.bain_sensitivity  <- function(object, which_stat = "BF", ...){
   out_tab <- data.frame(Fraction = sapply(object, `[[`, "fraction"),
                         t(do.call(cbind,
                                   outlist)))
+  empty_rows <- apply(out_tab, 1, function(x){all(is.na(x))})
+  out_tab <- out_tab[!empty_rows, ]
   rownames(out_tab) <- NULL
   class(out_tab) <- c("sum_sensitivity", class(out_tab))
   out_tab
