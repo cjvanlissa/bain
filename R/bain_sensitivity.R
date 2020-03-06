@@ -30,12 +30,11 @@
 #' sesamesim$site <- as.factor(sesamesim$site)
 #' res <- lm(sesamesim$postnumb~sesamesim$site-1)
 #' set.seed(4583)
-#' bain_sens <- bain_sensitivity(res, "site1=site2=site3=site4=site5;
-#'                                     site2>site5>site1>site3=site4;
-#'                                     site1=site2>site3=site4>site5",
+#' bain_sens <- bain_sensitivity(res, "site1=site2;
+#'                                     site2>site5",
 #'                                     fractions = c(1,2,3))
 #' summary(bain_sens, which_stat = "BF.c")
-#' summary(bain_sens, which_stat = "BFmatrix[1,3]")
+#' summary(bain_sens, which_stat = "BFmatrix[1,2]")
 #' @rdname bain_sensitivity
 #' @export
 bain_sensitivity <- function(x, hypothesis, fractions = 1, ...){
