@@ -27,14 +27,13 @@ minimal fraction, 2 denotes twice the minimal fraction, etc.}
 A \code{data.frame} of class \code{"bain_sensitivity"}.
 }
 \description{
-Conducts a sensitivity analysis for \code{\link[bain]{bain}},
-see details.
-\code{fractions} argument, and returns a list of bain results objects.
+Conducts a sensitivity analysis for \code{\link[bain]{bain}}.
 }
 \details{
 The Bayes factor for equality constraints is sensitive to a
-scaling factor applied to the prior distribution. The \code{fraction}
-argument adjusts this scaling factor. The function \code{bain_sensitivity}
+scaling factor applied to the prior distribution. The argument
+\code{fraction} adjusts this scaling factor. The function
+\code{bain_sensitivity}
 is a wrapper for \code{\link[bain]{bain}}, which accepts a vector for the
 \code{fractions} argument, and returns a list of bain results objects.
 A table with a sensitivity analysis for specific statistics can be obtained
@@ -46,10 +45,13 @@ and PMPb), and elements of the
 \code{summary(bain_sens, which_stat = "BFmatrix[1,2]")}.
 }
 \examples{
-res <- t_test(extra ~ group, data = sleep)
-bain(res, hypothesis = "group1 - group2 = 1.5")
-bain_sens <- bain_sensitivity(res, hypothesis = "group1-group2 = 1.5",
-                              fractions = c(1,2,3))
+sesamesim$site <- as.factor(sesamesim$site)
+res <- lm(sesamesim$postnumb~sesamesim$site-1)
+set.seed(4583)
+bain_sens <- bain_sensitivity(res, "site1=site2=site3=site4=site5;
+                                    site2>site5>site1>site3=site4;
+                                    site1=site2>site3=site4>site5",
+                                    fractions = c(1,2,3))
 summary(bain_sens, which_stat = "BF.c")
-summary(bain_sens, which_stat = "BFmatrix[1,1]")
+summary(bain_sens, which_stat = "BFmatrix[1,3]")
 }
