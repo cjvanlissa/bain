@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis-ci.org/cjvanlissa/bain)
 [![](https://cranlogs.r-pkg.org/badges/bain)](https://cran.r-project.org/package=bain)
 <!--[![Codecov test coverage](https://codecov.io/gh/cjvanlissa/bain/branch/master/graph/badge.svg)](https://codecov.io/gh/cjvanlissa/bain?branch=master)-->
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 
 # bain
 
@@ -71,9 +72,9 @@ You can cite the R-package with the following citation:
 
 ## Contributing and Contact Information
 
-If you have ideas, please get involved. You can contribute by opening an issue on GitHub, or sending a pull request with proposed features.
+If you have ideas, please get involved. You can contribute by opening an issue on GitHub, or sending a pull request with proposed features. Contributions in code must adhere to the [tidyverse style guide](https://style.tidyverse.org/).
 
 * File a GitHub issue [here](https://github.com/cjvanlissa/bain)
 * Make a pull request [here](https://github.com/cjvanlissa/bain/pulls)
 
-By participating in this project, you agree to abide by the [Contributor Code of Conduct v2.0](https://www.contributor-covenant.org/).
+By participating in this project, you agree to abide by the [Contributor Code of Conduct v2.0](code_of_conduct.md).

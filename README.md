@@ -8,6 +8,8 @@ status](https://www.r-pkg.org/badges/version/bain)](https://cran.r-project.org/p
 Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis-ci.org/cjvanlissa/bain)
 [![](https://cranlogs.r-pkg.org/badges/bain)](https://cran.r-project.org/package=bain)
 <!--[![Codecov test coverage](https://codecov.io/gh/cjvanlissa/bain/branch/master/graph/badge.svg)](https://codecov.io/gh/cjvanlissa/bain?branch=master)-->
+[![Contributor
+Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 
 # bain
 
@@ -61,8 +63,8 @@ iris %>%
 #> 
 #>    Fit   Com   BF.u  BF.c            PMPa  PMPb 
 #> H1 0.000 0.224 0.000 0.000           0.000 0.000
-#> H2 1.000 0.162 6.183 45357602666.875 1.000 0.861
-#> Hu                                         0.139
+#> H2 1.000 0.167 6.001 38831590472.520 1.000 0.857
+#> Hu                                         0.143
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
@@ -92,9 +94,11 @@ You can cite the R-package with the following citation:
 
 If you have ideas, please get involved. You can contribute by opening an
 issue on GitHub, or sending a pull request with proposed features.
+Contributions in code must adhere to the [tidyverse style
+guide](https://style.tidyverse.org/).
 
   - File a GitHub issue [here](https://github.com/cjvanlissa/bain)
   - Make a pull request [here](https://github.com/cjvanlissa/bain/pulls)
 
 By participating in this project, you agree to abide by the [Contributor
-Code of Conduct v2.0](https://www.contributor-covenant.org/).
+Code of Conduct v2.0](code_of_conduct.md).
