@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 [![](https://cranlogs.r-pkg.org/badges/bain)](https://cran.r-project.org/package=bain)
 <!--[![Codecov test coverage](https://codecov.io/gh/cjvanlissa/bain/branch/master/graph/badge.svg)](https://codecov.io/gh/cjvanlissa/bain?branch=master)-->
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3871/badge)](https://bestpractices.coreinfrastructure.org/projects/3871)
 
 # bain
 

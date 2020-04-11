@@ -10,6 +10,8 @@ Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis
 <!--[![Codecov test coverage](https://codecov.io/gh/cjvanlissa/bain/branch/master/graph/badge.svg)](https://codecov.io/gh/cjvanlissa/bain?branch=master)-->
 [![Contributor
 Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
+[![CII Best
+Practices](https://bestpractices.coreinfrastructure.org/projects/3871/badge)](https://bestpractices.coreinfrastructure.org/projects/3871)
 
 # bain
 
@@ -63,8 +65,8 @@ iris %>%
 #> 
 #>    Fit   Com   BF.u  BF.c            PMPa  PMPb 
 #> H1 0.000 0.224 0.000 0.000           0.000 0.000
-#> H2 1.000 0.167 6.001 38831590472.520 1.000 0.857
-#> Hu                                         0.143
+#> H2 1.000 0.170 5.891 64159839438.629 1.000 0.855
+#> Hu                                         0.145
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
