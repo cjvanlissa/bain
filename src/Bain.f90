@@ -204,7 +204,7 @@ return
 end function
 
 
-end
+end subroutine
 
 
 
@@ -328,7 +328,7 @@ transcon(i)=sum(Ainv(i,1:numIR)*constant(1:numIR))
 end do
 
 deallocate(A,Ainv,rownumber)
-end
+end subroutine
 
 
 
@@ -960,4 +960,4 @@ return
 end function
 
 
-end
+end subroutine
