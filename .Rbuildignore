@@ -1,4 +1,5 @@
 ^cran-comments\.md$
+^news\.md$
 ^CRAN-RELEASE$
 ^Meta$
 ^doc$
@@ -6,7 +7,6 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^README-.*\.png$
-^\.travis\.yml$
 dev/
 news.md
 bain-Ex_i386.Rout
@@ -15,3 +15,6 @@ examples_i386
 examples_x64
 tests_i386
 tests_x64
+^LICENSE.md$
+^code_of_conduct.md$
+^\.github$

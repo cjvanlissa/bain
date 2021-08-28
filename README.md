@@ -4,10 +4,9 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/bain)](https://cran.r-project.org/package=bain)
-[![Build
-Status](https://travis-ci.org/cjvanlissa/bain.svg?branch=master)](https://travis-ci.org/cjvanlissa/bain)
+[![R-CMD-check](https://github.com/cjvanlissa/bain/workflows/R-CMD-check/badge.svg)](https://github.com/cjvanlissa/bain/actions)
 [![](https://cranlogs.r-pkg.org/badges/bain)](https://cran.r-project.org/package=bain)
-<!--[![Codecov test coverage](https://codecov.io/gh/cjvanlissa/bain/branch/master/graph/badge.svg)](https://codecov.io/gh/cjvanlissa/bain?branch=master)-->
+[![test-coverage](https://github.com/cjvanlissa/bain/workflows/test-coverage/badge.svg)](https://github.com/cjvanlissa/bain/actions)
 [![Contributor
 Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
 [![CII Best
@@ -50,7 +49,6 @@ in an ANOVA:
 ``` r
 # Load bain
 library(bain)
-#> Warning: package 'bain' was built under R version 3.6.3
 # dplyr to access the %>% operator
 library(dplyr)
 # Iris as example data
@@ -65,8 +63,8 @@ iris %>%
 #> 
 #>    Fit   Com   BF.u  BF.c            PMPa  PMPb 
 #> H1 0.000 0.224 0.000 0.000           0.000 0.000
-#> H2 1.000 0.170 5.891 64159839438.629 1.000 0.855
-#> Hu                                         0.145
+#> H2 1.000 0.169 5.921 44482323169.572 1.000 0.856
+#> Hu                                         0.144
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
