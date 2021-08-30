@@ -1,5 +1,4 @@
 parse_hypothesis <- function(varnames, hyp){
-
 # Check hypothesis syntax -------------------------------------------------
 
   if(grepl("\\([^,]+?\\)", hyp)){
@@ -260,16 +259,17 @@ constraint_to_equation <- function(hyp){
   # If scalar comes after variable name, move it in front
   hyp <- gsub("([\\.a-zA-Z][a-zA-Z0-9_\\.]{0,})\\*(\\d+)", "\\2*\\1", hyp, perl = TRUE)
 
+  # If a number starts with a period, add a leading zero
+  # hyp <- gsub("(^|(?<!\\d))(\\.[0-9]+)", "0\\2", hyp, perl = TRUE)
+  # Gu: add if being preceded by any of a-zA-Z0-9_, then ignore. Otherwise x.1 becomes x0.1
+  hyp <- gsub("(^|(?<![a-zA-Z0-9_]))(\\.[0-9]+)", "0\\2", hyp, perl = TRUE)
+
   # When the string starts with a word, OR when a word is not preceded by
   # a number or *-sign, replace the "word" with "1*word"
   # hyp <- gsub("(^|(?<![\\*\\d]))([a-zA-Z][a-zA-Z0-9_]{0,})", "1*\\2", hyp, perl = TRUE)
   # Gu: add if not being preceded by any of .a-zA-Z0-9 , then ignore. otherwise x.A becomes x.1*A
   hyp <- gsub("(^|(?<![\\*\\d\\.a-zA-Z0-9_]))([a-zA-Z\\.][a-zA-Z0-9_\\.]{0,})", "1*\\2", hyp, perl = TRUE)
 
-  # If a number starts with a period, add a leading zero
-  # hyp <- gsub("(^|(?<!\\d))(\\.[0-9]+)", "0\\2", hyp, perl = TRUE)
-  # Gu: add if being preceded by any of a-zA-Z0-9_, then ignore. Otherwise x.1 becomes x0.1
-  hyp <- gsub("(^|(?<![a-zA-Z0-9_]))(\\.[0-9]+)", "0\\2", hyp, perl = TRUE)
 
   # When a number is directly followed by a word, insert a * sign
   # hyp <- gsub("(\\d)(?=[a-zA-Z][a-zA-Z0-9_]{0,})", "\\1*", hyp, perl = TRUE)

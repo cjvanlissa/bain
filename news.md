@@ -1,3 +1,8 @@
+# bain 0.2.5
+
+* Fix bug in bain:::bain.t_test() on Debian linux
+* Fix bug in parser related to decimal numbers without leading zero (issue #28)
+  
 # bain 0.2.4
 
 * Add bain_sensitivity() and S3 method summary.bain_sensitivity()
