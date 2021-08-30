@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
+[![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/bain)](https://cran.r-project.org/package=bain)
 [![R-CMD-check](https://github.com/cjvanlissa/bain/workflows/R-CMD-check/badge.svg)](https://github.com/cjvanlissa/bain/actions)
@@ -63,8 +63,8 @@ iris %>%
 #> 
 #>    Fit   Com   BF.u  BF.c            PMPa  PMPb 
 #> H1 0.000 0.224 0.000 0.000           0.000 0.000
-#> H2 1.000 0.169 5.921 44482323169.572 1.000 0.856
-#> Hu                                         0.144
+#> H2 1.000 0.164 6.081 30613603549.767 1.000 0.859
+#> Hu                                         0.141
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
@@ -101,4 +101,5 @@ guide](https://style.tidyverse.org/).
   - Make a pull request [here](https://github.com/cjvanlissa/bain/pulls)
 
 By participating in this project, you agree to abide by the [Contributor
-Code of Conduct v2.0](code_of_conduct.md).
+Code of Conduct
+v2.0](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html).

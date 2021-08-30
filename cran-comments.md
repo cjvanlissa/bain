@@ -1,16 +1,18 @@
-# Version 0.2.4
+# Version 0.2.5
+
+New version to address CRAN test failures on Debian and Fedora linux
 
 ## Test environments
-* local Windows 10 install, R 3.6.2
+* local x86_64-pc-linux-gnu, R 4.0.3
 * rhub check: Windows Server 2008 R2 SP1, R-devel, 32/64 bit
-* rhub check: Ubuntu Linux 16.04 LTS, R-release, GCC
+* rhub check: Ubuntu Linux 20.04.1 LTS, R-release, GCC
 * rhub check: Fedora Linux, R-devel, clang, gfortran
 * rhub check: Debian Linux, R-devel, GCC ASAN/UBSAN
 * win-builder (devel and release)
-* travis-ci, macOS High Sierra 10.13.6, R 3.6.2
-* travis-ci, Ubuntu 16.04.6, R 3.5.3
-* travis-ci, Ubuntu 16.04.6, R 3.6.2
-* travis-ci, Ubuntu 16.04.6, R development version
+* GitHub actions, windows-latest (release)
+* GitHub actions, macOS-latest (release)
+* GitHub actions, ubuntu-20.04 (release)
+* GitHub actions, ubuntu-20.04 (devel)
 
 ## R CMD check results
 

@@ -129,7 +129,8 @@ The following steps need to be executed:
 
 1) `x <- sem()` or `x <- cfa()` or `x <- growth()`. 
 Execute an analysis with the sem, cfa, or growth functions
-implemented in `lavaan` (http://lavaan.org/) . Note that, by default, 
+implemented in [`lavaan`](https://lavaan.ugent.be).
+Note that, by default, 
 `lavaan` will apply list-wise deletion if there are cases with
 missing values in the variables used. An imputation based method
 for dealing with missing values tailored to Bayesian hypothesis
