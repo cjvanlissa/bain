@@ -150,7 +150,8 @@ get_estimates.lm <- function(x, ...){
 get_estimates.t_test <- function(x, ...){
   out <- list(estimate = coef(x),
               Sigma = vcov(x))
-  nams <- gsub("mean of the differences", "difference", names(out$estimate), fixed = TRUE)
+  nams <- gsub("mean difference", "difference", names(out$estimate), fixed = TRUE)
+  nams <- gsub("mean of the differences", "difference", nams, fixed = TRUE)
   nams <- gsub("mean of ", "", nams, fixed = TRUE)
   # if(x$method == "One Sample t-test"){
   #   nams <- "x"
