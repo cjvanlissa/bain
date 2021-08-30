@@ -119,6 +119,15 @@ t_test.default <- function(x, ...) {
     rval$n <- length(x)
     rval$v <- var(x)
   }
+
+# BELOW HERBERT HAS RELABELLED THE ESTIMATES. THIS AVOIDS POSSIBLE
+# FUTURE PROBLEMS LIKE THE ONE WE ENCOUNTERED WITH "DIFFERENCE".
+# ALSO IN PRINCIPLE
+# THE PARSER CANNOT PROVIDE NAMES WITH SPACES, SO THIS IS SAFER.
+
+  if (rval$method == "One Sample t-test"){names(rval$estimate) <- "x"}
+  else if (rval$method == "Paired t-test"){names(rval$estimate) <- "difference"}
+  else {names(rval$estimate) <- c("x","y")}
   class(rval) <- c("t_test", "htest")
   return(rval)
 }
@@ -152,7 +161,11 @@ t_test.formula <- function(x, ...) {
     rval$v <- var(model_frame[[1]])
   }
   if (length(rval$estimate) == 2L)
-    names(rval$estimate) <- paste0("mean of group", levels(g))
+
+# BELOW HERBERT HAS REMOVED "mean of" FROM THE LABELLING. THIS AVOIDS POSSIBLE
+# FUTURE PROBLEMS LIKE THE ONE WE ENCOUNTERED WITH "DIFFERENCE". ALSO IN PRINCIPLE
+# THE PARSER CANNOT PROVIDE NAMES WITH SPACES, SO THIS IS SAFER.
+    names(rval$estimate) <- paste0("group", levels(g))
   class(rval) <- c("t_test", "htest")
   return(rval)
 }
