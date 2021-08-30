@@ -4,7 +4,9 @@
 \name{sesamesim}
 \alias{sesamesim}
 \title{Simulated Sesame Street Data}
-\format{A data frame with 240 rows and 21 variables.}
+\format{
+A data frame with 240 rows and 21 variables.
+}
 \usage{
 data(sesamesim)
 }

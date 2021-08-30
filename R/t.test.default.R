@@ -261,7 +261,7 @@ t_test_old.formula <- function(formula, data, subset, na.action, ...)
 #' @export
 coef.t_test <- function (object, ...)
 {
-  rename_estimate(object$estimate)
+  object$estimate
 }
 
 #' @method vcov t_test
@@ -269,10 +269,10 @@ coef.t_test <- function (object, ...)
 vcov.t_test <- function (object, ...)
 {
   if(length(object$estimate) == 1){
-    diag(object$v/object$n)
+    diag(object$v/object$n, nrow = 1, ncol = 1)
   } else {
-    if (!object$method == " Two Sample t_test") {
-      diag(object$v/object$n)
+    if (grepl("two.sample", tolower(object$method)) & !(grepl("welch", tolower(object$method), fixed = TRUE))) {
+      diag(object$v/object$n, nrow = 1, ncol = 1)
     } else {
       df <- sum(object$n) - 2
       v <- 0
@@ -281,7 +281,7 @@ vcov.t_test <- function (object, ...)
       if (object$n[2] > 1)
         v <- v + (object$n[2] - 1) * object$v[2]
       v <- v/df
-      diag(v / object$n)
+      diag(v / object$n, nrow = 1, ncol = 1)
     }
 }
 }

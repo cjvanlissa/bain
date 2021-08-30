@@ -59,7 +59,7 @@ rename_estimate <- function(estimate){
   if(is.null(names_est)){
     stop("The 'estimates' supplied to bain() were unnamed. This is not allowed, because estimates are referred to by name in the 'hypothesis' argument. Please name your estimates.")
   }
-
+  browser()
   if(length(new_names) < 3){
     new_names <- gsub("mean of the differences", "difference", new_names)
     new_names <- gsub("mean of ", "", new_names)
@@ -150,6 +150,16 @@ get_estimates.lm <- function(x, ...){
 get_estimates.t_test <- function(x, ...){
   out <- list(estimate = coef(x),
               Sigma = vcov(x))
+  nams <- gsub("mean of the differences", "difference", names(out$estimate), fixed = TRUE)
+  nams <- gsub("mean of ", "", nams, fixed = TRUE)
+  # if(x$method == "One Sample t-test"){
+  #   nams <- "x"
+  # } else if (x$method == "Paired t-test"){
+  #   nams <- "difference"
+  # } else if (x$method == "Welch Two Sample t-test"){
+  #   nams <- gsub("mean of ", "", names(out$estimate), fixed = TRUE)
+  # } else {names(rval$estimate) <- c("x","y")}
+  names(out$estimate) <- nams
   class(out) <- "model_estimates"
   attr(out, "analysisType") <- "htest"
   out
