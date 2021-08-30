@@ -301,7 +301,7 @@ bain.t_test <-
            ...) {
       cl <- match.call()
       Args <- as.list(cl[-1])
-      ests <- get_estimate(x)
+      ests <- get_estimates(x)
       Args$x <- ests$estimate
       Args$n <- x$n
 
