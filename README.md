@@ -8,7 +8,7 @@ status](https://www.r-pkg.org/badges/version/bain)](https://cran.r-project.org/p
 [![](https://cranlogs.r-pkg.org/badges/bain)](https://cran.r-project.org/package=bain)
 [![test-coverage](https://github.com/cjvanlissa/bain/workflows/test-coverage/badge.svg)](https://github.com/cjvanlissa/bain/actions)
 [![Contributor
-Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md)
+Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html)
 [![CII Best
 Practices](https://bestpractices.coreinfrastructure.org/projects/3871/badge)](https://bestpractices.coreinfrastructure.org/projects/3871)
 
@@ -42,7 +42,7 @@ devtools::install_github("cjvanlissa/bain")
 ## Workflow
 
 Add bain to your existing R workflow, and obtain Bayes factors for your
-familiar R analyses\! Bain is compatible with the pipe operator. Here is
+familiar R analyses! Bain is compatible with the pipe operator. Here is
 an example for testing an informative hypothesis about mean differences
 in an ANOVA:
 
@@ -63,8 +63,8 @@ iris %>%
 #> 
 #>    Fit   Com   BF.u  BF.c            PMPa  PMPb 
 #> H1 0.000 0.224 0.000 0.000           0.000 0.000
-#> H2 1.000 0.164 6.081 30613603549.767 1.000 0.859
-#> Hu                                         0.141
+#> H2 1.000 0.170 5.889 30472995984.145 1.000 0.855
+#> Hu                                         0.145
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
@@ -97,8 +97,8 @@ issue on GitHub, or sending a pull request with proposed features.
 Contributions in code must adhere to the [tidyverse style
 guide](https://style.tidyverse.org/).
 
-  - File a GitHub issue [here](https://github.com/cjvanlissa/bain)
-  - Make a pull request [here](https://github.com/cjvanlissa/bain/pulls)
+-   File a GitHub issue [here](https://github.com/cjvanlissa/bain)
+-   Make a pull request [here](https://github.com/cjvanlissa/bain/pulls)
 
 By participating in this project, you agree to abide by the [Contributor
 Code of Conduct

@@ -1,4 +1,4 @@
-# Version 0.2.5
+# Version 0.2.6
 
 New version to address CRAN test failures on Debian and Fedora linux
 

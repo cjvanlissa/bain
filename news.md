@@ -1,3 +1,7 @@
+# bain 0.2.6
+
+* Fix URL to code of conduct as per CRAN request
+
 # bain 0.2.5
 
 * Fix bug in bain:::bain.t_test() on Debian linux
