@@ -20,7 +20,7 @@ statistical models. Just run your analysis as usual, and then apply bain
 to the output. A tutorial is available at
 [DOI:10.31234/osf.io/v3shc](https://psyarxiv.com/v3shc/). A sequel with
 the focus on Structural Equation Models is available at
-\[<https://doi.org/10.1080/10705511.2020.1745644>\].
+<https://doi.org/10.1080/10705511.2020.1745644>.
 
 ## Installation
 
@@ -64,18 +64,17 @@ iris %>%
        Speciessetosa < Speciesversicolor < Speciesvirginica")
 #> Bayesian informative hypothesis testing for an object of class lm (ANOVA):
 #> 
-#>    Fit   Com   BF.u  BF.c            PMPa  PMPb  PMPc 
-#> H1 0.000 0.224 0.000 0.000           0.000 0.000 0.000
-#> H2 1.000 0.167 5.991 39764313971.322 1.000 0.857 1.000
-#> Hu                                         0.143      
-#> Hc 0.000 0.833 0.000                             0.000
+#>    Fit   Com   BF.u  BF.c             PMPa  PMPb  PMPc 
+#> H1 0.000 0.224 0.000 0.000            0.000 0.000 0.000
+#> H2 1.000 0.171 5.863 118577263118.841 1.000 0.854 1.000
+#> Hu                                          0.146      
+#> Hc 0.000 0.829 0.000                              0.000
 #> 
 #> Hypotheses:
 #>   H1: Speciessetosa<Speciesversicolor=Speciesvirginica
 #>   H2: Speciessetosa<Speciesversicolor<Speciesvirginica
 #> 
-#> Note: BF.u denotes the Bayes factor of the hypothesis at hand versus the unconstrained hypothesis Hu. BF.c denotes the Bayes factor
-#>       of the hypothesis at hand versus its complement.
+#> Note: BF.u denotes the Bayes factor of the hypothesis at hand versus the unconstrained hypothesis Hu. BF.c denotes the Bayes factor of the hypothesis at hand versus its complement. PMPa contains the posterior model probabilities of the hypotheses specified. PMPb adds Hu, the unconstrained hypothesis. PMPc adds Hc, the complement of the union of the hypotheses specified.
 ```
 
 ## Documentation
