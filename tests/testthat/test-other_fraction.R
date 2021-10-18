@@ -1,7 +1,7 @@
 # ===================================================
 # TEST1: FRACTION FOR BAIN DEFAULT
 # ===================================================
-
+data(sesamesim)
 sesamesim$site <- as.factor(sesamesim$site)
 anov <- lm(sesamesim$postnumb~sesamesim$site-1)
 

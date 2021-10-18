@@ -68,7 +68,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(y$BFmatrix)), as.vector(t(z$B
 
 sesamesim$sex <- as.factor(sesamesim$sex)
 ancov <- lm(postnumb ~ sex + prenumb + peabody -1, data = sesamesim)
-coef(ancov)
 set.seed(100)
 z<-bain(ancov, " sex1 = sex2 & pre > 0 &  pea > 0")
 

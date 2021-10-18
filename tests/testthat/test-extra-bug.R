@@ -8,7 +8,7 @@
 # PARAMETERS EN COV GEBRUIKT. HET MOETEN DE ONGESTANDAARDIZEERDE
 # WORDEN
 # ===========================================================================
-library(lavaan)
+data(sesamesim)
 
 # read in the simulated sesamestreet data
 sesamedata <- sesamesim
@@ -185,8 +185,6 @@ hypotheses1 <-"age~peabody = age~peabody.g2 = age~peabody.g3 = age~peabody.g4 = 
 set.seed(100)
 z2 <- bain(estimate1, hypotheses1, n = ngroup1, Sigma = covariance1,
            group_parameters = 2, joint_parameters = 0)
-y2$Sigma
-z2$Sigma
 test_that("Bain mutual", {expect_equal(y2$n , z2$n)})
 test_that("Bain mutual", {expect_equal(y2$fit$Fit , z2$fit$Fit)})
 test_that("Bain mutual", {expect_equal(y2$fit$Com , z2$fit$Com)})

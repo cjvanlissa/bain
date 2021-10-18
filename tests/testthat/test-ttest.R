@@ -3,7 +3,7 @@
 # ===============================================================================================
 
 # THE ONE SAMPLE T-TEST WITH A T.TEST OBJECT
-
+data(sesamesim)
 
 
 x<-sesamesim$postnumb
@@ -20,7 +20,7 @@ set.seed(100)
 zd <-bain(estimate,"m1=30;m1>30;m1<30",n=length(x),Sigma=cov1,group_parameters=1,joint_parameters = 0)
 
 # TESTING BAIN T.TEST AND DEFAULT VERSUS EACH OTHER
-
+test_that("Bain mutual", {expect_equal(as.vector(zd$estimates), as.vector(z$estimates))})
 test_that("Bain mutual", {expect_equal(zd$fit$Fit , z$fit$Fit)})
 test_that("Bain mutual", {expect_equal(zd$fit$Com , z$fit$Com)})
 test_that("Bain mutual", {expect_equal(zd$independent_restrictions, z$independent_restrictions)})
@@ -43,7 +43,6 @@ set.seed(100)
 z <- bain(ttest, "x=y; x>y; x<y")
 
 # THE INDEPENDENT GROUPS WELCH TEST WITH BAIN DEFAULT
-ttest$v
 cov1<-list(matrix(c(sd(x)^2/length(x)),1,1),matrix(c(sd(y)^2/length(y)),1,1))
 estimate<-c(mean(x),mean(y))
 samp <- c(length(x),length(y))
@@ -53,7 +52,7 @@ zd <-bain(estimate,"m1=m2; m1>m2; m1<m2",n=samp,Sigma=cov1,group_parameters=1,jo
 
 
 # TESTING BAIN T.TEST AND DEFAULT VERSUS EACH OTHER
-
+test_that("Bain mutual", {expect_equal(as.vector(zd$estimates), as.vector(z$estimates))})
 test_that("Bain mutual", {expect_equal(zd$fit$Fit , z$fit$Fit)})
 test_that("Bain mutual", {expect_equal(zd$fit$Com , z$fit$Com)})
 test_that("Bain mutual", {expect_equal(zd$independent_restrictions, z$independent_restrictions)})
@@ -85,7 +84,7 @@ set.seed(100)
 zd <-bain(estimate,"m1=m2; m1>m2; m1<m2",n=samp,Sigma=cov1,group_parameters=1,joint_parameters = 0)
 
 # TESTING BAIN T.TEST AND DEFAULT VERSUS EACH OTHER
-
+test_that("Bain mutual", {expect_equal(as.vector(zd$estimates), as.vector(z$estimates))})
 test_that("Bain mutual", {expect_equal(zd$fit$Fit , z$fit$Fit)})
 test_that("Bain mutual", {expect_equal(zd$fit$Com , z$fit$Com)})
 test_that("Bain mutual", {expect_equal(zd$independent_restrictions, z$independent_restrictions)})
@@ -97,7 +96,7 @@ test_that("Bain mutual", {expect_equal(zd$fit$PMPb , z$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$BFmatrix)))})
 
 sesamesim$sex<-as.factor(sesamesim$sex)
-ttest <- bain:::t_test_old.formula(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = TRUE)
+# ttest <- bain:::t_test_old.formula(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = TRUE)
 ttest <- t_test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = TRUE)
 set.seed(100)
 zh<-bain(ttest, "group1=group2; group1>group2; group1<group2")
@@ -138,7 +137,7 @@ set.seed(100)
 zd <-bain(estimate,"dd=0;dd>0;dd<0",n=length(d),Sigma=cov1,group_parameters=1,joint_parameters = 0)
 
 # TESTING BAIN T.TEST AND DEFAULT VERSUS EACH OTHER
-
+test_that("Bain mutual", {expect_equal(as.vector(zd$estimates), as.vector(z$estimates))})
 test_that("Bain mutual", {expect_equal(zd$fit$Fit , z$fit$Fit)})
 test_that("Bain mutual", {expect_equal(zd$fit$Com , z$fit$Com)})
 test_that("Bain mutual", {expect_equal(zd$independent_restrictions, z$independent_restrictions)})

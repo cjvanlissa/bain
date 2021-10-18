@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 # bain
 
-Bain stands for Bayesian informative hypothesis evaluation. It computes Bayes factors for informative hypotheses in a wide variety of statistical models. Just run your analysis as usual, and then apply bain to the output. A tutorial is available at [DOI:10.31234/osf.io/v3shc](https://psyarxiv.com/v3shc/).
+Bain stands for Bayesian informative hypothesis evaluation. It computes Bayes factors for informative hypotheses in a wide variety of statistical models. Just run your analysis as usual, and then apply bain to the output. A tutorial is available at [DOI:10.31234/osf.io/v3shc](https://psyarxiv.com/v3shc/). A sequel with the focus on Structural Equation Models is available at [https://doi.org/10.1080/10705511.2020.1745644].
 
 ## Installation
 

@@ -1,3 +1,4 @@
+data(sesamesim)
 sesamesim$sex <- factor(sesamesim$sex)
 bw <- lm(cbind(prenumb, postnumb, funumb)~sex-1 + age + peabody, data=sesamesim)
 coef(bw)

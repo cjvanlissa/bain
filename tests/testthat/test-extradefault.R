@@ -1,5 +1,5 @@
 # test construction prior and posterior with group_parameters=2 and joint_parameters=2
-
+data(sesamesim)
 est1 <-c(1,2)
 est2 <-c(3,4)
 est3 <-c(-1,1)
@@ -26,7 +26,7 @@ invtotcov <- matrix(c(1,0,0,0,0,0,
                       0,0,0,0,2,0,
                       0,0,0,0,0,2),nrow=6,ncol=6)
 
-totcov <- solve(invtotcov)    
+totcov <- solve(invtotcov)
 
 pricov1 <-matrix(c(200,0,0,0,
                    0,200,0,0,
@@ -71,7 +71,7 @@ ngroup<-100
 
 cov1 <-matrix(c(1,0,
                 0,1),nrow=2,ncol=2)
-          
+
 covariance<-list(cov1)
 set.seed(100)
 y <-bain(estimate, "a1=a2"  , n=ngroup, Sigma=covariance,

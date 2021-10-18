@@ -1,8 +1,8 @@
 #====================================================
-# test hypo lavaan mbt equated parameters moet 
+# test hypo lavaan mbt equated parameters moet
 # foutmelding geven
 #====================================================
-
+data(sesamesim)
 # multiple group 1 equality constraints - constraints on restricted pars
 model1 <- 'postnumb ~ c(v2,v3)*age + c(v2,v3)*peabody'
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
@@ -92,7 +92,7 @@ hypotheses14 <- "v2 > 0 & postnumb~prenumb >0"
 set.seed(100)
 y14<-bain(fit14,hypotheses14,standardize = FALSE)
 covariance14 <- lavInspect(fit14,"vcov")[c(1,2,5),c(1,2,5)]
-test_that("Bain mutual", 
+test_that("Bain mutual",
           {expect_equal(as.vector(y14$posterior), as.vector(covariance14) )}         )
 
 
@@ -109,7 +109,7 @@ y7 <- bain(fit7,hypotheses7,standardize = FALSE)
 covariance7 <- lavInspect(fit7,"vcov")[c(1,3,5,7,8,10,12,14),c(1,3,5,7,8,10,12,14)]
 test_that("Bain mutual", {expect_equal(as.vector(y7$posterior), as.vector(covariance7) )}         )
 
-# standardize is false met within group constraints die drie 
+# standardize is false met within group constraints die drie
 # regressie coefficienten gelijk stellen
 model8 <- 'postnumb ~ c(v2,v3)*age + c(v2,v3)*peabody + c(v2,v3)*prenumb +funumb + viewenc'
 sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))
@@ -118,7 +118,7 @@ hypotheses8 <- "postnumb~viewenc.girl > 0 & v2 > 0"
 set.seed(100)
 y8 <- bain(fit8,hypotheses8,standardize = FALSE)
 covariance8 <- lavInspect(fit8,"vcov")[c(1,4,5,7,8,11,12,14),c(1,4,5,7,8,11,12,14)]
-test_that("Bain mutual", 
+test_that("Bain mutual",
           {expect_equal(as.vector(y8$posterior), as.vector(covariance8) )}         )
 
 

@@ -24,14 +24,22 @@ print.Bain <- function(x,...){
 
 }
 
-
-
 #' @method print bain
 #' @export
 print.bain <- function(x, stats = c("Fit", "Com", "BF.u", "BF.c","PMPa", "PMPb"),
                        digits = 3,
                        na.print = "", ...){
+
+# Modifications by Herbert
+# if gocomplement is TRUE, fits has 12 columns and print.bain is modified
+# such that also the column with PMPc is printed.
+# if the hypotheses specified cover (almost) the complete parameter space
+# an extra message is displayed.
+
   fits <- as.matrix(x$fit)
+
+  if (dim(fits)[2] == 12){stats[7] <- "PMPc"}
+
   dat <- fits[, stats]
   miss_val <- is.na(dat)
   dat <- formatC(dat, digits = digits, format = "f")
@@ -46,9 +54,23 @@ print.bain <- function(x, stats = c("Fit", "Com", "BF.u", "BF.c","PMPa", "PMPb")
            quote = FALSE,
            na.print = na.print)
 
-  cat("\nHypotheses:\n ", paste(rownames(dat)[-nrow(dat)], ": ", x$hypotheses, sep = "", collapse = "\n  "))
-  cat("\n\nNote: BF.u denotes the Bayes factor of the hypothesis at hand versus the unconstrained hypothesis Hu. BF.c denotes the Bayes factor of the hypothesis at hand versus its complement.")
+
+  if (dim(fits)[2] == 12){
+  cat("\nHypotheses:\n ", paste(rownames(dat)[c(-nrow(dat),-(nrow(dat)-1))], ": ", x$hypotheses, sep = "", collapse = "\n  "))}
+  if (dim(fits)[2] == 11){
+    cat("\nHypotheses:\n ", paste(rownames(dat)[-nrow(dat)], ": ", x$hypotheses, sep = "", collapse = "\n  "))}
+
+  cat("\n\nNote: BF.u denotes the Bayes factor of the hypothesis at hand versus the unconstrained hypothesis Hu. BF.c denotes the Bayes factor of the hypothesis at hand versus its complement. PMPa contains the posterior model probabilities of the hypotheses specified. PMPb adds Hu, the unconstrained hypothesis. PMPc adds Hc, the complement of the union of the hypotheses specified.")
+
+  if (dim(fits)[2] == 12 & !is.na(fits[dim(fits)[1],6])   ){
+  if(fits[dim(fits)[1],6] < .05){
+  cat("\n\nNote: If the complexity of Hc is smaller than .05 the hypotheses specified (almost) completely cover the parameter space and therefore PMPa should be used.")}
+  }
+
   if(!is.null(x[["warnings"]])){
     warning("Bain analysis returned the following warnings:\n  ", paste(1:length(x$warnings), ". ", x$warnings, sep = "", collapse = "\n  "))
   }
 }
+
+
+

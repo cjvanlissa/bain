@@ -8,7 +8,7 @@ cov <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 set.seed(100)
 y<-bain(estimate,"a>-.96 & a < 2.96 & b>-.96 & b < 2.96 & c>-.96 & c < 2.96",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
-test_that("bain default", {expect_equal(y$fit$Fit_in, c(0.8560805, NA), tolerance = .016)})
+test_that("bain default", {expect_equal(y$fit$Fit_in[1:2], c(0.8560805, NA), tolerance = .016)})
 
 # =============================================
 
@@ -20,7 +20,7 @@ cov <- matrix(c(.04,0,0,0,.04,0,0,0,.04),nrow=3,ncol=3)
 set.seed(100)
 y<-bain(estimate,"a>-.96 & a < 2.96 & b>-.96 & b < 2.96 & c>-.96 & c < 2.96",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
-test_that("bain default", {expect_equal(y$fit$Com_in, c(0.8532082, NA), tolerance = .016)})
+test_that("bain default", {expect_equal(y$fit$Com_in[1:2], c(0.8532082, NA), tolerance = .016)})
 test_that("Bain mutual", {expect_equal(y$b, .04)})
 test_that("Bain mutual", {expect_equal(y$independent_restrictions, 4)})
 

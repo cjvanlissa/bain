@@ -1,4 +1,3 @@
-library(lavaan)
 data(sesamesim)
 sesameCFA <- sesamesim
 names(sesameCFA)[6] <- "pea"

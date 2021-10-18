@@ -3,7 +3,7 @@
 # ===========================================================
 
 # DEBUGGING THE EMPT CONSTRAINTS SCREEN SITUATION
-
+data(sesamesim)
 sesamesim <- as.data.frame(cbind(sesamesim$postnumb,sesamesim$site))
 names(sesamesim)<-c("postnumb","site")
 

@@ -1,6 +1,6 @@
 # TESTS MET REGRESSION STANDARDIZED ALS NIET ALLE PREDICTOREN
 # IN DE HYPOTHESE VOORKOMEN
-
+data(sesamesim)
 # ===================================================================
 # HIERONDER EEN VOORBEELD VAN DE BUG - TEST TWEE VAN DRIE
 # ===================================================================

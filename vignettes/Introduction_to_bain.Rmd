@@ -1,10 +1,10 @@
 ---
 title: "Introduction to bain"
-author: "Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Marlyne Bosman, Camiel van Zundert, Xin Gu"
+author: "Herbert Hoijtink, Caspar van Lissa, Joris Mulder, Xin Gu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{bain_introduction}
+  %\VignetteIndexEntry{Introduction to bain}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,6 +16,9 @@ knitr::opts_chunk$set(
 )
 ```
  
+## Acknowledgement
+Besides the authors Marlyne Bosman, Camiel van Zundert, and Fayette Klaassen have contributed examples to this vignette.
+
 ## Introduction
 
 `bain` is an acronym for "Bayesian informative hypotheses evaluation".
@@ -23,45 +26,17 @@ It uses the Bayes factor to evaluate hypotheses specified using equality and
 inequality constraints among (linear combinations of) parameters in a wide
 range of statistical models. 
 
-A tutorial is provided by Hoijtink, Mulder,
-van Lissa, and Gu (2019) retrievable from the Psychological Methods website at
-https://www.apa.org/pubs/journals/met/ or the bain website at
-https://informative-hypotheses.sites.uu.nl/software/bain/ 
+Two tutorials are retrievable from the bain website (look under tutorials) at https://informative-hypotheses.sites.uu.nl/software/bain/.
+
+The first introducing Bayesian evaluation of informative hypotheses is provided by Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019). A tutorial on testing hypotheses using the Bayes factor. Psychological Methods, 24, 539-556. By reading the tutorial in combination with executing the analyses contained in `easyBFtutorial.R` and `BFtutorial.R` you quickly learn the basics of Bayesian hypothesis evaluation. 
+
+The second containing introduction to Bayesian evaluation of informative hypotheses in the context of structural equation models is provided by Van Lissa, C., Gu, X., Mulder, J., Rosseel, Y., van Zundert, C. and Hoijtink, H. (2020), Structural Equation Modelling, 28, 292-301. 
 
 **Users are
-advised to read the tutorial and this vignette before using `bain`**.
+advised to read these tutorials and this vignette before using `bain`**.
 
-The full `bain` reference list (all retrievable from the `bain` website) is
+The full `bain` reference list with applications and statistical underpinnings can be found on the `bain` website.
 
-Bosman, M. and Hoijtink, H. (unpublished). Robust Bayes factors for Bayesian
-ANOVA: overcoming overcoming adverse effect of non-normality and outliers.
-
-Gu, X., Mulder, J., and Hoijtink, H. (2018). Approximate adjusted fractional
-Bayes factors: A general method for testing informative hypotheses.
-British Journal of Mathematical and Statistical Psychology, 71,
-229-261. DOI: 10.1111/bmsp.12110
-
-Gu, X., Hoijtink, H., Mulder, J., and Rosseel, Y. (2019). Bain: A
-program for Bayesian testing of order constrained hypotheses in structural
-equation models. Journal of Statistical Computation
-and Simulation. https://doi.org/10.1080/00949655.2019.1590574
-
-Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019). A tutorial on
-testing hypotheses using the Bayes factor. Psychological Methods.
-DOI: 10.1037/met0000201
-
-Hoijtink, H., Gu, X., and Mulder, J. (2019). Bayesian evaluation of
-informative hypotheses for multiple populations. British Journal of
-Mathematical and Statistical Psychology, 72, 219-243. DOI: 10.1111/bmsp.12145
-
-Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (2019). Computing Bayes
-Factors from Data with Missing Values. Psychological Methods,
-24, 253-268. DOI: 10.1037/met0000187
-
-Van Lissa, C.J., Gu, X., Mulder, J., Rosseel, Y.,
-van Zundert, C, and Hoijtink, H. (unpublished). Teacher's 
-corner: Evaluating informative hypotheses using the
-Bayes factor in structural equation models.  
 
 ## Usage
 
@@ -81,7 +56,7 @@ An R object containing the outcome of a statistical analysis. Currently, the fol
 `hypothesis` A character string containing the informative hypotheses to evaluate 
 (see below the section on "The Specification of Hypotheses").
 
-`fraction = 1` A number representing the fraction of information in the data used to construct the prior distribution (see Hoijtink, Mulder, van Lissa, and Gu, 2019): The default value 1 denotes the minimal fraction, 2 denotes twice the minimal fraction, etc. 
+`fraction = 1` A number representing the fraction of information in the data used to construct the prior distribution. The default value 1 denotes the minimal fraction, 2 denotes twice the minimal fraction, etc. Example 2d. below shows how `fraction` can be employed to execute a sensitivity analysis. See also Hoijtink, Mulder, van Lissa, and Gu, 2019).
 
 `...`	Additional arguments (see below).
 
@@ -94,13 +69,14 @@ The following steps need to be executed:
 of the
 calls to `lm` and `t_test` that can be processed by `bain`.
 Note that, `lm` and `t_test` will apply list-wise deletion if there
-are cases with missing values in the variables used.
-2) Display the estimates and their names using the command `coef(x)`. 
-(Unique abbreviations of) the names will be used to specify `hypotheses`.
+are cases with missing values in the variables used. An imputation based method
+for dealing with missing values tailored to Bayesian hypothesis
+evaluation is illustrated in Section 4 "Examples Using 
+a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+and Rosseel, 2019).
+2) If `lm()` is used, display the estimates and their names using the command `coef(x)`. (Unique abbreviations of) the names will be used to specify `hypotheses`. If `t_test()` is used, hypotheses have to be specified using the names `x`, `y`, and `difference` (see Examples 1a throught 1e which can be found below).
 3) `set.seed(seed)`. Set `seed` equal to an integer 
-number to create a repeatable random number sequence. 
-It is recommended to run analyses with two different seeds 
-to ensure stability of the results.
+number to create a repeatable random number sequence. `bain` uses sampling to compute Bayes factors and posterior model probabilities. It is therefore recommended to run analyses with two different seeds to ensure stability of the results.
 4) `results <- bain(x,hypotheses,fraction = 1)` or `results <-
 bain(x,hypotheses,fraction = 1,standardize = FALSE)`. The first call to 
 `bain` is used
@@ -109,12 +85,10 @@ second call to `bain` is used in case of `lm` implementations of
 multiple regression. With `standardize = TRUE` hypotheses with respect
 to standardized regression coefficients are evaluated. With `standardize
 = FALSE` hypotheses with respect to unstandardized regression coefficients
-are evaluated.
+are evaluated. `fraction = 1` represents the fraction of information in the data used to construct the prior distribution. The default value 1 denotes the minimal fraction, 2 denotes twice the minimal fraction, etc. Example 2d. below shows how `fraction` can be employed to execute a sensitivity analysis. See also Hoijtink, Mulder, van Lissa, and Gu, 2019). 
 5) `print(results)` Print the results of an analysis with
 `bain`.
-6) `summary(results, ci=0.95)` Present descriptives for the
-parameters used to specify `hypotheses`. `ci` can be used to specify
-the confidence level of the credibility intervals.
+6) `summary(results, ci=0.95)` Present estimates and credibility intervals for the parameters used to specify the `hypotheses`. `ci` can be used to specify the confidence level of the credibility intervals.
 
 
 
@@ -135,8 +109,8 @@ Note that, by default,
 missing values in the variables used. An imputation based method
 for dealing with missing values tailored to Bayesian hypothesis
 evaluation is illustrated in Section 4 "Examples Using 
-a Named Vector" in Example h. (based on Hoijtink, Gu, Mulder,
-and Rosseel, 2019).
+a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+and Rosseel, 2019). If an analysis with `lavaan` is executed using `missing = "fiml"` the sample size is not corrected for the presence of missing values. This will affect (bias) the evaluation of hypotheses specified using (about) equality constraints.  
 2) Specify a `lavaan` model using the `model <- ...` command. In case
 of multiple group models, only models **without** between group 
 restrictions can be processed by `bain` with a `lavaan` object
@@ -149,24 +123,19 @@ can be used to specify `hypotheses`. For multiple group analyses
 the names have to end with a group label `.grp`. Group labels
 can be assigned using commands like
 `sesamesim$sex <- factor(sesamesim$sex, labels = c("boy", "girl"))`. 
-If in a `lavaan` model specification parameters are labeled, e.g., as in 
+If in a `lavaan` model parameters are labeled, e.g., as in 
 `model <- 'age ~ c(a1, a2)*peabody + c(b1, b2)*1` then the labels
 have to be used in the specification of hypotheses.
-4) `set.seed(seed)`. Set `seed` equal to an integer
-number to create a repeatable random number sequence.
-It is recommended to run analyses with two different seeds 
-to ensure stability of the results.
+4) `set.seed(seed)`. Set `seed` equal to an integer 
+number to create a repeatable random number sequence. `bain` uses sampling to compute Bayes factors and posterior model probabilities. It is therefore recommended to run analyses with two different seeds to ensure stability of the results.
 5) `results <- bain(x,hypotheses,fraction = 1,standardize = FALSE)`.
 With `standardize = TRUE` hypotheses with respect
 to standardized coefficients are evaluated. With `standardize
 = FALSE` hypotheses with respect to unstandardized coefficients
-are evaluated.
+are evaluated. `fraction = 1` represents the fraction of information in the data used to construct the prior distribution. The default value 1 denotes the minimal fraction, 2 denotes twice the minimal fraction, etc. Example 2d. below shows how `fraction` can be employed to execute a sensitivity analysis. See also Hoijtink, Mulder, van Lissa, and Gu, 2019). 
 6) `print(results)` Print the results of an analysis with
 `bain`.
-7) `summary(results, ci=0.95)` Present descriptives for the
-parameters used to specify `hypotheses`. `ci` can be used to specify
-the confidence level of the credibility intervals.
-
+7)  `summary(results, ci=0.95)` Present estimates and credibility intervals for the parameters used to specify the `hypotheses`. `ci` can be used to specify the confidence level of the credibility intervals.
 
 
 
@@ -193,7 +162,11 @@ used to specify `hypotheses`;
 b) A list containing the covariance matrix of these parameters; and, 
 c) The sample size used for estimation of the parameters. Note that,
 due to missing values this sample size may be smaller than the total sample
-size.
+size. An imputation based method
+for dealing with missing values tailored to Bayesian hypothesis
+evaluation is illustrated in Section 4 "Examples Using 
+a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+and Rosseel, 2019).
 
 In case of a multiple group
 analysis, the following information has to be extracted from the statistical
@@ -201,10 +174,10 @@ analysis and supplied to `bain`:
 
 a) A vector containing estimates of the group specific
 parameters possibly augmented with the
-estimates of parameters that are joined by the groups. The structure 
+estimates of parameters that are shared by the groups. The structure 
 of this vector is 
 [parameters of group 1, parameters of group 2, ..., the parameters that 
-are joined by the groups];
+are shared by the groups];
 b) A list containing, per group, the covariance
 matrix of the parameters corresponding to the group at hand and, possibly,
 the augmented parameters. In the rows and columns of each covariance matrix 
@@ -212,20 +185,22 @@ the parameters of the group at hand come first, possibly followed by the
 augmented parameters.
 c) Per group the sample size used for estimation of the parameters. Note that,
 due to missing values this sample size may be smaller than the total sample
-size per group.
+size per group. An imputation based method
+for dealing with missing values tailored to Bayesian hypothesis
+evaluation is illustrated in Section 4 "Examples Using 
+a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+and Rosseel, 2019).
 
 2) Assign names to the estimates
-using `names(estimates)<-names`. Note that, `names` is a
+using `names(estimates)<-c()`. Note that, `names` is a
 character vector containing new names for the estimates in `estimates`.
 Each name has to start with a letter, and may consist of "letters",
 "numbers", "`.`", "`_`", "`:`", "`~`", "`=~`", and "`~1`". 
 These names are 
 used to specify `hypotheses`
 (see below). An example is `names <- c("a", "b", "c")`.
-3) `set.seed(seed)`. Set `seed` equal to an integer
-number to create a repeatable random number sequence.
-It is recommended to run analyses with two different seeds 
-to ensure stability of the results.
+3) `set.seed(seed)`. Set `seed` equal to an integer 
+number to create a repeatable random number sequence. `bain` uses sampling to compute Bayes factors and posterior model probabilities. It is therefore recommended to run analyses with two different seeds to ensure stability of the results.
 4) `results <- bain(estimates, hypotheses, n=., Sigma=.,
 group_parameters = 2, joint_parameters = 0, fraction = 1)` 
 executes `bain` with the
@@ -266,16 +241,10 @@ f) `joint_parameters` In case of one group `joint_parameters =
 0`. In case of two or more groups, the number of parameters in
 `estimates` shared by the groups. In, for example, an ANCOVA, the number
 of `joint_parameters` equals the number of covariates.
-g) `fraction = 1` A number representing the fraction of information in the 
-data used to construct the prior distribution (see Hoijtink, Mulder, 
-van Lissa, and Gu, 2019): The default value 1 denotes the minimal fraction, 
-2 denotes twice the minimal fraction, etc. 
-
+g) `fraction = 1` A number representing the fraction of information in the data used to construct the prior distribution. The default value 1 denotes the minimal fraction, 2 denotes twice the minimal fraction, etc. Example 2d. below shows how `fraction` can be employed to execute a sensitivity analysis. See also Hoijtink, Mulder, van Lissa, and Gu, 2019). 
 5) `print(results)` Print the results of an analysis with
 `bain`.
-6) `summary(results, ci=0.95)` Present descriptives for the
-parameters used to specify `hypotheses`. `ci` can be used the specify
-the confidence level of the credibility intervals.
+6)  `summary(results, ci=0.95)` Present estimates and credibility intervals for the parameters used to specify the `hypotheses`. `ci` can be used to specify the confidence level of the credibility intervals.
 
 ## The specification of `hypotheses` 
 
@@ -284,8 +253,7 @@ hypotheses have to be evaluated. A simple example is `hypotheses <- "a >
 b > c; a = b = c;"` which specifies two hypotheses using three estimates with
 names "a", "b", and "c", respectively.
 
-The hypotheses specified have to adhere to the following rules **`bain` may still run if you
-deviate from the rules, however, the output will be nonsense**:
+The hypotheses specified have to adhere to the following rules:
 
 * When using `bain` with a `lm` or `t_test` or `lavaan` object, 
 (unique abbreviations of) the names
@@ -353,8 +321,8 @@ redundant.
 
 **Each hypothesis in a set of hypotheses has to be possible.** An
 hypothesis is impossible if estimates in agreement with the hypothesis do not
-exist. For example: values for `a` in agreement with `a = 0 &
-a > 2` do not exist. It is the responsibility of the user to ensure that the
+exist. For example: values for `a, b, c` in agreement with `a > b > c &
+a < c` do not exist. It is the responsibility of the user to ensure that the
 hypotheses specified are possible. If not, `bain` will either return an
 error message or render an output table containing `Inf`'s.
 
@@ -364,11 +332,13 @@ error message or render an output table containing `Inf`'s.
 The commands `bain()` or `results<-bain()` followed by
 `results` or `print(results)` will render the default (most
 important) output from `bain`. These concern for each hypothesis
-specified in `hypotheses` the fit, complexity, **Bayes factor versus its
-complement**, posterior model probability (based on equal prior model
-probabilities) excluding the unconstrained hypothesis, and posterior model
-probability including the unconstrained hypothesis. 
-Note that, the posterior model probabilities are computed from
+specified in `hypotheses` the fit, complexity, Bayes factor versus 
+the unconstrained hypothesis, Bayes factor versus its
+complement, posterior model probability (based on equal prior model
+probabilities) excluding the unconstrained hypothesis, posterior model
+probability including the unconstrained hypothesis, and posterior model
+probability of each hypothesis specified and their joint complement. 
+Note that, all the posterior model probabilities are computed from
 the Bayes factors of each hypothesis versus the unconstrained hypothesis.
 In Hoijtink, Mulder,
 van Lissa, and Gu (2019) it is elaborated how these quantities 
@@ -385,10 +355,21 @@ object:
 
 * `results$fit` renders the default output, `results$fit$Fit`
 contains only the column containing the fit of each hypothesis. In the last
-command `Fit` can be replaced by `Com`, `BF`, `PMPa`,
-`PMPb` to obtain the information in the corresponding columns of the
-default output. Note that, in the column `BF` **the Bayes factor of the
-hypothesis at hand versus its complement** is displayed.
+command `Fit` can be replaced by `Com`, `BF`, `BF.u`, `BF.c`, `PMPa`,
+`PMPb`, `PMPc` to obtain the information in the corresponding columns of the
+default output. Note that, in the columns `BF` and `BF.c` the Bayes factor of the
+hypothesis at hand versus its complement is displayed. In the column `BF.u` the
+Bayes factor of the hypothesis at hand versus the unconstrained hypothesis is
+displayed. `PMPa` renders the posterior model probabilities (based on equal
+prior model probabilities) of the hypotheses specified. `PMPb` renders 
+the posterior model probabilities (based on equal
+prior model probabilities) of the hypotheses specified plus the unconstrained 
+hypothesis.  `PMPc` renders the posterior model probabilities (based on equal
+prior model probabilities) of the hypotheses specified plus the complement of 
+the union of these hypotheses. If, in the latter case, the complexity of the 
+complement of the union of all hypotheses specified is smaller than .05, the
+hypotheses specified (almost) completely cover the parameter space. In this 
+case `PMPc` is not provided and instead `PMPa` should be used.
 * `results$BFmatrix` contains the matrix containing the mutual Bayes
 factors of the hypotheses specified in `hypotheses`.
 * `results$b` contains for each of the groups in the analysis the
@@ -399,8 +380,7 @@ distribution.
 * `results$posterior` contains the covariance matrix of the
 posterior distribution.
 * `results$call` displays the call to `bain`.
-* `results$model` displays the named vector or the call to the R
-function rendering the R object that is input to `bain`.
+* `results$model` displays the named vector or the R object that is input to `bain`.
 * `results$n` displays the sample sizes per group.
 * `results$independent_restrictions` displays the number of
 independent constraints in the set of hypotheses under consideration. Note that,
@@ -414,12 +394,19 @@ the fit of the equality constrained part. `Com_eq`, and `Com_in`,
 respectively, are the complexity counterparts of `Fit_eq`, and
 `Fit_in`.
 
+Note that, if you have specified two hypotheses that both have a small
+`BF.u` (close to zero), then there is no support in the data for these 
+hypotheses. In these cases the corresponding entry in `results$BFmatrix` 
+(the Bayes factor comparing both hypotheses) is very unstable and should
+only be interpreted if repeated analyses using different seeds 
+(see `set.seed()`) render about the same results.
 
 ## Examples
 
 
-Note that, each of the examples given below can be run by copy pasting them
-into the Source screen of `RStudio`. 
+Note that, each of the examples given below can be run by 
+1) copy pasting them into the Source screen of `RStudio`. 
+2) by highlighting them followed by `ctrl-enter` or `cmd-enter`.
 
 Unless indicated otherwise, the examples that follow below use a simulated
 data set inspired by the Sesame Street data set from:
@@ -457,11 +444,12 @@ year)
 * Ar Knowledge of relations after
 * Ac Knowledge of classifications after
 
-The examples that follow below are organized in three categories:
+The examples that follow below are organized in four categories:
 
-1) Running `bain` with a `t_test` object; 
-2) running `bain` with a `lm object`; and, 
-3) running bain with a named vector. 
+1) running `bain` with a `t_test` object
+2) running `bain` with a `lm` object
+3) running `bain` with a `lavaan` object
+3) running bain with a named vector
 
 The ANOVA and ANCOVA
 examples are provided using both a `lm` object and a named vector
@@ -486,7 +474,7 @@ order ANOVAs can only be handled by recoding all factors into one
 factor. If, for example, there is a factor `sex` with levels `man` and `woman`,
 and a factor `age` with levels `young` and `old`, these have to be recoded in a
 new factor `sexage` with levels `manyoung`, `manold`, `womanyoung`, `womanold`. 
-If a `lm` "ANOVA"object is used, the main output table is 
+If a `lm` "ANOVA" object is used, the main output table is 
 labeled: "Bayesian informative hypothesis testing for an object 
 of class lm (ANOVA)"
 b) Bayesian ANCOVA. The example concerns a one-way ANCOVA. Two-way or higher
@@ -496,7 +484,7 @@ factor. **Note that calls to `lm` using functions of the predictors
 `y ~ x + I(x^2)`)
 can not be processed by `bain`.** However, one can compute a new variable
 (for example, a squared predictor) and add this variable to the 
-model specification of `lm`. If a `lm` "ANCOVA"object is used, the 
+model specification of `lm`. If a `lm` "ANCOVA" object is used, the 
 main output table is 
 labeled: "Bayesian informative hypothesis testing for an object 
 of class lm (ANCOVA)". **Note that, in 
@@ -507,8 +495,10 @@ to the model using commands like `y ~ x + I(x^2)`)
 can not be processed by `bain`.** However, one can compute a new variable
 (for example, a squared predictor) and add this variable to the 
 model specification of `lm`. Note furthermore, that only if 
-`standardize = FALSE` interactions between predictors can
-be processed. If a `lm` "regression with only continuous predictors" 
+`standardize = FALSE` interactions between predictors should
+be processed, because a standardized interaction is not the same as the
+interaction between two standardized variables. 
+If a `lm` "regression with only continuous predictors" 
 object is used, the main output table is 
 labeled: "Bayesian informative hypothesis testing for an object 
 of class lm (continuous predictors)". If a `lm` object contains 
@@ -525,15 +515,14 @@ van Lissa, and Gu (2019) for elaborations.
 
 If a `lavaan` object is used, the main output table is labeled: 
 "Bayesian informative hypothesis testing for an object 
-of class lavaan".
+of class lavaan". See the tutorial by Van Lissa, Gu, Mulder, Rosseel,
+van Zundert, and Hoijtink (2020) for further elaborations.
 
 a) Bayesian confirmatory factor analysis
 b) Bayesian latent regression
 c) Bayesian multiple group latent regression. Note that, multiple group 
 models with between group restrictions cannot be processed. 
 
-Additional examples can be found in Gu, Hoijtink, Mulder,
-and Rosseel (2019).
 
 **4. Examples Using a Named Vector**
 
@@ -542,24 +531,17 @@ If a `named vector` object is used, the main output table is labeled:
 of class numeric" (which denotes that `named vector` input was used).
 
 a) Bayesian ANOVA
-b) Bayesian ANCOVA
-c) Bayesian repeated measures analysis (one within factor)
-d) Bayesian repeated measures analysis (within between design)
-e) Bayesian one group logistic regression (counterpart of multiple
+b) Bayesian Welch's ANOVA (unequal within group variances)
+c) Bayesian robust (against non-normality) ANOVA (unequal within group variances)
+d) Bayesian ANCOVA
+e) Bayesian repeated measures analysis (one within factor)
+f) Bayesian repeated measures analysis (within between design)
+g) Bayesian one group logistic regression (counterpart of multiple
 regression)
-f) Bayesian multiple group logistic regression (counterpart of ANCOVA)
-g) Bayesian robust ANOVA (unequal within groups variances)
-h) Bayesian multiple regression with missing data
-i) Bayesian confirmatory factor analysis
+h) Bayesian multiple group logistic regression (counterpart of ANCOVA)
 
-Additional examples are available in `BFTutorial.R` downloadable from 
-the bain website at
-https://informative-hypotheses.sites.uu.nl/software/bain/.
-
-* Executing a sensitivity analysis with `bain` using a
-named vector object
-* Executing Bayesian updating with `bain` using
-a named vector object
+i) Bayesian multiple regression with missing data
+j) Bayesian confirmatory factor analysis
 
 **1. Examples Using a `t_test` Object**
 
@@ -574,11 +556,9 @@ x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 # execute student's t-test
 ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
-# Check the names of the estimates
-coef(ttest)
 # set a seed value
 set.seed(100)
-# test hypotheses with bain
+# test hypotheses with bain. The names of the means are x and y.
 results <- bain(ttest, "x = y; x > y; x < y")
 # display the results
 results
@@ -597,11 +577,9 @@ x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 # execute student's t-test
 ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
-# Check the names of the coefficients
-coef(ttest)
 # set a seed value
 set.seed(100)
-# test hypotheses with bain
+# test hypotheses with bain. The names of the means are x and y.
 results <- bain(ttest, "x = y; x > y; x < y")
 # display the results
 print(results)
@@ -616,11 +594,9 @@ c) An example of the Bayesian paired samples t-test:
 library(bain)
 # compare the pre with the post measurements
 ttest <- t_test(sesamesim$prenumb,sesamesim$postnumb,paired = TRUE)
-# Check name of the coefficient
-coef(ttest)
 # set a seed value
 set.seed(100)
-# test hypotheses with bain
+# test hypotheses with bain. Use difference to refer to the difference between means
 results <- bain(ttest, "difference=0; difference>0; difference<0")
 # display the results
 print(results)
@@ -636,10 +612,8 @@ library(bain)
 # compare post measurements with the reference value 30
 ttest <- t_test(sesamesim$postnumb)
 # Check name of estimate
-coef(ttest)
-# set a seed value
 set.seed(100)
-# test hypotheses with bain versus the reference value 30
+# test hypotheses with bain versus the reference value 30. Use x to refer to the mean
 results <- bain(ttest, "x=30; x>30; x<30")
 # display the results
 print(results)
@@ -658,8 +632,6 @@ x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 # execute student's t-test
 ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
-# Check the names of the estimates
-coef(ttest)
 # compute the pooled within standard deviation using the variance of x
 # (ttest$v[1]) and y (ttest$v[2])
 pwsd <- sqrt(((length(x) -1) * ttest$v[1] + (length(y)-1) * ttest$v[2])/
@@ -673,6 +645,7 @@ set.seed(100)
 # 2.52 VERSUS the means differ more than .2 * pwsd = 2.52) with bain
 # note that, .2 is a value for Cohen's d reflecting a "small" effect, that
 # is, the means differ less or more than .2 pwsd.
+# use x and y to refer to the means.
 results <- bain(ttest, "x - y > -2.52 & x - y < 2.52")
 # display the results
 print(results)
@@ -803,7 +776,8 @@ print(results3)
 **3. Examples Using a `lavaan` object**
 
 a) An example of Bayesian confirmatory factor analysis.
-See van Lissa et al. (unpublished) for further elaborations
+See the tutorial by Van Lissa, Gu, Mulder, Rosseel,
+van Zundert, and Hoijtink (2020) for further elaborations.
 
 ```{r ttest_ex10, eval=FALSE}
 # Load the bain and lavaan libraries. Visit www.lavaan.org for 
@@ -833,7 +807,8 @@ sy <- summary(y, ci = 0.95)
 ```
 
 b) An example of Bayesian latent regression.
-See van Lissa et al. (unpublished) for further elaborations.
+See the tutorial by Van Lissa, Gu, Mulder, Rosseel,
+van Zundert, and Hoijtink (2020) for further elaborations.
 
 ```{r ttest_ex11, eval=FALSE}
 # Load the bain and lavaan libraries. Visit www.lavaan.org for 
@@ -864,7 +839,8 @@ sy1 <- summary(y1, ci = 0.99)
 ```
 
 c) An example of Bayesian multiple group regression.
-See van Lissa et al. (unpublished) for further elaborations.
+See the tutorial by Van Lissa, Gu, Mulder, Rosseel,
+van Zundert, and Hoijtink (2020) for further elaborations.
 
 ```{r ttest_ex12, eval=FALSE}
 # Load the bain and lavaan libraries. Visit www.lavaan.org for 
@@ -944,7 +920,98 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-b) An example of the Bayesian ANCOVA using a named vector as input for bain
+b) An example of the Bayesian Welch's ANOVA (that is an ANOVA that does not assume equal within group variances) using a named vector as input for bain
+
+```{r ttest_ex21, eval=FALSE}
+# Load the bain library
+library(bain)
+
+# make a factor of variable site
+sesamesim$site <- as.factor(sesamesim$site)
+
+# collect the estimated means in a vector
+estimates <- aggregate(sesamesim$postnumb,list(sesamesim$site),mean)[,2]
+# give names to the estimates
+names(estimates) <- c("site1", "site2", "site3","site4","site5")
+
+# create a vector containing the sample sizes of each group
+ngroup <- table(sesamesim$site)
+
+# compute the variances in each group and subquently the squared standard errors
+vars <- aggregate(sesamesim$postnumb,list(sesamesim$site),var)
+vargroup <- vars[,2]/ngroup
+
+# collect the variances of the means in a covariance listcov1 <- matrix(vargroup[1], nrow=1, ncol=1)
+cov2 <- matrix(vargroup[2], nrow=1, ncol=1)
+cov3 <- matrix(vargroup[3], nrow=1, ncol=1)
+cov4 <- matrix(vargroup[4], nrow=1, ncol=1)
+cov5 <- matrix(vargroup[5], nrow=1, ncol=1)
+covlist <- list(cov1, cov2, cov3, cov4,cov5)
+
+# set a seed value
+set.seed(100)
+# test hypotheses using bain. Note that there are multiple groups
+# characterized by one mean, therefore group_parameters=1. Note that
+# there are no joint parameters, therefore, joint_parameters=0.
+results <- bain(estimates,
+                "site1=site2=site3=site4=site5;site2>site5>site1>site4>site3",
+                n=ngroup,Sigma=covlist,group_parameters=1,joint_parameters = 0)
+print(results)
+
+# obtain the descriptives table
+summary(results, ci = 0.95)
+```
+
+c) Bayesian robust (against non-normality) ANOVA (unequal within group variances). Robust ANOVA is elaborated in Bosman and Hoijtink (unpublished) which can be downloaded from the `bain` website.
+
+```{r ttest_ex19, eval=FALSE}
+# load the bain package which includes the simulated sesamesim data set
+library(bain)
+# load the WRS2 package which renders the trimmed sample mean and
+# corresponding standard error
+library(WRS2)
+# make a factor of variable site
+sesamesim$site <- as.factor(sesamesim$site)
+# create a vector containing the sample sizes of each group
+# (in case of missing values in the variables used, the command
+# below has to be modified such that only the cases without
+# missing values are counted)
+ngroup <- table(sesamesim$site)
+# Compute the 20\% sample trimmed mean for each site
+estimates <- c(mean(sesamesim$postnumb[sesamesim$site == 1], tr = 0.2),
+               mean(sesamesim$postnumb[sesamesim$site == 2], tr = 0.2),
+               mean(sesamesim$postnumb[sesamesim$site == 3], tr = 0.2),
+               mean(sesamesim$postnumb[sesamesim$site == 4], tr = 0.2),
+               mean(sesamesim$postnumb[sesamesim$site == 5], tr = 0.2))
+# give names to the estimates
+names(estimates) <- c("s1", "s2", "s3","s4","s5")
+# display the estimates and their names
+print(estimates)
+# Compute the sample trimmed mean standard error for each site
+se <- c(trimse(sesamesim$postnumb[sesamesim$site == 1]),
+        trimse(sesamesim$postnumb[sesamesim$site == 2]),
+        trimse(sesamesim$postnumb[sesamesim$site == 3]),
+        trimse(sesamesim$postnumb[sesamesim$site == 4]),
+        trimse(sesamesim$postnumb[sesamesim$site == 5]))
+# Square the standard errors to obtain the variances of the sample
+# trimmed means
+var <- se^2
+# Store the variances in a list of matrices
+covlist <- list(matrix(var[1]),matrix(var[2]),
+matrix(var[3]),matrix(var[4]), matrix(var[5]))
+# set a seed value
+set.seed(100)
+# test hypotheses with bain
+results <- bain(estimates,"s1=s2=s3=s4=s5;s2>s5>s1>s3>s4",
+n=ngroup,Sigma=covlist,group_parameters=1,joint_parameters= 0)
+# display the results
+print(results)
+# obtain the descriptives table
+summary(results, ci = 0.95)
+```
+
+
+d) An example of the Bayesian ANCOVA using a named vector as input for bain
 
 ```{r ttest_ex14, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data se
@@ -1016,7 +1083,7 @@ print(results2)
 summary(results2, ci = 0.95)
 ```
 
-c) An example of the Bayesian one within factor repeated measures analysis
+e) An example of the Bayesian one within factor repeated measures analysis
 
 ```{r ttest_ex15, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
@@ -1053,7 +1120,7 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-d) An example of the Bayesian one between factor and one within factor
+f) An example of the Bayesian one between factor and one within factor
 repeated measures analysis
 
 ```{r ttest_ex16, eval=FALSE}
@@ -1103,7 +1170,7 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-e) An example of the Bayesian logistic regression as the counterpart of
+g) An example of the Bayesian logistic regression as the counterpart of
 Bayesian multiple regression
 
 ```{r ttest_ex17, eval=FALSE}
@@ -1146,7 +1213,7 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-f) An example of the Bayesian logistic regression as the counterpart of
+h) An example of the Bayesian logistic regression as the counterpart of
 an ANCOVA. This is Example 3 from  Hoijtink, Gu, and Mulder (2019).
 The research question concerns the probability of encouragement to view
 sesame street (a dichotomous 0/1 meaning no/yes dependent variable) for
@@ -1245,153 +1312,92 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-g) An example of the Bayesian robust ANOVA with unequal within group
-variances. Robust ANOVA is elaborated in Bosman and Hoijtink (unpublished).
-
-```{r ttest_ex19, eval=FALSE}
-# load the bain package which includes the simulated sesamesim data set
-library(bain)
-# load the WRS2 package which renders the trimmed sample mean and
-# corresponding standard error
-library(WRS2)
-# make a factor of variable site
-sesamesim$site <- as.factor(sesamesim$site)
-# create a vector containing the sample sizes of each group
-# (in case of missing values in the variables used, the command
-# below has to be modified such that only the cases without
-# missing values are counted)
-ngroup <- table(sesamesim$site)
-# Compute the 20\% sample trimmed mean for each site
-estimates <- c(mean(sesamesim$postnumb[sesamesim$site == 1], tr = 0.2),
-               mean(sesamesim$postnumb[sesamesim$site == 2], tr = 0.2),
-               mean(sesamesim$postnumb[sesamesim$site == 3], tr = 0.2),
-               mean(sesamesim$postnumb[sesamesim$site == 4], tr = 0.2),
-               mean(sesamesim$postnumb[sesamesim$site == 5], tr = 0.2))
-# give names to the estimates
-names(estimates) <- c("s1", "s2", "s3","s4","s5")
-# display the estimates and their names
-print(estimates)
-# Compute the sample trimmed mean standard error for each site
-se <- c(trimse(sesamesim$postnumb[sesamesim$site == 1]),
-        trimse(sesamesim$postnumb[sesamesim$site == 2]),
-        trimse(sesamesim$postnumb[sesamesim$site == 3]),
-        trimse(sesamesim$postnumb[sesamesim$site == 4]),
-        trimse(sesamesim$postnumb[sesamesim$site == 5]))
-# Square the standard errors to obtain the variances of the sample
-# trimmed means
-var <- se^2
-# Store the variances in a list of matrices
-covlist <- list(matrix(var[1]),matrix(var[2]),
-matrix(var[3]),matrix(var[4]), matrix(var[5]))
-# set a seed value
-set.seed(100)
-# test hypotheses with bain
-results <- bain(estimates,"s1=s2=s3=s4=s5;s2>s5>s1>s3>s4",
-n=ngroup,Sigma=covlist,group_parameters=1,joint_parameters= 0)
-# display the results
-print(results)
-# obtain the descriptives table
-summary(results, ci = 0.95)
-```
-
-h) An example of the Bayesian Regression with missing data. The computation
-of Bayes factors in the presence of missing data is elaborated in
-Hoijtink, Gu, Mulder, and Rosseel (2019).
+i) An example of the Bayesian Regression with missing data.
 
 RUNNING THIS EXAMPLE WILL TAKE ABOUT 60 SECONDS
 
 ```{r ttest_ex20, eval=FALSE}
 # load the bain package which includes the simulated sesamesim data set
 library(bain)
-# load the mice (multiple imputation of missing data), psych
-# (provides access to the describe function), and MASS libraries - 
+
+# load mice (multiple imputation of missing data) 
 # inspect the mice help file to obtain further information 
-# - also surf to http://www.stefvanbuuren.nl/mi/MICE.html to obtain 
-# further information and references for mice.
 library(mice)
-library(psych)
-library(MASS)
-sesamesim <- cbind(sesamesim$prenumb,sesamesim$postnumb,sesamesim$funumb,sesamesim$peabody)
-colnames(sesamesim) <- c("prenumb","postnumb","funumb","peabody")
-sesamesim <- as.data.frame(sesamesim)
-# this examples is based on the prenumb, postnumb, funumb and peabody
-# variables in the sesamesim data set. First of all, missing data are
-# created in these four variables.
-#
+
+# create missing values in four variables from the sesamesim data set
+misdat <- cbind(sesamesim$prenumb,sesamesim$postnumb,sesamesim$funumb,sesamesim$peabody)
+colnames(misdat) <- c("prenumb","postnumb","funumb","peabody")
+misdat <- as.data.frame(misdat)
+
 set.seed(1)
-pmis1<-1
-pmis2<-1
-pmis3<-1
+pmis <- .80
 #
 for (i in 1:240){
-  pmis1[i] <- .80
-  pmis2[i]<- .80
-  pmis3[i]<- .80
-#
   uni<-runif(1)
-  if (pmis1[i] < uni) {
-    sesamesim$funumb[i]<-NaN
+  if (pmis < uni) {
+    misdat$funumb[i]<-NA
   }
   uni<-runif(1)
-  if (pmis2[i] < uni) {
-    sesamesim$prenumb[i]<-NaN
-    sesamesim$postnumb[i]<-NaN
+  if (pmis < uni) {
+    misdat$prenumb[i]<-NA
+    misdat$postnumb[i]<-NA
   }
   uni<-runif(1)
-  if (pmis3[i] < uni) {
-    sesamesim$peabody[i]<-NaN
+  if (pmis < uni) {
+    misdat$peabody[i]<-NA
   }
 }
-# print data summaries - note that due to missing valus the n per variable is smaller than 240
-print(describe(sesamesim))
-# use mice to create 1000 imputed data matrices. Note that, the approach used below 
-# is only one manner in which mice can be instructed. Many other options are available.
+# print data summaries - note the missing values (NAs)
+summary(misdat)
+
+# use mice to create 1000 imputed data matrices. Note that, the approach used 
+# below # is only one manner in which mice can be instructed. Many other 
+# options are available.
 M <- 1000 
-out <- mice(data = sesamesim, m = M, seed=999, meth=c("norm","norm","norm","norm"), diagnostics = FALSE, printFlag = FALSE)
-# create matrices in which 1000 vectors with estimates can be stored and in which a covariance matrix can be stored
-mulest <- matrix(0,nrow=1000,ncol=2)
-covwithin <- matrix(0,nrow=2,ncol=2)
-# execute 1000 multiple regressions using the imputed data matrices and store the estimates 
-# of only the regression coefficients of funumb on prenumb and postnumband and the average 
-# of the 1000 covariance matrices.
-# See Hoijtink, Gu, Mulder, and Rosseel (2019) for an explanation of the latter.
-for(i in 1:M) {
-mulres <- lm(funumb~prenumb+postnumb,complete(out,i))
-mulest[i,]<-coef(mulres)[2:3]
-covwithin<-covwithin + 1/M * vcov(mulres)[2:3,2:3]
-}
-# Compute the average of the estimates and assign names, the between and total covariance matrix.
-# See Hoijtink, Gu, Mulder, and Rosseel (2019) for an explanation.
-estimates <- colMeans(mulest)
-names(estimates) <- c("prenumb", "postnumb")
-covbetween <- cov(mulest)
-covariance <- covwithin + (1+1/M)*covbetween
-# determine the sample size
-samp <- nrow(sesamesim)
-# compute the effective sample size
-# See Hoijtink, Gu, Mulder, and Rosseel (2019) for an explanation.
-nucom<-samp-length(estimates)
-lam <- (1+1/M)*(1/length(estimates))* sum(diag(covbetween %*% ginv(covariance)))
-nuold<-(M-1)/(lam^2)
-nuobs<-(nucom+1)/(nucom+3)*nucom*(1-lam)
-nu<- nuold*nuobs/(nuold+nuobs)
-fracmis <- (nu+1)/(nu+3)*lam + 2/(nu+3)
-neff<-samp-samp*fracmis
-covariance<-list(covariance)
-# set the seed
+out <- mice(data = misdat, m = M, seed=999, meth=c("norm","norm","norm","norm"), diagnostics = FALSE, printFlag = FALSE)
+
+# create vectors in which 1000 fits and complexities can be stored for each
+# of two hypotheses and their complement
+fits1 <- vector("numeric",1000)
+compls1 <- vector("numeric",1000)
+fits2 <- vector("numeric",1000)
+compls2 <- vector("numeric",1000)
+fitscomplement <- vector("numeric",1000)
+complscomplement <- vector("numeric",1000)
+
+# analyse each imputed data set with lm and bain, store the resulting
+# fits and complexities
 set.seed(100)
-# test hypotheses with bain
-results <- bain(estimates,"prenumb=postnumb=0",n=neff,Sigma=covariance,group_parameters=2,joint_parameters = 0)
-# display the results
-print(results)
-# obtain the descriptives table
-summary(results, ci = 0.95)
+for(i in 1:M) {
+regr <- lm(funumb~prenumb+postnumb,complete(out,i))
+result <- bain(regr,"prenumb=0 & postnumb=0;prenumb>0 & postnumb>0")  
+fits1[i]<-result$fit$Fit[1] 
+compls1[i]<-result$fit$Com[1]
+fits2[i]<-result$fit$Fit[2] 
+compls2[i]<-result$fit$Com[2]
+fitscomplement[i]<-result$fit$Fit[4] 
+complscomplement[i]<-result$fit$Com[4]
+}
+
+# compute the Bayes factor from the imputed fits and complexities
+# see Equation 23 in Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (2019). 
+# Computing Bayes Factors from Data with Missing Values. 
+# Psychological Methods, 24, 253-268. 
+
+BF1u <- sum(fits1)/sum(compls1)
+BF2u <- sum(fits2)/sum(compls2)
+BFcomplementu <- sum(fitscomplement)/sum(complscomplement)
+
+# compute PMPc
+PMPcH1 <- BF1u/(BF1u + BF2u + BFcomplementu)
+PMPcH2 <- BF2u/(BF1u + BF2u + BFcomplementu)
+PMPcHcomplement <- BFcomplementu/(BF1u + BF2u + BFcomplementu)
 ```
 
-i) An example of Bayesian confirmatory factor analysis with
-a named vector object. This option uses `bain.default()`, so the user must manually extract the required information. See van Lissa et al. (unpublished) for further elaborations. First, we fit a structural equation model using `lavaan`:
+j) An example of Bayesian confirmatory factor analysis with
+a named vector object. This option uses `bain.default()`, so the user must manually extract the required information. See the tutorial by Van Lissa, Gu, Mulder, Rosseel, van Zundert, and Hoijtink (2020) for further elaborations. First, we fit a structural equation model using `lavaan`:
 
-```{r, eval = TRUE, echo = TRUE, results='hide', message=FALSE, warning=FALSE}
+```{r, eval = FALSE}
 library(bain)
 library(lavaan)
 model1 <- 'A =~ Ab + Al + Af + An + Ar + Ac 
@@ -1401,14 +1407,14 @@ fit1 <- sem(model1, data = sesamesim, std.lv = TRUE)
 
 We want to specify the following hypotheses:
 
-```{r eval = TRUE, echo = TRUE}
+```{r, eval = FALSE}
 hypotheses <- "(Ab, Al, Af, An, Ar, Ac) >.6 &
                (Bb, Bl, Bf, Bn, Br, Bc) >.6"
 ```
 
 Next, we extract the required information from the `lavaan` model object, in the order of the parameter table above:
 
-```{r}
+```{r, eval = FALSE}
 # Extract standardized parameter estimates (argument x)
 PE1 <- parameterEstimates(fit1, standardized = TRUE)
 # Identify which parameter estimates are factor loadings
@@ -1443,7 +1449,7 @@ joint_parameters <- 0
 
 Now, we can evaluate the hypotheses using `bain.default()`:
 
-```{r}
+```{r, eval = FALSE}
 res <- bain(x = estimates,
             hypothesis = hypotheses,
             n = n,
@@ -1456,7 +1462,7 @@ res
 Finally, we print the results of the bain analysis and obtain the estimates and 95%
 central credibility intervals
 
-```{r}
+```{r, eval = FALSE}
 sres <- summary(res, ci = 0.95)
 sres
 ```

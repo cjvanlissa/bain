@@ -1,7 +1,7 @@
 # ===========================================================
 # REGRESSION
 # ===========================================================
-
+data(sesamesim)
 # DEBUGGING THE EMPTy CONSTRAINTS SCREEN SITUATION
 # THREE PREDICTORS - STANDARDIZE IS TRUE
 

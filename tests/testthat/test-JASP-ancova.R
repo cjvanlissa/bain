@@ -3,7 +3,7 @@
 # ===========================================================
 
 # DEBUGGING THE EMPTY CONSTRAINTS SCREEN SITUATION - TWO COVARIATES
-
+data(sesamesim)
 sesamesim <- as.data.frame(cbind(sesamesim$postnumb,
              sesamesim$prenumb,sesamesim$funumb,sesamesim$site))
 names(sesamesim)<-c("postnumb","prenumb","funumb","site")
@@ -36,13 +36,13 @@ test_that("Bain mutual", {expect_equal(summary(bainResult),summary(ttout))})
 bainResult <- bain:::bain_ancova_cran(X=sesamesim,dep="postnumb",
               cov="prenumb funumb",
               group="site",
-              hyp="site1 = site2 = site3 = site4 = site5; 
+              hyp="site1 = site2 = site3 = site4 = site5;
               (site1, site3, site4) < (site2, site5)",seed=900)
 
 set.seed(900)
 sesamesim$site <- as.factor(sesamesim$site)
 tt <- lm(postnumb ~ site+prenumb+funumb-1, sesamesim)
-ttout <-  bain(tt,"site1 = site2 = site3 = site4 = site5; 
+ttout <-  bain(tt,"site1 = site2 = site3 = site4 = site5;
               (site1, site3, site4) < (site2, site5)")
 
 # COMPARING THE WRAPPER FOR JASP WITH BAIN
@@ -93,12 +93,12 @@ test_that("Bain mutual", {expect_equal(summary(bainResult),summary(ttout))})
 bainResult <- bain:::bain_ancova_cran(X=sesamesim,dep="postnumb",
                            cov="prenumb",
                            group="site",
-                           hyp="site1 = site2 = site3 = site4 = site5; 
+                           hyp="site1 = site2 = site3 = site4 = site5;
                            (site1, site3, site4) < (site2, site5)",seed=900)
 set.seed(900)
 sesamesim$site <- as.factor(sesamesim$site)
 tt <- lm(postnumb ~ site+prenumb-1, sesamesim)
-ttout <-  bain(tt,"site1 = site2 = site3 = site4 = site5; 
+ttout <-  bain(tt,"site1 = site2 = site3 = site4 = site5;
                (site1, site3, site4) < (site2, site5)")
 
 # COMPARING THE WRAPPER FOR JASP WITH BAIN
