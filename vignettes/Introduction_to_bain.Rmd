@@ -71,8 +71,8 @@ calls to `lm` and `t_test` that can be processed by `bain`.
 Note that, `lm` and `t_test` will apply list-wise deletion if there
 are cases with missing values in the variables used. An imputation based method
 for dealing with missing values tailored to Bayesian hypothesis
-evaluation is illustrated in Section 4 "Examples Using 
-a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+evaluation is illustrated in Section 2 "Examples Using 
+a `lm` object" in Example e. (based on Hoijtink, Gu, Mulder,
 and Rosseel, 2019).
 2) If `lm()` is used, display the estimates and their names using the command `coef(x)`. (Unique abbreviations of) the names will be used to specify `hypotheses`. If `t_test()` is used, hypotheses have to be specified using the names `x`, `y`, and `difference` (see Examples 1a throught 1e which can be found below).
 3) `set.seed(seed)`. Set `seed` equal to an integer 
@@ -108,8 +108,8 @@ Note that, by default,
 `lavaan` will apply list-wise deletion if there are cases with
 missing values in the variables used. An imputation based method
 for dealing with missing values tailored to Bayesian hypothesis
-evaluation is illustrated in Section 4 "Examples Using 
-a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+evaluation is illustrated in Section 2 "Examples Using 
+a `lm` object" in Example e. (based on Hoijtink, Gu, Mulder,
 and Rosseel, 2019). If an analysis with `lavaan` is executed using `missing = "fiml"` the sample size is not corrected for the presence of missing values. This will affect (bias) the evaluation of hypotheses specified using (about) equality constraints.  
 2) Specify a `lavaan` model using the `model <- ...` command. In case
 of multiple group models, only models **without** between group 
@@ -164,8 +164,8 @@ c) The sample size used for estimation of the parameters. Note that,
 due to missing values this sample size may be smaller than the total sample
 size. An imputation based method
 for dealing with missing values tailored to Bayesian hypothesis
-evaluation is illustrated in Section 4 "Examples Using 
-a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+evaluation is illustrated in Section 2 "Examples Using 
+a `lm` object" in Example e. (based on Hoijtink, Gu, Mulder,
 and Rosseel, 2019).
 
 In case of a multiple group
@@ -187,8 +187,8 @@ c) Per group the sample size used for estimation of the parameters. Note that,
 due to missing values this sample size may be smaller than the total sample
 size per group. An imputation based method
 for dealing with missing values tailored to Bayesian hypothesis
-evaluation is illustrated in Section 4 "Examples Using 
-a Named Vector" in Example i. (based on Hoijtink, Gu, Mulder,
+evaluation is illustrated in Section 2 "Examples Using 
+a `lm` object" in Example e. (based on Hoijtink, Gu, Mulder,
 and Rosseel, 2019).
 
 2) Assign names to the estimates
@@ -510,6 +510,7 @@ approach to computing Bayes factors is used (see, Hoijtink, Gu, and
 Mulder, 2019). This may render inferior results if group sizes are unequal.
 d) Bayesian ANOVA. Sensitivity analysis. See Hoijtink, Mulder, 
 van Lissa, and Gu (2019) for elaborations.
+e) Bayesian multiple regression with missing data
 
 **3. Examples Using a `lavaan` Object**
 
@@ -539,9 +540,7 @@ f) Bayesian repeated measures analysis (within between design)
 g) Bayesian one group logistic regression (counterpart of multiple
 regression)
 h) Bayesian multiple group logistic regression (counterpart of ANCOVA)
-
-i) Bayesian multiple regression with missing data
-j) Bayesian confirmatory factor analysis
+i) Bayesian confirmatory factor analysis
 
 **1. Examples Using a `t_test` Object**
 
@@ -771,6 +770,88 @@ set.seed(100)
 results3 <- bain(anov, "site1=site2=site3=site4=site5; site2>site5>site1>
 site3>site4",fraction = 3)
 print(results3)
+```
+
+e) An example of Bayesian Regression with missing data.
+
+RUNNING THIS EXAMPLE WILL TAKE ABOUT 60 SECONDS
+
+```{r ttest_ex20, eval=FALSE}
+# load the bain package which includes the simulated sesamesim data set
+library(bain)
+
+# load mice (multiple imputation of missing data) 
+# inspect the mice help file to obtain further information 
+library(mice)
+
+# create missing values in four variables from the sesamesim data set
+misdat <- cbind(sesamesim$prenumb,sesamesim$postnumb,sesamesim$funumb,sesamesim$peabody)
+colnames(misdat) <- c("prenumb","postnumb","funumb","peabody")
+misdat <- as.data.frame(misdat)
+
+set.seed(1)
+pmis <- .80
+#
+for (i in 1:240){
+  uni<-runif(1)
+  if (pmis < uni) {
+    misdat$funumb[i]<-NA
+  }
+  uni<-runif(1)
+  if (pmis < uni) {
+    misdat$prenumb[i]<-NA
+    misdat$postnumb[i]<-NA
+  }
+  uni<-runif(1)
+  if (pmis < uni) {
+    misdat$peabody[i]<-NA
+  }
+}
+# print data summaries - note the missing values (NAs)
+summary(misdat)
+
+# use mice to create 1000 imputed data matrices. Note that, the approach used 
+# below # is only one manner in which mice can be instructed. Many other 
+# options are available.
+M <- 1000 
+out <- mice(data = misdat, m = M, seed=999, meth=c("norm","norm","norm","norm"), diagnostics = FALSE, printFlag = FALSE)
+
+# create vectors in which 1000 fits and complexities can be stored for each
+# of two hypotheses and their complement
+fits1 <- vector("numeric",1000)
+compls1 <- vector("numeric",1000)
+fits2 <- vector("numeric",1000)
+compls2 <- vector("numeric",1000)
+fitscomplement <- vector("numeric",1000)
+complscomplement <- vector("numeric",1000)
+
+# analyse each imputed data set with lm and bain, store the resulting
+# fits and complexities
+set.seed(100)
+for(i in 1:M) {
+regr <- lm(funumb~prenumb+postnumb,complete(out,i))
+result <- bain(regr,"prenumb=0 & postnumb=0;prenumb>0 & postnumb>0")  
+fits1[i]<-result$fit$Fit[1] 
+compls1[i]<-result$fit$Com[1]
+fits2[i]<-result$fit$Fit[2] 
+compls2[i]<-result$fit$Com[2]
+fitscomplement[i]<-result$fit$Fit[4] 
+complscomplement[i]<-result$fit$Com[4]
+}
+
+# compute the Bayes factor from the imputed fits and complexities
+# see Equation 23 in Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (2019). 
+# Computing Bayes Factors from Data with Missing Values. 
+# Psychological Methods, 24, 253-268. 
+
+BF1u <- sum(fits1)/sum(compls1)
+BF2u <- sum(fits2)/sum(compls2)
+BFcomplementu <- sum(fitscomplement)/sum(complscomplement)
+
+# compute PMPc
+PMPcH1 <- BF1u/(BF1u + BF2u + BFcomplementu)
+PMPcH2 <- BF2u/(BF1u + BF2u + BFcomplementu)
+PMPcHcomplement <- BFcomplementu/(BF1u + BF2u + BFcomplementu)
 ```
 
 **3. Examples Using a `lavaan` object**
@@ -1312,89 +1393,7 @@ print(results)
 summary(results, ci = 0.95)
 ```
 
-i) An example of the Bayesian Regression with missing data.
-
-RUNNING THIS EXAMPLE WILL TAKE ABOUT 60 SECONDS
-
-```{r ttest_ex20, eval=FALSE}
-# load the bain package which includes the simulated sesamesim data set
-library(bain)
-
-# load mice (multiple imputation of missing data) 
-# inspect the mice help file to obtain further information 
-library(mice)
-
-# create missing values in four variables from the sesamesim data set
-misdat <- cbind(sesamesim$prenumb,sesamesim$postnumb,sesamesim$funumb,sesamesim$peabody)
-colnames(misdat) <- c("prenumb","postnumb","funumb","peabody")
-misdat <- as.data.frame(misdat)
-
-set.seed(1)
-pmis <- .80
-#
-for (i in 1:240){
-  uni<-runif(1)
-  if (pmis < uni) {
-    misdat$funumb[i]<-NA
-  }
-  uni<-runif(1)
-  if (pmis < uni) {
-    misdat$prenumb[i]<-NA
-    misdat$postnumb[i]<-NA
-  }
-  uni<-runif(1)
-  if (pmis < uni) {
-    misdat$peabody[i]<-NA
-  }
-}
-# print data summaries - note the missing values (NAs)
-summary(misdat)
-
-# use mice to create 1000 imputed data matrices. Note that, the approach used 
-# below # is only one manner in which mice can be instructed. Many other 
-# options are available.
-M <- 1000 
-out <- mice(data = misdat, m = M, seed=999, meth=c("norm","norm","norm","norm"), diagnostics = FALSE, printFlag = FALSE)
-
-# create vectors in which 1000 fits and complexities can be stored for each
-# of two hypotheses and their complement
-fits1 <- vector("numeric",1000)
-compls1 <- vector("numeric",1000)
-fits2 <- vector("numeric",1000)
-compls2 <- vector("numeric",1000)
-fitscomplement <- vector("numeric",1000)
-complscomplement <- vector("numeric",1000)
-
-# analyse each imputed data set with lm and bain, store the resulting
-# fits and complexities
-set.seed(100)
-for(i in 1:M) {
-regr <- lm(funumb~prenumb+postnumb,complete(out,i))
-result <- bain(regr,"prenumb=0 & postnumb=0;prenumb>0 & postnumb>0")  
-fits1[i]<-result$fit$Fit[1] 
-compls1[i]<-result$fit$Com[1]
-fits2[i]<-result$fit$Fit[2] 
-compls2[i]<-result$fit$Com[2]
-fitscomplement[i]<-result$fit$Fit[4] 
-complscomplement[i]<-result$fit$Com[4]
-}
-
-# compute the Bayes factor from the imputed fits and complexities
-# see Equation 23 in Hoijtink, H., Gu, X., Mulder, J., and Rosseel, Y. (2019). 
-# Computing Bayes Factors from Data with Missing Values. 
-# Psychological Methods, 24, 253-268. 
-
-BF1u <- sum(fits1)/sum(compls1)
-BF2u <- sum(fits2)/sum(compls2)
-BFcomplementu <- sum(fitscomplement)/sum(complscomplement)
-
-# compute PMPc
-PMPcH1 <- BF1u/(BF1u + BF2u + BFcomplementu)
-PMPcH2 <- BF2u/(BF1u + BF2u + BFcomplementu)
-PMPcHcomplement <- BFcomplementu/(BF1u + BF2u + BFcomplementu)
-```
-
-j) An example of Bayesian confirmatory factor analysis with
+i) An example of Bayesian confirmatory factor analysis with
 a named vector object. This option uses `bain.default()`, so the user must manually extract the required information. See the tutorial by Van Lissa, Gu, Mulder, Rosseel, van Zundert, and Hoijtink (2020) for further elaborations. First, we fit a structural equation model using `lavaan`:
 
 ```{r, eval = FALSE}

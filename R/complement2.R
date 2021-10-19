@@ -250,6 +250,7 @@ PMPcomplement<-function(results){
   complf <- 1 - jointfit
   if (complf < 0){complf <- 0}
   complc <- 1 - jointcom
+  if (complc < 0){complc <- 0}
 
   if (complc < .05) {
   BF[1:Nhypo] <- results$fit$BF.u[1:Nhypo]
@@ -442,11 +443,11 @@ makefullrank <- function(consmat){
   s <- 1
   repeat{
 
-    
+
     if(dim(consmat)[1] == qr(consmat)$rank) {
       break
     }
-    
+
     removeone <- consmat[(-1*s),]
 
     if (qr(consmat)$rank == qr(removeone)$rank){
