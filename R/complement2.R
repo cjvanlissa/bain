@@ -16,6 +16,7 @@
 #   are added, modify the call to bain in STEP 5.
 # ==============================================================================
 
+#' @importFrom utils combn
 
 PMPcomplement<-function(results){
 
@@ -312,7 +313,7 @@ return(results)
 checkconsist <- function(varnames,hypo){
 #  Rrres <- bain:::parse_hypothesis(varnames,hypo)
 
-  Rrres <- bain:::parse_hypothesis(varnames,hypo)
+  Rrres <- parse_hypothesis(varnames,hypo)
   Rexclc <- Rrres$hyp_mat[[1]][,1:dim(Rrres$hyp_mat[[1]])[2]-1]
   Rinclc <- Rrres$hyp_mat[[1]][,1:dim(Rrres$hyp_mat[[1]])[2]]
 
