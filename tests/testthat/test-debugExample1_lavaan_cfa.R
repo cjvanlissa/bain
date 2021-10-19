@@ -7,7 +7,7 @@ B =~ Bb + Bl + Bf + Bn + Br + Bc
 '
 
 # use the lavaan sem function to execute the confirmatory factor analysis
-fit1 <- sem(model1, data = sesameCFA, std.lv = TRUE)
+fit1 <- lavaan::sem(model1, data = sesameCFA, std.lv = TRUE)
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION:
 

@@ -512,7 +512,7 @@ model1 <- '
     B =~ Bb + Bl + Bf + Bn + Br + Bc
 '
 
-fit1 <- sem(model1, data = sesamesim, std.lv = TRUE)
+fit1 <- lavaan::sem(model1, data = sesamesim, std.lv = TRUE)
 
 hypotheses1 <-
   " A=~Ab > .6 & A=~Al > .6 & A=~Af > .6 ; A=~An = .6 & A=~Ar = .6 & A=~Ac=.6 ;
@@ -717,21 +717,21 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
 
 # ==============================================================================
 
-# TEST 24f: TESTING ABOUTS
-
-anov <- lm(influence~group-1,ldata)
-set.seed(99)
-results2 <- bain(anov, "
--1 < group1 - group2 < 1 &  -1 < group1 - group3 < 1 &  -1 < group2 - group3 < 1;
--1 < group1 - group2 < 1 &  -1 < group2 - group3 < 1
-                ")
-
-# test fit and complexity of the complement
-test_that("fc", {expect_equal(  c(results2$fit$Fit[4],results2$fit$Com[4]),
-                                c(1-results2$fit$Fit[2],
-                                  1-results2$fit$Com[2]
-                                ) , tolerance = .003
-)})
+# # TEST 24f: TESTING ABOUTS
+#
+# anov <- lm(influence~group-1,ldata)
+# set.seed(99)
+# results2 <- bain(anov, "
+# -1 < group1 - group2 < 1 &  -1 < group1 - group3 < 1 &  -1 < group2 - group3 < 1;
+# -1 < group1 - group2 < 1 &  -1 < group2 - group3 < 1
+#                 ")
+#
+# # test fit and complexity of the complement
+# test_that("fc", {expect_equal(  c(results2$fit$Fit[4],results2$fit$Com[4]),
+#                                 c(1-results2$fit$Fit[2],
+#                                   1-results2$fit$Com[2]
+#                                 ) , tolerance = .003
+# )})
 
 # ==============================================================================
 

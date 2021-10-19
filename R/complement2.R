@@ -311,7 +311,7 @@ return(results)
 checkconsist <- function(varnames,hypo){
 #  Rrres <- bain:::parse_hypothesis(varnames,hypo)
 
-  Rrres <- parse_hypothesis(varnames,hypo)
+  Rrres <- bain:::parse_hypothesis(varnames,hypo)
   Rexclc <- Rrres$hyp_mat[[1]][,1:dim(Rrres$hyp_mat[[1]])[2]-1]
   Rinclc <- Rrres$hyp_mat[[1]][,1:dim(Rrres$hyp_mat[[1]])[2]]
 
@@ -387,6 +387,8 @@ checkconsist <- function(varnames,hypo){
 
       allbutone <- Rexnone[(-1*t),]
       # if allbutone not of full rank, remove rows until it is
+      # note that, makefullrank() starts by checking if allbutone is
+      # of full rank. If yes, it "breaks out" immediately.
       # if allbutone consists of one row, do not call makefullrank()
       if (!is.null(dim(allbutone)[1])) {allbutone <- makefullrank(allbutone)}
       one <- Rexnone[t,]
@@ -440,6 +442,11 @@ makefullrank <- function(consmat){
   s <- 1
   repeat{
 
+    
+    if(dim(consmat)[1] == qr(consmat)$rank) {
+      break
+    }
+    
     removeone <- consmat[(-1*s),]
 
     if (qr(consmat)$rank == qr(removeone)$rank){
@@ -448,9 +455,6 @@ makefullrank <- function(consmat){
 
     if (is.null(dim(consmat)[1])){break}
 
-    if(dim(consmat)[1] == qr(consmat)$rank) {
-      break
-    }
   }
 
   return(consmat)
