@@ -1,3 +1,8 @@
+# bain 0.2.7
+
+* Add column PMPc to bain output object and printed output table
+* Add row Hc to bain output object and printed output table
+
 # bain 0.2.6
 
 * Fix URL to code of conduct as per CRAN request
