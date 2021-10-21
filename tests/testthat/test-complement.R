@@ -73,8 +73,8 @@ test_that("PMPc", {expect_equal(results2$fit$BF.u[c(1,3)]/sum(results2$fit$BF.u[
 anov <- lm(influence~group-1,ldata)
 set.seed(110)
 results3 <- bain(anov, "group3 > group4 > (group2, group1);group3 > group4 > (group2, group1)", fraction = 5)
-test_that("PMPc", {expect_equal(results2$fit$Fit[3],results3$fit$Fit[4],tolerance = .007)})
-test_that("PMPc", {expect_equal(results2$fit$Com[3],results3$fit$Com[4],tolerance = .007)})
+test_that("PMPc", {expect_equal(results2$fit$Fit[3],results3$fit$Fit[4],tolerance = .009)})
+test_that("PMPc", {expect_equal(results2$fit$Com[3],results3$fit$Com[4],tolerance = .009)})
 
 # ==============================================================================
 
@@ -295,7 +295,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                   1 - (sum(results2$fit$Com[1:3])
                                        - sum(resc[1:3])
                                        + sum(resc[4])
-                                          ))   , tolerance = .004        )})
+                                          ))   , tolerance = .006        )})
 
 # test BFcu
 test_that("BFcu", {expect_equal(results2$fit$BF.u[5],results2$fit$Fit[5]/results2$fit$Com[5])})
@@ -317,7 +317,7 @@ results3 <- bain(anov, "group3 > group4 > (group2, group1);
 
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
-                                c(results3$fit$Fit[8],results3$fit$Com[8]), tolerance = .006
+                                c(results3$fit$Fit[8],results3$fit$Com[8]), tolerance = .038
                                  )})
 
 # ==============================================================================
@@ -501,7 +501,7 @@ results2 <- bain(anov, "group1 > group2;
 
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
-                                c(0,0)   , tolerance = .002  )})
+                                c(0,0)   , tolerance = .004  )})
 
 # ==============================================================================
 
@@ -528,7 +528,7 @@ resc <- c(.050)
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[6],results2$fit$Com[6]),
   c(1-(results2$fit$Fit[1]+results2$fit$Fit[3]-resf),
-    1-(results2$fit$Com[1]+results2$fit$Com[3]-resc) )  , tolerance = .002  )})
+    1-(results2$fit$Com[1]+results2$fit$Com[3]-resc) )  , tolerance = .004  )})
 
 
 # ==============================================================================
@@ -616,7 +616,7 @@ resc <- c(.096,.095,.019,.098,.018,.019,.100,.018,.020,.021,.019)
 test_that("PMPc", {expect_equal(c(results2$fit$Fit[7],results2$fit$Com[7]),
                                 c(1 - (sum(results2$fit$Fit[1:5]) - sum(resf[1:6])
 + sum(resf[7:10]) - resf[11]),1 - (sum(results2$fit$Com[1:5]) - sum(resc[1:6])
-     + sum(resc[7:10]) - resc[11]))   ,tolerance = .001  )})
+     + sum(resc[7:10]) - resc[11]))   ,tolerance = .05  )})
 
 # ==============================================================================
 
@@ -693,7 +693,7 @@ resc <- c(.090,.085,.086,.069)
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                 c(1-(sum(results2$fit$Fit[1:3])- sum(resf[1:3]) + resf[4]),
                                   1-(sum(results2$fit$Com[1:3])- sum(resc[1:3]) + resc[4])
-                                ) , tolerance = .004
+                                ) , tolerance = .01
 )})
 
 # ==============================================================================
@@ -712,7 +712,7 @@ resc <- .090
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                 c(1-(sum(results2$fit$Fit[1:3])-  resf[1]),
                                   1-(sum(results2$fit$Com[1:3])-  resc[1])
-                                ) , tolerance = .002
+                                ) , tolerance = .006
 )})
 
 # ==============================================================================
@@ -842,7 +842,7 @@ resc <- c(.137,.181)
 test_that("fc", {expect_equal(  c(results2$fit$Fit[7],results2$fit$Com[7]),
                                 c(1-sum(results2$fit$Fit[2:5])+sum(resf[1:2]),
 1-sum(results2$fit$Com[2:5])+sum(resc[1:2])
-                                ) ,tolerance = .004
+                                ) ,tolerance = .009
 )})
 
 # ==============================================================================
@@ -905,7 +905,7 @@ resc <- c(.129,.100)
 test_that("fc", {expect_equal(  c(results2$fit$Fit[7],results2$fit$Com[7]),
                                 c(1-sum(results2$fit$Fit[2:5])+sum(resf[1:2]),
                                   1-sum(results2$fit$Com[2:5])+sum(resc[1:2])
-                                ),tolerance = .002
+                                ),tolerance = .004
 )})
 
 
