@@ -589,10 +589,6 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
                                                                                     h - 1], 1:n_constraints[2 * h - 1]]))))
     }
 
-    # to solve large integer problem this unused quantity
-    # is deleted before line 611
-    #          Numfc = as.integer(0),
-
     #inequality constraints
     if (n_constraints[2 * h] > 0) {
       # function for the computation of complexity or fit for inequality constraints
@@ -608,15 +604,12 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
           B,
           transR,
           f_or_c = as.double(0),
+          Numfc = as.integer(0),
           sample.int(1e10, 1)
         )
-        return(c(forc$f_or_c)) #, forc$Numfc))
+        return(c(forc$f_or_c, forc$Numfc))
       }
-
-      # to solve large integer problem this unused quantity
-      # is deleted before line 630 and 644
-      #        Numfc = as.integer(0),
-        forc_post <- .Fortran(
+      forc_post <- .Fortran(
         "forc",
         as.integer(n_constraints[2 * h - 1]),
         as.integer(n_constraints[2 * h]),
@@ -627,6 +620,7 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
         Bpost,
         transR,
         f_or_c = as.double(0),
+        Numfc = as.integer(0),
         sample.int(1e10, 1)
       )
 
@@ -641,13 +635,14 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
         Bpri,
         transR,
         f_or_c = as.double(0),
+        Numfc = as.integer(0),
         sample.int(1e10, 1)
       )
 
       fitin[h] <- forc_post$f_or_c
-#      numf <- forc_post$Numfc
+      numf <- forc_post$Numfc
       comin[h] <- forc_prior$f_or_c
-#      numc <- forc_prior$Numfc
+      numc <- forc_prior$Numfc
     }
   }
 
