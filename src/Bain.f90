@@ -336,7 +336,12 @@ end subroutine
 
 
 
-subroutine forc(numER,numIR,rowrank,bet,transcon,invbetadiag,B,transR,f_or_c,Numfc,seed)
+!subroutine forc(numER,numIR,rowrank,bet,transcon,invbetadiag,
+!B,transR,f_or_c,Numfc,seed)
+!TO GET RID OF THE INTEGER PROBLEM NUMFC HAS BEEN REMOVED
+!IT IS NOT NEEDED - SEE DIRECTLY BELOW, 353 AND 519
+
+subroutine forc(numER,numIR,rowrank,bet,transcon,invbetadiag,B,transR,f_or_c,seed)
 
 implicit none
 
@@ -345,7 +350,7 @@ integer, intent(in)                                                    :: seed
 integer, allocatable, dimension(:)                                     :: iseed
 integer, intent(in)                                                    :: numER, numIR, rowrank
 integer, dimension(numIR)                                              :: Num
-integer(kind=8), intent(out)                                           :: Numfc
+!integer(kind=8), intent(out)                                       !  :: Numfc
 
 double precision                                                       :: lower, upper
 double precision                                                       :: large, small
@@ -511,7 +516,7 @@ Num(k)=N
 end if
 
 f_or_c=product(df_or_dc)
-Numfc=sum(Num)
+!Numfc=10
 
 end do
 
