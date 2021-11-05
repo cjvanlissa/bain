@@ -1,5 +1,5 @@
 # This R code contains a number of tests of the bain default function
-
+data(sesamesim)
 
 #========================================================================================")
 # compute c=, f=, and f>|= for an hypothesis with 1 = and 1 > restriction with Bain and R")
@@ -96,9 +96,9 @@ sigmaz <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 z <- c(0,0,0)
 meanz <- c(0,0,0)
 
-test_that("bain default", {expect_equal(y$fit$Fit_eq, c(0.004031442,0.06349364,1,NA))})
-test_that("bain default", {expect_equal(y$fit$Fit_in, c(1,.125,.015625,NA))})
-test_that("bain default", {expect_equal(y$fit$Com_in, c(1,.125,.015625,NA))})
+test_that("bain default", {expect_equal(y$fit$Fit_eq[1:4], c(0.004031442,0.06349364,1,NA))})
+test_that("bain default", {expect_equal(y$fit$Fit_in[1:4], c(1,.125,.015625,NA))})
+test_that("bain default", {expect_equal(y$fit$Com_in[1:4], c(1,.125,.015625,NA))})
 
 #========================================================================================")
 # Compute fit of 0 and complexity of 1/6 for an hypothesis that is really wrong")
@@ -132,8 +132,8 @@ cov <- matrix(c(1,0,0,0,1,0,0,0,1), nrow=3,ncol=3)
 set.seed(10)
 y<-bain(estimate,"a > b & b > 0 & a > 0; a > b & b > 0",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
-test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.125,NA),tolerance = .01)})
-test_that("bain default", {expect_equal(y$fit$Com, c(.125,.125,NA),tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Fit[1:3], c(.125,.125,NA),tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Com[1:3], c(.125,.125,NA),tolerance = .01)})
 
 #========================================================================================")
 # a test of the t_test using bain default shows that b per group is correctly")
@@ -328,15 +328,15 @@ set.seed(10)
 y<-bain(estimate,"a>0 & b>0 & c>0; a>b>c;a>b & b>0; a=b=c=0",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
 
 # check fit ERr4 via dnorm(0,0,1)*dnorm(0,0,1)*dnorm(0,0,1)
-test_that("bain default", {expect_equal(y$fit$Fit, c(.125,.166,.125,dnorm(0,0,1)*dnorm(0,0,1)*dnorm(0,0,1),NA), tolerance = .01)})
-test_that("bain default", {expect_equal(y$fit$Com, c(.125,.166,.125,dnorm(0,0,5.77)*dnorm(0,0,5.77)*dnorm(0,0,5.77),NA),tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Fit[1:5], c(.125,.166,.125,dnorm(0,0,1)*dnorm(0,0,1)*dnorm(0,0,1),NA), tolerance = .01)})
+test_that("bain default", {expect_equal(y$fit$Com[1:5], c(.125,.166,.125,dnorm(0,0,5.77)*dnorm(0,0,5.77)*dnorm(0,0,5.77),NA),tolerance = .01)})
 
 # tweede check elke par gelijk aan nul
 
 set.seed(10)
 z<-bain(estimate,"a=0;b=0;c=0",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
-test_that("bain default", {expect_equal(z$fit$Fit, c(dnorm(0,0,1),dnorm(0,0,1),dnorm(0,0,1),NA), tolerance = .001)})
-test_that("bain default", {expect_equal(z$fit$Com, c(dnorm(0,0,5.77),dnorm(0,0,5.77),dnorm(0,0,5.77),NA), tolerance = .001)})
+test_that("bain default", {expect_equal(z$fit$Fit[1:4], c(dnorm(0,0,1),dnorm(0,0,1),dnorm(0,0,1),NA), tolerance = .001)})
+test_that("bain default", {expect_equal(z$fit$Com[1:4], c(dnorm(0,0,5.77),dnorm(0,0,5.77),dnorm(0,0,5.77),NA), tolerance = .001)})
 
 # tweede check met elke par gelijk aan nul en non-diagonal covariance matrix
 
@@ -345,9 +345,9 @@ set.seed(10)
 x<-bain(estimate,"a=0&b=0&c=0",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
 sigma <- matrix(c(1,.95, .95, .95, 1, .95, .95, .95, 1), ncol=3)
 mean <- c(0,0,0)
-test_that("bain default", {expect_equal(x$fit$Fit, c(0.7456949,NA),tolerance = .001)})
+test_that("bain default", {expect_equal(x$fit$Fit[1:2], c(0.7456949,NA),tolerance = .001)})
 sigma2 <- x$prior
-test_that("bain default", {expect_equal(x$fit$Com, c(0.003874745,NA),tolerance = .001)})
+test_that("bain default", {expect_equal(x$fit$Com[1:2], c(0.003874745,NA),tolerance = .001)})
 #========================================================================================")
 # using stylized tests to check the use of scalar multiplyers and additive constants")
 #========================================================================================")

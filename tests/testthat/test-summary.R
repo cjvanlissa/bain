@@ -2,7 +2,7 @@
 # THE T-TEST
 # #===========================================================================
 
-
+data(sesamesim)
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
@@ -169,7 +169,6 @@ test_that("summary", {expect_equal(des2$n , c(240,240,240))})
 
 sesamesim$sex <- factor(sesamesim$sex)
 bw <- lm(cbind(prenumb, postnumb, funumb)~sex-1, data=sesamesim)
-coef(bw)
 est1 <-coef(bw)[1,1:3] # the three means for sex = 1
 est2 <-coef(bw)[2,1:3] # the three means for sex = 2
 estimate <- c(est1,est2)

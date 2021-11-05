@@ -8,7 +8,7 @@
 # PARAMETERS EN COV GEBRUIKT. HET MOETEN DE ONGESTANDAARDIZEERDE
 # WORDEN
 # ===========================================================================
-library(lavaan)
+data(sesamesim)
 
 # read in the simulated sesamestreet data
 sesamedata <- sesamesim
@@ -116,7 +116,7 @@ set.seed(100)
 y2 <- bain(fit1,hypotheses1,standardize = TRUE)
 #bain:::lav_get_estimates(fit1, standardize = TRUE)
 # HERE FOLLOWS THE CALL TO BAIN DEFAULT WITH STANDARDIZED PARAMETERS
-PE1 <- parameterEstimates(fit1, standardize = TRUE)
+PE1 <- lavaan::parameterEstimates(fit1, standardize = TRUE)
 estimate1 <- PE1[ PE1$op == "~1", "std.all"][7]
 names(estimate1) <- c("i~1")
 cov<- matrix(lavInspect(fit1, "vcov.std.all")["i~1", "i~1"],1,1)
@@ -161,7 +161,7 @@ y3 <- bain(fit1,hypotheses1,standardize = TRUE)
 data(sesamesim)
 sesamesim$site <- factor(sesamesim$site, labels = c("a", "b", "c", "d", "e"))
 ngroup1 <- table(sesamesim$site)
-PE3 <- parameterEstimates(fit1, standardize = TRUE)
+PE3 <- lavaan::parameterEstimates(fit1, standardize = TRUE)
 estimate1 <- PE3[ PE3$op == "~"  |PE3$op == "~1", "std.all"]
 estimate1 <- estimate1[c(1,2,4,5,7,8,10,11,13,14)]
 names(estimate1) <- do.call(paste0, data.frame(PE3[ PE3$op == "~"  |PE3$op == "~1", c("lhs", "op", "rhs")], ".g", PE3[ PE3$op == "~"  |PE3$op == "~1", ]$group))[c(1,2,4,5,7,8,10,11,13,14)]
@@ -185,8 +185,6 @@ hypotheses1 <-"age~peabody = age~peabody.g2 = age~peabody.g3 = age~peabody.g4 = 
 set.seed(100)
 z2 <- bain(estimate1, hypotheses1, n = ngroup1, Sigma = covariance1,
            group_parameters = 2, joint_parameters = 0)
-y2$Sigma
-z2$Sigma
 test_that("Bain mutual", {expect_equal(y2$n , z2$n)})
 test_that("Bain mutual", {expect_equal(y2$fit$Fit , z2$fit$Fit)})
 test_that("Bain mutual", {expect_equal(y2$fit$Com , z2$fit$Com)})
@@ -245,7 +243,7 @@ level: 2
 fb =~ y1 + y2 + y3
 fb ~ w1 + w2
 '
-fit1 <- lavaan::sem(model, data = Demo.twolevel, cluster = "cluster")
+fit1 <- lavaan::sem(model, data = lavaan::Demo.twolevel, cluster = "cluster")
 hypotheses1 <-"fw~x1=0"
 set.seed(100)
 test_that("Multilevel gives error", expect_error(y1 <- bain(fit1,hypotheses1,standardized = TRUE)))

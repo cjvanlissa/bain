@@ -1,6 +1,6 @@
 # ============================================================================================================
 # TESTING ABOUT EQUALITY WITH RESPECT TO "NOT THE FIRST PARAMETER
-
+data(sesamesim)
 
 # USING JOINT_PARAMETERS
 samp <- dim(sesamesim)[1]

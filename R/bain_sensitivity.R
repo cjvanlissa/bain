@@ -7,10 +7,11 @@
 #' vector objects. See the vignette for elaborations.
 #' @param hypothesis	A character string containing the informative hypotheses
 #' to evaluate. See the vignette for elaborations.
-#' @param fractions A numeric vector, representing the fractions of information
-#' in the data to be used to construct the prior distribution
-#' (see the tutorial DOI: 10.1037/met0000201): The default value 1 denotes the
-#' minimal fraction, 2 denotes twice the minimal fraction, etc.
+#' @param fractions A number representing the fraction of information
+#' in the data used to construct the prior distribution.
+#' The default value 1 denotes the
+#' minimal fraction, 2 denotes twice the minimal fraction, etc. See the
+#' vignette for elaborations.
 #' @param ... Additional arguments passed to \code{\link[bain]{bain}}.
 #' @return A \code{data.frame} of class \code{"bain_sensitivity"}.
 #' @details The Bayes factor for equality constraints is sensitive to a

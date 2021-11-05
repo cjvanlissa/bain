@@ -16,10 +16,11 @@ vector objects. See the vignette for elaborations.}
 \item{hypothesis}{A character string containing the informative hypotheses
 to evaluate. See the vignette for elaborations.}
 
-\item{fractions}{A numeric vector, representing the fractions of information
-in the data to be used to construct the prior distribution
-(see the tutorial DOI: 10.1037/met0000201): The default value 1 denotes the
-minimal fraction, 2 denotes twice the minimal fraction, etc.}
+\item{fractions}{A number representing the fraction of information
+in the data used to construct the prior distribution.
+The default value 1 denotes the
+minimal fraction, 2 denotes twice the minimal fraction, etc. See the
+vignette for elaborations.}
 
 \item{...}{Additional arguments passed to \code{\link[bain]{bain}}.}
 }

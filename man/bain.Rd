@@ -17,9 +17,10 @@ vector objects. See the vignette for elaborations.}
 to evaluate. See the vignette for elaborations.}
 
 \item{fraction}{A number representing the fraction of information
-in the data used to construct the prior distribution
-(see the tutorial DOI: 10.1037/met0000201): The default value 1 denotes the
-minimal fraction, 2 denotes twice the minimal fraction, etc.}
+in the data used to construct the prior distribution.
+The default value 1 denotes the
+minimal fraction, 2 denotes twice the minimal fraction, etc. See the
+vignette for elaborations.}
 
 \item{...}{Additional arguments. See the vignette for elaborations.}
 }
@@ -33,7 +34,7 @@ hypotheses that are evaluated. See the \strong{tutorial} and the
 \code{bain} is an acronym for "Bayesian informative hypotheses evaluation".
 It uses the Bayes factor to evaluate hypotheses specified using equality and
 inequality constraints among (linear combinations of) parameters in a wide
-range of statistical models. A tutorial by Hoijtink, Mulder, van Lissa,
+range of statistical models. A \strong{tutorial} by Hoijtink, Mulder, van Lissa,
 and Gu (2018), was published in
 \href{https://www.doi.org/10.1037\%2Fmet0000201}{Psychological Methods}.
 The preprint of that tutorial is available at
@@ -45,11 +46,11 @@ advised to read the tutorial AND the vignette that is provided
 with this package before using} \code{bain}.
 }
 \examples{
-# USING BAIN WITH A LM OBJECT: Bayesian ANOVA
+# Evaluation of informative hypotheses for an ANOVA
 # make a factor of variable site
 sesamesim$site <- as.factor(sesamesim$site)
 # execute an analysis of variance using lm() which, due to the -1, returns
-# estimates of the means per group
+# estimates of the means of postnumb per group
 anov <- lm(postnumb~site-1,sesamesim)
 # take a look at the estimated means and their names
 coef(anov)
@@ -59,36 +60,6 @@ set.seed(100)
 results <- bain(anov, "site1=site2=site3=site4=site5; site2>site5>site1>
 site3>site4")
 #
-# USING BAIN WITH A NAMED VECTOR: Bayesian ANOVA
-
-# make a factor of variable site
-sesamesim$site <- as.factor(sesamesim$site)
-# execute an analysis of variance using lm() which, due to the -1, returns
-# estimates of the means per group
-anov <- lm(postnumb~site-1,sesamesim)
-# collect the estimates means in a vector
-estimate <- coef(anov)
-# give names to the estimates in anov
-names(estimate) <- c("site1", "site2", "site3","site4","site5")
-# create a vector containing the sample sizes of each group
-ngroup <- table(sesamesim$site)
-# compute the variance of the means and collect them in a list
-var <- summary(anov)$sigma**2
-cov1 <- matrix(var/ngroup[1], nrow=1, ncol=1)
-cov2 <- matrix(var/ngroup[2], nrow=1, ncol=1)
-cov3 <- matrix(var/ngroup[3], nrow=1, ncol=1)
-cov4 <- matrix(var/ngroup[4], nrow=1, ncol=1)
-cov5 <- matrix(var/ngroup[5], nrow=1, ncol=1)
-covlist <- list(cov1, cov2, cov3, cov4,cov5)
-# set a seed value
-set.seed(100)
-# test hypotheses with bain. Note that there are multiple groups
-# characterized by one mean, therefore group_parameters=1. Note that
-# there are no joint parameters, therefore, joint_parameters=0.
-results <- bain(estimate,
-"site1=site2=site3=site4=site5; site2>site5>site1>site3>site4",
-n=ngroup,Sigma=covlist,group_parameters=1,joint_parameters = 0)
-
 # SEE THE TUTORIAL AND VIGNETTE FOR MANY ADDITIONAL EXAMPLES
 
 
@@ -96,15 +67,15 @@ n=ngroup,Sigma=covlist,group_parameters=1,joint_parameters = 0)
 \references{
 See the vignette for additional references.
 
-Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2018). A tutorial on
-testing hypotheses using the Bayes factor. \emph{Psychological Methods.}
+Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019).
+A tutorial on testing hypotheses using the Bayes factor.
+\emph{Psychological Methods, 24,} 539-556.
 DOI: 10.1037/met0000201
 }
 \author{
 The main authors of the bain package are Xin Gu, Caspar
-van Lissa, Herbert Hoijtink and Joris Mulder. Contributions
-were made by Marlyne Bosman and Camiel van Zundert.
-Contact information can be
-found on the bain website at
+van Lissa, Herbert Hoijtink and Joris Mulder with smaller contributions
+by Marlyne Bosman, Camiel van Zundert, and Fayette Klaassen.
+Contact information can be found on the bain website at
 \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
 }

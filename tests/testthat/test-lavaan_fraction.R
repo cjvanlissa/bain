@@ -1,5 +1,3 @@
-library(lavaan)
-
 data(sesamesim)
 sesameCFA <- sesamesim
 names(sesameCFA)[6] <- "pea"
@@ -10,7 +8,7 @@ model2 <- '
 
     A ~ B + age + pea
 '
-fit2 <- sem(model2, data = sesameCFA, std.lv = TRUE)
+fit2 <- lavaan::sem(model2, data = sesameCFA, std.lv = TRUE)
 
 # HERE FOLLOWS THE CALL TO THE BAIN S3 FUNCTION:
 
@@ -32,7 +30,7 @@ y3 <- bain(fit2, hypotheses2, fraction = 3, standardize = TRUE)
 
 ngroup2 <- lavaan::nobs(fit2)
 
-PE2 <- parameterEstimates(fit2, standardize = TRUE)
+PE2 <- lavaan::parameterEstimates(fit2, standardize = TRUE)
 # here, we only need the rows that correspond to regressions (ie op == "~"):
 estimate2 <- PE2[ PE2$op == "~", "std.all"]
 

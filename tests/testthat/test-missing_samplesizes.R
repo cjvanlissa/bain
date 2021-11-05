@@ -1,3 +1,4 @@
+data(sesamesim)
 d <- sesamesim
 
 d$age[10] <- NA

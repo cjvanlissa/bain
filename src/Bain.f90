@@ -345,7 +345,7 @@ integer, intent(in)                                                    :: seed
 integer, allocatable, dimension(:)                                     :: iseed
 integer, intent(in)                                                    :: numER, numIR, rowrank
 integer, dimension(numIR)                                              :: Num
-integer, intent(out)                                                   :: Numfc
+integer(kind=8), intent(out)                                           :: Numfc
 
 double precision                                                       :: lower, upper
 double precision                                                       :: large, small

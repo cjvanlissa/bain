@@ -1,7 +1,5 @@
-
-
+data(sesamesim)
 regr <- lm(postnumb ~ prenumb + funumb + peabody, sesamesim)
-regr$call$formula
 # UNSTANDARDIZED REGRESSION USING AN LM OBJECT
 set.seed(100)
 z<-bain(regr,"pre=fu=pea;pea > fu > pre; pre>fu>pea", standardize = FALSE)
@@ -84,7 +82,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(sy$BFmatrix)), as.vector(t(sz
 
 
 regr <- lm(postnumb ~ prenumb + peabody, sesamesim)
-coef(regr)
 set.seed(100)
 sz<-bain(regr,"Int=5 & pre > pea", standardize = FALSE)
 
@@ -115,7 +112,6 @@ test_that("Bain mutual", {expect_equal(as.vector(t(sy$BFmatrix)), as.vector(t(sz
 
 samp <- dim(sesamesim)[1]
 regr <- lm(postnumb ~ prenumb * peabody, sesamesim)
-coef(regr)
 set.seed(100)
 sz<-bain(regr,hypothesis = "prenumb >0 ", standardize = FALSE)
 

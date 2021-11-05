@@ -1,7 +1,7 @@
 # TESTING ANOVA VIA LM AND DEFAULT VERSUS EACH OTHER
 
 # ANOVA VIA LM OBJECT
-
+data(sesamesim)
 
 
 sesamesim$site <- as.factor(sesamesim$site)
@@ -79,7 +79,7 @@ x<-0
 for (i in 1:10000){if (a[i]>c[i] & a[i]>d[i] & a[i]>e[i] & b[i]>c[i] & b[i]> d[i] & b[i]> e[i])
 {x <- x + 1/10000}
 }
-test_that("Bain mutual", {expect_equal(z$fit$Com , c(x,NA),tolerance = .01)})
+test_that("Bain mutual", {expect_equal(z$fit$Com[1:2] , c(x,NA),tolerance = .01)})
 test_that("Bain mutual", {expect_equal(z$independent_restrictions, 4)})
 
 
