@@ -345,7 +345,7 @@ integer, intent(in)                                                    :: seed
 integer, allocatable, dimension(:)                                     :: iseed
 integer, intent(in)                                                    :: numER, numIR, rowrank
 integer, dimension(numIR)                                              :: Num
-integer(kind=8), intent(out)                                           :: Numfc
+integer, intent(out)                                                   :: Numfc
 
 double precision                                                       :: lower, upper
 double precision                                                       :: large, small
@@ -511,7 +511,8 @@ Num(k)=N
 end if
 
 f_or_c=product(df_or_dc)
-Numfc=sum(Num)
+!Numfc=sum(Num) to repair the large integer replaced by the line below
+Numfc = 10
 
 end do
 
