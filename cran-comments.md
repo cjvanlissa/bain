@@ -1,6 +1,8 @@
-# Version 0.2.6
+# Version 0.2.7
 
-New version to address CRAN test failures on Debian and Fedora linux
+* Add column PMPc to bain output object and printed output table
+* Add row Hc to bain output object and printed output table
+* Fix large integer bug in Fortran code
 
 ## Test environments
 * local x86_64-pc-linux-gnu, R 4.0.3

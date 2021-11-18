@@ -30,7 +30,7 @@ Two tutorials are retrievable from the bain website (look under tutorials) at ht
 
 The first introducing Bayesian evaluation of informative hypotheses is provided by Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019). A tutorial on testing hypotheses using the Bayes factor. Psychological Methods, 24, 539-556. By reading the tutorial in combination with executing the analyses contained in `easyBFtutorial.R` and `BFtutorial.R` you quickly learn the basics of Bayesian hypothesis evaluation. 
 
-The second containing introduction to Bayesian evaluation of informative hypotheses in the context of structural equation models is provided by Van Lissa, C., Gu, X., Mulder, J., Rosseel, Y., van Zundert, C. and Hoijtink, H. (2020), Structural Equation Modelling, 28, 292-301. 
+The second containing introduction to Bayesian evaluation of informative hypotheses in the context of structural equation models is provided by Van Lissa, C., Gu, X., Mulder, J., Rosseel, Y., van Zundert, C. and Hoijtink, H. (2020), Structural Equation Modeling, 28, 292-301. 
 
 **Users are
 advised to read these tutorials and this vignette before using `bain`**.
@@ -74,7 +74,7 @@ for dealing with missing values tailored to Bayesian hypothesis
 evaluation is illustrated in Section 2 "Examples Using 
 a `lm` object" in Example e. (based on Hoijtink, Gu, Mulder,
 and Rosseel, 2019).
-2) If `lm()` is used, display the estimates and their names using the command `coef(x)`. (Unique abbreviations of) the names will be used to specify `hypotheses`. If `t_test()` is used, hypotheses have to be specified using the names `x`, `y`, and `difference` (see Examples 1a throught 1e which can be found below).
+2) If `lm()` is used, display the estimates and their names using the command `coef(x)`. (Unique abbreviations of) the names will be used to specify `hypotheses`. If `t_test()` is used, hypotheses have to be specified using the names `x`, `y`, and `difference` (see Examples 1a through 1e which can be found below).
 3) `set.seed(seed)`. Set `seed` equal to an integer 
 number to create a repeatable random number sequence. `bain` uses sampling to compute Bayes factors and posterior model probabilities. It is therefore recommended to run analyses with two different seeds to ensure stability of the results.
 4) `results <- bain(x,hypotheses,fraction = 1)` or `results <-

@@ -2,6 +2,7 @@
 
 * Add column PMPc to bain output object and printed output table
 * Add row Hc to bain output object and printed output table
+* Fix large integer bug in Fortran code
 
 # bain 0.2.6
 

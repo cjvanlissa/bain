@@ -4,10 +4,9 @@
 #' It uses the Bayes factor to evaluate hypotheses specified using equality and
 #' inequality constraints among (linear combinations of) parameters in a wide
 #' range of statistical models. A \strong{tutorial} by Hoijtink, Mulder, van Lissa,
-#' and Gu (2018), was published in
-#' \href{https://www.doi.org/10.1037\%2Fmet0000201}{Psychological Methods}.
-#' The preprint of that tutorial is available at
-#' \href{https://psyarxiv.com/v3shc/}{DOI:10.31234/osf.io/v3shc}, or on the bain
+#' and Gu (2018), was published in Psychological Methods.
+#' The preprint of that tutorial is available on PsyArxiv
+#' (\doi{10.31234/osf.io/v3shc}) or on the bain
 #' website at
 #' \url{https://informative-hypotheses.sites.uu.nl/software/bain/}
 #' \strong{Users are
@@ -44,7 +43,7 @@
 #' Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019).
 #' A tutorial on testing hypotheses using the Bayes factor.
 #' \emph{Psychological Methods, 24,} 539-556.
-#' DOI: 10.1037/met0000201
+#' \doi{10.1037/met0000201}
 #'
 #' @examples
 #' # Evaluation of informative hypotheses for an ANOVA

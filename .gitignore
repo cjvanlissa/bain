@@ -16,3 +16,5 @@ src-x64/
 vignettes/*.R
 vignettes/*.html
 binary/
+/doc/
+/Meta/
