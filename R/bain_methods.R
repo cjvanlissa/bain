@@ -43,7 +43,9 @@
 #' Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019).
 #' A tutorial on testing hypotheses using the Bayes factor.
 #' \emph{Psychological Methods, 24,} 539-556.
-#' \doi{10.1037/met0000201}
+#' <doi:10.1037/met0000201>
+# <\href{https://doi.apa.org/doiLanding?doi=10.1037%2Fmet0000201}
+# {doi:10.1037/met0000201}>
 #'
 #' @examples
 #' # Evaluation of informative hypotheses for an ANOVA

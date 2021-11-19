@@ -69,7 +69,7 @@ See the vignette for additional references.
 Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019).
 A tutorial on testing hypotheses using the Bayes factor.
 \emph{Psychological Methods, 24,} 539-556.
-\doi{10.1037/met0000201}
+<doi:10.1037/met0000201>
 }
 \author{
 The main authors of the bain package are Xin Gu, Caspar
