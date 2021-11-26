@@ -64,12 +64,31 @@ site3>site4")
 
 }
 \references{
-See the vignette for additional references.
+For a tutorial on this method, see:
+Hoijtink, H., Mulder, J., van Lissa, C., & Gu, X. (2019). A tutorial on
+testing hypotheses using the Bayes factor. *Psychological methods, 24*(5),
+539. \doi{10.1037/met0000201}
 
-Hoijtink, H., Mulder, J., van Lissa, C., and Gu, X. (2019).
-A tutorial on testing hypotheses using the Bayes factor.
-\emph{Psychological Methods, 24,} 539-556.
-<doi:10.1037/met0000201>
+For applications in structural equation modeling, see:
+Van Lissa, C. J., Gu, X., Mulder, J., Rosseel, Y., Van Zundert, C., &
+Hoijtink, H. (2021). Teacher’s corner: Evaluating informative hypotheses
+using the Bayes factor in structural equation models.
+*Structural Equation Modeling: A Multidisciplinary Journal, 28*(2), 292-301.
+\doi{10.1080/10705511.2020.1745644}.
+
+For the statistical underpinnings, see:
+
+Gu, Mulder, and Hoijtink (2018). Approximated adjusted fractional Bayes
+factors: A general method for testing informative hypotheses.
+*British Journal of Mathematical and Statistical Psychology, 71*(2), 229-261.
+\doi{10.1111/bmsp.12110}
+Hoijtink, H., Gu, X., & Mulder, J. (2019). Bayesian evaluation of informative
+hypotheses for multiple populations.
+*British Journal of Mathematical and Statistical Psychology, 72*(2), 219-243.
+\doi{10.1111/bmsp.12145}
+Hoijtink, H., Gu, X., Mulder, J., & Rosseel, Y. (2019). Computing Bayes
+factors from data with missing values. *Psychological Methods, 24*(2), 253.
+\doi{10.1037/met0000187}
 }
 \author{
 The main authors of the bain package are Xin Gu, Caspar

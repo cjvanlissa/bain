@@ -14,16 +14,6 @@ Authors@R: c(
     )
 Description: Computes approximated adjusted fractional Bayes factors for
     equality, inequality, and about equality constrained hypotheses.
-    For a tutorial on this method,
-    see Hoijtink, Mulder, Van Lissa, and Gu (2019) <doi:10.1037/met0000201>.
-    For applications in structural equation modeling, see 
-    Van Lissa, Gu, Mulder, Rosseel, Van Zundert, and Hoijtink (2020)
-    <doi:10.1080/10705511.2020.1745644>.
-    The statistical underpinnings are
-    explained in 
-    Gu, Mulder, and Hoijtink (2018) <doi:10.1111/bmsp.12110>,
-    Hoijtink, Gu, and Mulder (2018) <doi:10.1111/bmsp.12145>, and
-    Hoijtink, Gu, Mulder, and Rosseel (2018) <doi:10.1037/met0000187>.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
