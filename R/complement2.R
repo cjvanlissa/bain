@@ -159,15 +159,18 @@ PMPcomplement<-function(results){
 
   subforbain <- paste0(Hcombisubset, collapse=";")
 
-  callfrac <- results$call$fraction
-  if (is.null(callfrac)){callfrac <- 1}
-  callstd <- results$call$standardize
-  if (is.null(callstd)){callstd <- FALSE}
 
+# 29-11-2021 the lines below have been modified to repair the
+# bug detected by JASP. Fraction is now part of the output object
+# and not picked up from the call to bain.
+  # callfrac <- results$call$fraction
+  # if (is.null(callfrac)){callfrac <- 1}
+  # callstd <- results$call$standardize
+  # if (is.null(callstd)){callstd <- FALSE}
   resultscombi <-bain(results$estimates,Sigma=results$Sigma,n=results$n, subforbain,
                  group_parameters = results$group_parameters,
                  joint_parameters = results$joint_parameters,
-                 fraction = callfrac, standardize = callstd,gocomplement = FALSE)
+                 fraction = results$fraction,gocomplement = FALSE)
 
   # store the subforbain fit and com
   Subtel <- 1
@@ -247,6 +250,8 @@ PMPcomplement<-function(results){
   results$fit[,"PMPc"]<-NA
   # remove gocomplement from the list
   results <- results[names(results)!="gocomplement"]
+  # remove fraction from the list
+  results <- results[names(results)!="fraction"]
 
   complf <- 1 - jointfit
   if (complf < 0){complf <- 0}

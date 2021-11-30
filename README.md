@@ -90,8 +90,8 @@ Moreover, you can read the *Introduction to bain* vignette by running
 
 You can cite the R-package with the following citation:
 
-> Gu, X., Hoijtink, H., Mulder, J., & van Lissa, C. (2019). bain: Bayes
-> factors for informative hypotheses. (Version 0.2.3) \[R package\].
+> Gu, X., Hoijtink, H., Mulder, J., & van Lissa, C. (2021). bain: Bayes
+> factors for informative hypotheses. (Version 0.2.8) \[R package\].
 > <https://CRAN.R-project.org/package=bain>
 
 ## Contributing and Contact Information
