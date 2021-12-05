@@ -204,7 +204,7 @@ restest <- c(.396,.052)
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[6],results2$fit$Com[6]),
                                 c(1 - (sum(results2$fit$Fit[c(1:3)]) - restest[1]),
-                                  1 - (sum(results2$fit$Com[c(1:3)]) - restest[2])), tolerance = .006 )})
+                                  1 - (sum(results2$fit$Com[c(1:3)]) - restest[2])), tolerance = .008 )})
 # test BFcu
 test_that("BFcu", {expect_equal(results2$fit$BF.u[6],results2$fit$Fit[6]/results2$fit$Com[6])})
 # test PMPc
@@ -258,7 +258,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[6],results2$fit$Com[6]),
                - sum(resc[1:6])
                + sum(resc[7:10])
                - sum(resc[11]  )
-          )), tolerance = .008           )})
+          )), tolerance = .025           )})
 
 # test BFcu
 test_that("BFcu", {expect_equal(results2$fit$BF.u[6],results2$fit$Fit[6]/results2$fit$Com[6])})
@@ -295,7 +295,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                   1 - (sum(results2$fit$Com[1:3])
                                        - sum(resc[1:3])
                                        + sum(resc[4])
-                                          ))   , tolerance = .006        )})
+                                          ))   , tolerance = .008       )})
 
 # test BFcu
 test_that("BFcu", {expect_equal(results2$fit$BF.u[5],results2$fit$Fit[5]/results2$fit$Com[5])})
@@ -747,7 +747,7 @@ results2 <- bain(anov, "
 test_that("fc", {expect_equal(  c(results2$fit$Fit[4],results2$fit$Com[4]),
                                 c(1-results2$fit$Fit[2],
                                   1-results2$fit$Com[2]
-                                ) ,tolerance = .005
+                                ) ,tolerance = .010
 )})
 
 # ==============================================================================
@@ -776,7 +776,7 @@ resc <- c(.004,.000)
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                 c(1-sum(results2$fit$Fit[1:3]) + sum(resf[1:2]),
                                   1-sum(results2$fit$Com[1:3]) + sum(resc[1:2])
-                                  ), tolerance = .005
+                                  ), tolerance = .007
 )})
 
 

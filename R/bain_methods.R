@@ -124,10 +124,9 @@ bain.lm <-
            hypothesis,
            fraction = 1,
            ...,
-          standardize = FALSE,
-          gocomplement = TRUE) {    # gocomplement is the exit for the
-                                    # recursive use of bain when calling
-                                    # PMPcomplement at the end of bain_methods
+           standardize = FALSE
+           ) {
+
     cl <- match.call()
     Args <- as.list(cl[-1])
 
@@ -263,8 +262,7 @@ bain.lm <-
 #' @method bain lavaan
 #' @importFrom lavaan parTable lavInspect
 #' @export
-bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = FALSE,
-                        gocomplement = TRUE) {
+bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = FALSE) {
   cl <- match.call()
   Args <- as.list(cl[-1])
   if(standardize){
@@ -306,8 +304,8 @@ bain.htest <-
   function(x,
            hypothesis,
            fraction = 1,
-           ...,
-           gocomplement = TRUE) {
+           ...
+           ) {
     stop("The standard t.test() function from the 'stats' package does not return variance and sample size, which are required to run bain. Please use the function t_test() from the 'bain' package instead. It accepts the same arguments.")
 }
 
@@ -317,7 +315,8 @@ bain.t_test <-
   function(x,
            hypothesis,
            fraction = 1,
-           ...) {
+           ...
+           ) {
       cl <- match.call()
       Args <- as.list(cl[-1])
       ests <- get_estimates(x)
@@ -364,6 +363,9 @@ bain.default <- function(x,
                          joint_parameters = 0,
                          gocomplement = TRUE
                          )
+  # gocomplement is the exit for the
+  # recursive use of bain when calling
+  # PMPcomplement at the end of bain_methods
 {
 
   cl <- match.call()
@@ -708,6 +710,9 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
     Sigma = Sigma,
     group_parameters = group_parameters,
     joint_parameters = joint_parameters,
+# 29-11-2021 fraction has temporarily been added to the bain output object
+# will be removed again later
+    fraction = fraction,
     gocomplement = gocomplement
   )
 
