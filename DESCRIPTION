@@ -1,6 +1,6 @@
 Package: bain
 Type: Package
-Date: 2021-11-30
+Date: 2021-12-06
 Title: Bayes Factors for Informative Hypotheses
 Version: 0.2.8
 Authors@R: c(
