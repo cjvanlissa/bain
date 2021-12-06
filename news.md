@@ -1,3 +1,7 @@
+# bain 0.2.8
+
+* Minor bugfix to ensure compatibility with JASP
+
 # bain 0.2.7
 
 * Add column PMPc to bain output object and printed output table

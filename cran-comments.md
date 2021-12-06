@@ -1,11 +1,9 @@
-# Version 0.2.7
+# Version 0.2.8
 
-* Add column PMPc to bain output object and printed output table
-* Add row Hc to bain output object and printed output table
-* Fix large integer bug in Fortran code
+* Minor bugfix to ensure compatibility with JASP
 
 ## Test environments
-* local x86_64-pc-linux-gnu, R 4.0.3
+* local x86_64-pc-linux-gnu, R 4.1.0
 * rhub check: Windows Server 2008 R2 SP1, R-devel, 32/64 bit
 * rhub check: Ubuntu Linux 20.04.1 LTS, R-release, GCC
 * rhub check: Fedora Linux, R-devel, clang, gfortran
