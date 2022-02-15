@@ -129,7 +129,7 @@ get_estimates.matrix <- function(x, ...){
   names(estimate) <- paste0(x$Var1, "_with_", x$Var2)
   out <- list(estimate = estimate,
               Sigma = NULL)
-  class(out) <- "model_estimates"
+  class(out) <- c("model_estimates", class(out))
   attr(out, "analysisType") <- "correlation"
   out
 }
@@ -140,7 +140,7 @@ get_estimates.matrix <- function(x, ...){
 get_estimates.lm <- function(x, ...){
   out <- list(estimate = coef(x),
               Sigma = vcov(x))
-  class(out) <- "model_estimates"
+  class(out) <- c("model_estimates", class(out))
   attr(out, "analysisType") <- "lm"
   out
 }
@@ -161,7 +161,7 @@ get_estimates.t_test <- function(x, ...){
   #   nams <- gsub("mean of ", "", names(out$estimate), fixed = TRUE)
   # } else {names(rval$estimate) <- c("x","y")}
   names(out$estimate) <- nams
-  class(out) <- "model_estimates"
+  class(out) <- c("model_estimates", class(out))
   attr(out, "analysisType") <- "htest"
   out
 }
@@ -172,7 +172,7 @@ get_estimates.lavaan <- function(x, standardize = FALSE, ...){
   cl <- as.list(match.call()[-1])
   out <- do.call(lav_get_estimates, cl)
   names(out)[which(names(out) == "x")] <- "estimate"
-  class(out) <- "model_estimates"
+  class(out) <- c("model_estimates", class(out))
   attr(out, "analysisType") <- "lavaan"
   out
 }
