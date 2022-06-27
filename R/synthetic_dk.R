@@ -6,37 +6,39 @@
 #' Cooperation questionnaire, MAC; see Curry et al., 2019) and political
 #' orientation.
 #'
-# \tabular{lll}{
-#   \strong{sex} \tab \code{integer} \tab Sex of the child; 1 = boy, 2 = girl\cr
-#   \strong{site} \tab \code{integer} \tab Site of the child's origin; 1 = disadvantaged inner city, 2 =
-#    advantaged suburban , 3 = advantaged rural,
-#   4 = disadvantaged rural, 5 = disadvantaged Spanish speaking\cr
-#   \strong{setting} \tab \code{integer} \tab Setting in which the child watches Sesame Street; 1 = at
-#   home, 2 = at school\cr
-#   \strong{age} \tab \code{integer} \tab Age of the child in months\cr
-#   \strong{viewenc} \tab \code{integer} \tab Whether or not the child is encouraged to watch Sesame
-#   Street; 0 = no, 1 = yes\cr
-#   \strong{peabody} \tab \code{integer} \tab Peabody mental age score of the child; the higher the
-#   score the higher the mental age\cr
-#   \strong{prenumb} \tab \code{integer} \tab score on a numbers test before watching Sesame Street for
-#   a year\cr
-#   \strong{postnumb} \tab \code{integer} \tab score on a numbers test after watching Sesame Street for
-#   a year\cr
-#   \strong{funumb} \tab \code{integer} \tab follow up numbers test score measured one year after
-#   postnumb\cr
-#   \strong{Bb} \tab \code{integer} \tab Knowledge of body parts before\cr
-#   \strong{Bl} \tab \code{integer} \tab Knowledge of letters before\cr
-#   \strong{Bf} \tab \code{integer} \tab Knowledge of forms before\cr
-#   \strong{Bn} \tab \code{integer} \tab Knowledge of numbers before\cr
-#   \strong{Br} \tab \code{integer} \tab Knowledge of relations before\cr
-#   \strong{Bc} \tab \code{integer} \tab Knowledge of classifications before\cr
-#   \strong{Ab} \tab \code{integer} \tab Knowledge of body parts after\cr
-#   \strong{Al} \tab \code{integer} \tab Knowledge of letters after\cr
-#   \strong{Af} \tab \code{integer} \tab Knowledge of forms after\cr
-#   \strong{An} \tab \code{integer} \tab Knowledge of numbers after\cr
-#   \strong{Ar} \tab \code{integer} \tab Knowledge of relations after\cr
-#   \strong{Ac} \tab \code{integer} \tab Knowledge of classifications after
-# }
+#' \tabular{lll}{
+#'   \strong{sepa_soc_1} \tab \code{numeric} \tab Item 1 of the Policy Attitudes social (PA-social) scale.\cr
+#'   \strong{sepa_soc_2} \tab \code{numeric} \tab Item 2 of the Policy Attitudes social (PA-social) scale.\cr
+#'   \strong{sepa_soc_3} \tab \code{numeric} \tab Item 3 of the Policy Attitudes social (PA-social) scale.\cr
+#'   \strong{sepa_soc_4} \tab \code{numeric} \tab Item 4 of the Policy Attitudes social (PA-social) scale.\cr
+#'   \strong{sepa_soc_5} \tab \code{numeric} \tab Item 5 of the Policy Attitudes social (PA-social) scale.\cr
+#'   \strong{sepa_eco_1} \tab \code{numeric} \tab Item 1 of the Policy Attitudes economic (PA-economic) scale.\cr
+#'   \strong{sepa_eco_2} \tab \code{numeric} \tab Item 2 of the Policy Attitudes economic (PA-economic) scale.\cr
+#'   \strong{sepa_eco_3} \tab \code{numeric} \tab Item 3 of the Policy Attitudes economic (PA-economic) scale.\cr
+#'   \strong{sepa_eco_4} \tab \code{numeric} \tab Item 4 of the Policy Attitudes economic (PA-economic) scale.\cr
+#'   \strong{sepa_eco_5} \tab \code{numeric} \tab Item 5 of the Policy Attitudes economic (PA-economic) scale.\cr
+#'   \strong{fam_1} \tab \code{numeric} \tab Item 1 of the MAC (family subscale) scale.\cr
+#'   \strong{fam_2} \tab \code{numeric} \tab Item 2 of the MAC (family subscale) scale.\cr
+#'   \strong{fam_3} \tab \code{numeric} \tab Item 3 of the MAC (family subscale) scale.\cr
+#'   \strong{grp_1} \tab \code{numeric} \tab Item 1 of the MAC (group subscale) scale.\cr
+#'   \strong{grp_2} \tab \code{numeric} \tab Item 2 of the MAC (group subscale) scale.\cr
+#'   \strong{grp_3} \tab \code{numeric} \tab Item 3 of the MAC (group subscale) scale.\cr
+#'   \strong{rec_1} \tab \code{numeric} \tab Item 1 of the MAC (reciprocity subscale) scale.\cr
+#'   \strong{rec_2} \tab \code{numeric} \tab Item 2 of the MAC (reciprocity subscale) scale.\cr
+#'   \strong{rec_3} \tab \code{numeric} \tab Item 3 of the MAC (reciprocity subscale) scale.\cr
+#'   \strong{her_1} \tab \code{numeric} \tab Item 1 of the MAC (heroism subscale) scale.\cr
+#'   \strong{her_2} \tab \code{numeric} \tab Item 2 of the MAC (heroism subscale) scale.\cr
+#'   \strong{her_3} \tab \code{numeric} \tab Item 3 of the MAC (heroism subscale) scale.\cr
+#'   \strong{def_1} \tab \code{numeric} \tab Item 1 of the MAC (deference subscale) scale.\cr
+#'   \strong{def_2} \tab \code{numeric} \tab Item 2 of the MAC (deference subscale) scale.\cr
+#'   \strong{def_3} \tab \code{numeric} \tab Item 3 of the MAC (deference subscale) scale.\cr
+#'   \strong{fai_1} \tab \code{numeric} \tab Item 1 of the MAC (fairness subscale) scale.\cr
+#'   \strong{fai_2} \tab \code{numeric} \tab Item 2 of the MAC (fairness subscale) scale.\cr
+#'   \strong{fai_3} \tab \code{numeric} \tab Item 3 of the MAC (fairness subscale) scale.\cr
+#'   \strong{pro_1} \tab \code{numeric} \tab Item 1 of the MAC (property subscale) scale.\cr
+#'   \strong{pro_2} \tab \code{numeric} \tab Item 2 of the MAC (property subscale) scale.\cr
+#'   \strong{pro_3} \tab \code{numeric} \tab Item 3 of the MAC (property subscale) scale.\cr
+#' }
 #' @docType data
 #' @keywords datasets
 #' @name synthetic_dk
@@ -48,5 +50,5 @@
 #' Curry, O. S., Chesters, M. J., & Van Lissa, C. J. (2019). Mapping morality
 #' with a compass: Testing the theory of ‘morality-as-cooperation’with a new
 #' questionnaire. Journal of Research in Personality, 78, 106-124.
-#' @format A data frame with 518 rows and 33 variables.
+#' @format A data frame with 552 rows and 31 variables.
 NULL

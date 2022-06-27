@@ -17,6 +17,43 @@ associations between moral dispositions (measured using the Morality As
 Cooperation questionnaire, MAC; see Curry et al., 2019) and political
 orientation.
 }
+\details{
+\tabular{lll}{
+  \strong{secs_soc_1} \tab \code{numeric} \tab Item 1 of the Social and Economic Conservatism Scale (social subscale) scale.\cr
+  \strong{secs_soc_2} \tab \code{numeric} \tab Item 2 of the Social and Economic Conservatism Scale (social subscale) scale.\cr
+  \strong{secs_soc_3} \tab \code{numeric} \tab Item 3 of the Social and Economic Conservatism Scale (social subscale) scale.\cr
+  \strong{secs_soc_4} \tab \code{numeric} \tab Item 4 of the Social and Economic Conservatism Scale (social subscale) scale.\cr
+  \strong{secs_soc_5} \tab \code{numeric} \tab Item 5 of the Social and Economic Conservatism Scale (social subscale) scale.\cr
+  \strong{secs_soc_6} \tab \code{numeric} \tab Item 6 of the Social and Economic Conservatism Scale (social subscale) scale.\cr
+  \strong{secs_soc_7} \tab \code{numeric} \tab Item 7 of the Social and Economic Conservatism Scale (social subscale) scale.\cr
+  \strong{secs_eco_1} \tab \code{numeric} \tab Item 1 of the Social and Economic Conservatism Scale (economic subscale) scale.\cr
+  \strong{secs_eco_2} \tab \code{numeric} \tab Item 2 of the Social and Economic Conservatism Scale (economic subscale) scale.\cr
+  \strong{secs_eco_3} \tab \code{numeric} \tab Item 3 of the Social and Economic Conservatism Scale (economic subscale) scale.\cr
+  \strong{secs_eco_4} \tab \code{numeric} \tab Item 4 of the Social and Economic Conservatism Scale (economic subscale) scale.\cr
+  \strong{secs_eco_5} \tab \code{numeric} \tab Item 5 of the Social and Economic Conservatism Scale (economic subscale) scale.\cr
+  \strong{fam_1} \tab \code{numeric} \tab Item 1 of the MAC (family subscale) scale.\cr
+  \strong{fam_2} \tab \code{numeric} \tab Item 2 of the MAC (family subscale) scale.\cr
+  \strong{fam_3} \tab \code{numeric} \tab Item 3 of the MAC (family subscale) scale.\cr
+  \strong{grp_1} \tab \code{numeric} \tab Item 1 of the MAC (group subscale) scale.\cr
+  \strong{grp_2} \tab \code{numeric} \tab Item 2 of the MAC (group subscale) scale.\cr
+  \strong{grp_3} \tab \code{numeric} \tab Item 3 of the MAC (group subscale) scale.\cr
+  \strong{rec_1} \tab \code{numeric} \tab Item 1 of the MAC (reciprocity subscale) scale.\cr
+  \strong{rec_2} \tab \code{numeric} \tab Item 2 of the MAC (reciprocity subscale) scale.\cr
+  \strong{rec_3} \tab \code{numeric} \tab Item 3 of the MAC (reciprocity subscale) scale.\cr
+  \strong{her_1} \tab \code{numeric} \tab Item 1 of the MAC (heroism subscale) scale.\cr
+  \strong{her_2} \tab \code{numeric} \tab Item 2 of the MAC (heroism subscale) scale.\cr
+  \strong{her_3} \tab \code{numeric} \tab Item 3 of the MAC (heroism subscale) scale.\cr
+  \strong{def_1} \tab \code{numeric} \tab Item 1 of the MAC (deference subscale) scale.\cr
+  \strong{def_2} \tab \code{numeric} \tab Item 2 of the MAC (deference subscale) scale.\cr
+  \strong{def_3} \tab \code{numeric} \tab Item 3 of the MAC (deference subscale) scale.\cr
+  \strong{fai_1} \tab \code{numeric} \tab Item 1 of the MAC (fairness subscale) scale.\cr
+  \strong{fai_2} \tab \code{numeric} \tab Item 2 of the MAC (fairness subscale) scale.\cr
+  \strong{fai_3} \tab \code{numeric} \tab Item 3 of the MAC (fairness subscale) scale.\cr
+  \strong{pro_1} \tab \code{numeric} \tab Item 1 of the MAC (property subscale) scale.\cr
+  \strong{pro_2} \tab \code{numeric} \tab Item 2 of the MAC (property subscale) scale.\cr
+  \strong{pro_3} \tab \code{numeric} \tab Item 3 of the MAC (property subscale) scale.
+}
+}
 \references{
 Van Leeuwen, F., Van Lissa, C. J., Papakonstantinou, T.,
 Petersen, M., & Curry, O. S. (2022, May 25). Morality as Cooperation,
