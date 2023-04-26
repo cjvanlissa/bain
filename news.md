@@ -1,3 +1,7 @@
+# bain 0.2.9
+
+* Add pbf() function to compute product Bayes factors
+
 # bain 0.2.8
 
 * Minor bugfix to ensure compatibility with JASP

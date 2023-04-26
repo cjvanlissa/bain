@@ -1,8 +1,7 @@
 Package: bain
 Type: Package
-Date: 2021-12-06
 Title: Bayes Factors for Informative Hypotheses
-Version: 0.2.8
+Version: 0.2.9
 Authors@R: c(
     person(c("Xin"), "Gu", role = c("aut"), email = "guxin57@hotmail.com"),
     person(c("Herbert"), "Hoijtink", role = c("aut"), email = "h.hoijtink@uu.nl"),
@@ -27,7 +26,7 @@ LazyData: true
 URL: https://informative-hypotheses.sites.uu.nl/software/bain/
 BugReports: https://github.com/cjvanlissa/bain/
 NeedsCompilation: yes
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Depends:
     R (>= 3.0.0),
     stats
