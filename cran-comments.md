@@ -1,6 +1,7 @@
-# Version 0.2.9
+# bain 0.2.9
 
-* Minor bugfix to ensure compatibility with JASP
+* Update maintainer email address
+* Add pbf() function to compute product Bayes factors
 
 ## Test environments
 * local x86_64-pc-linux-gnu, R 4.2.2
@@ -11,10 +12,11 @@
 * win-builder: 4.2.3 (2023-03-15 ucrt)
 * win-builder: 4.3.0 (2023-04-21 ucrt)
 * win-builder: R Under development (unstable) (2023-04-25 r84327 ucrt)
-* GitHub actions, windows-latest (release)
-* GitHub actions, macOS-latest (release)
-* GitHub actions, ubuntu-20.04 (release)
-* GitHub actions, ubuntu-20.04 (devel)
+* GitHub Actions: macos-latest, r: release 
+* GitHub Actions: windows-latest, r: release 
+* GitHub Actions: ubuntu-latest, r: devel, http-user-agent: release 
+* GitHub Actions: ubuntu-latest, r: release 
+* GitHub Actions: ubuntu-latest, r: oldrel-1
 
 ## R CMD check results
 

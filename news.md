@@ -1,5 +1,6 @@
 # bain 0.2.9
 
+* Update maintainer email address
 * Add pbf() function to compute product Bayes factors
 
 # bain 0.2.8
