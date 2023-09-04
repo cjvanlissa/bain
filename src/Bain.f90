@@ -332,17 +332,13 @@ end subroutine
 
 
 
-
-
-
-
 subroutine forc(numER,numIR,rowrank,bet,transcon,invbetadiag,B,transR,f_or_c,Numfc,seed)
 
 implicit none
 
 integer                                                                :: N, i, j, k, time, nn
 integer, intent(in)                                                    :: seed
-integer, allocatable, dimension(:)                                     :: iseed
+integer                                                                :: iseed
 integer, intent(in)                                                    :: numER, numIR, rowrank
 integer, dimension(numIR)                                              :: Num
 integer, intent(out)                                                   :: Numfc
@@ -358,12 +354,7 @@ double precision, dimension(numER+rowrank,numER+rowrank), intent(in)   :: B
 double precision, dimension(numIR,numIR), intent(in)                   :: transR
 double precision, intent(out)                                          :: f_or_c
 
-
-
-call RANDOM_SEED(size=nn)
-allocate(iseed(nn))
-iseed(:)=seed
-call RANDOM_SEED(put=iseed)
+iseed = seed
 
 do k = 1,numIR
 
@@ -384,7 +375,7 @@ else if (i<(k+numER)) then ! When computing the probability of beta_{k}>0, beta_
 
 ! lower bound is 0, but it has to be standardized.
 lower=(0-conmeans(i))/sqrt(1/invbetadiag(i))
-call random_number(GG)! This function generates a pseudorandom number from a uniform (0,1) distribution
+GG = runiform(iseed)! This function generates a pseudorandom number from a uniform (0,1) distribution
 
 ! "cumnor" returns a probability that a normal random variable takes a value less than or equal to "lower"
 p=cumnor(lower)+GG*(1-cumnor(lower))
@@ -398,7 +389,7 @@ temp=dinvnr(p)
 ! Gibbs sample of beta_{k} is then obtained
 gibbsample(i)=temp*sqrt(1/invbetadiag(i))+conmeans(i)
 else ! if i>k, sample is unconstrained.
-gibbsample(i)=rnormal()*sqrt(1/invbetadiag(i))+conmeans(i)
+gibbsample(i)=rnormal(iseed)*sqrt(1/invbetadiag(i))+conmeans(i)
 end if
 end do   ! one iteration of gibbs sample ends.
 
@@ -464,7 +455,7 @@ end do
 end if
 lower=(large-conmeans(i))/sqrt(1/invbetadiag(i))
 upper=(small-conmeans(i))/sqrt(1/invbetadiag(i))
-call random_number(GG) ! This function generates a pseudorandom number from a uniform (0,1) distribution
+GG = runiform(iseed) ! This function generates a pseudorandom number from a uniform (0,1) distribution
 ! "cumnor" returns a probability that a normal random variable takes a value less than or equal to "lower"
 p=cumnor(lower)+GG*(cumnor(upper)-cumnor(lower))
 
@@ -519,7 +510,7 @@ end do
 
 contains
 
-function rnormal ()
+function rnormal ( iseed )
 
 !*****************************************************************************80
 !
@@ -554,13 +545,11 @@ real ( kind = 8 ) r1
 real ( kind = 8 ) r2
 real ( kind = 8 ) rnormal
 real ( kind = 8 ), parameter :: pi = 3.141592653589793D+00
-real ( kind = 8 ) GG
 real ( kind = 8 ) x
+integer ( kind = 4 ) iseed
 
-call random_number(GG)
-r1 = GG
-call random_number(GG)
-r2 = GG
+r1 = runiform (iseed)
+r2 = runiform (iseed + 12345)
 x = sqrt ( - 2.0D+00 * log ( r1 ) ) * cos ( 2.0D+00 * pi * r2 )
 
 rnormal = x
@@ -959,6 +948,106 @@ eval_pol = term
 
 return
 end function
+
+
+function runiform ( iseed )
+
+!*****************************************************************************80
+!
+!! RUNIFORM returns a unit pseudorandom R8.
+!
+!  Discussion:
+!
+!    An R8 is a real ( kind = 8 ) value.
+!
+!    For now, the input quantity iseed is an integer variable.
+!
+!    This routine implements the recursion
+!
+!      iseed = ( 16807 * iseed ) mod ( 2^31 - 1 )
+!      runiform = iseed / ( 2^31 - 1 )
+!
+!    The integer arithmetic never requires more than 32 bits,
+!    including a sign bit.
+!
+!    If the initial iseed is 12345, then the first three computations are
+!
+!      Input     Output      RUNIFORM
+!      iseed      iseed
+!
+!         12345   207482415  0.096616
+!     207482415  1790989824  0.833995
+!    1790989824  2035175616  0.947702
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    31 May 2007
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    Paul Bratley, Bennett Fox, Linus Schrage,
+!    A Guide to Simulation,
+!    Second Edition,
+!    Springer, 1987,
+!    ISBN: 0387964673,
+!    LC: QA76.9.C65.B73.
+!
+!    Bennett Fox,
+!    Algorithm 647:
+!    Implementation and Relative Efficiency of Quasirandom
+!    Sequence Generators,
+!    ACM Transactions on Mathematical Software,
+!    Volume 12, Number 4, December 1986, pages 362-376.
+!
+!    Pierre L'Ecuyer,
+!    Random Number Generation,
+!    in Handbook of Simulation,
+!    edited by Jerry Banks,
+!    Wiley, 1998,
+!    ISBN: 0471134031,
+!    LC: T57.62.H37.
+!
+!    Peter Lewis, Allen Goodman, James Miller,
+!    A Pseudo-Random Number Generator for the System/360,
+!    IBM Systems Journal,
+!    Volume 8, Number 2, 1969, pages 136-143.
+!
+!  Parameters:
+!
+!    Input/output, integer ( kind = 8 ) iseed, the "iseed" value, which should
+!    NOT be 0. On output, iseed has been updated.
+!
+!    Output, real ( kind = 8 ) RUNIFORM, a new pseudorandom variate,
+!    strictly between 0 and 1.
+!
+  implicit none
+
+  integer ( kind = 4 ), parameter :: i4_huge = 2147483647
+  integer ( kind = 4 ) k
+  real ( kind = 8 ) runiform
+  integer ( kind = 4 ) iseed
+
+  k = iseed / 127773
+
+  iseed = 16807 * ( iseed - k * 127773 ) - k * 2836
+
+  if ( iseed < 0 ) then
+    iseed = iseed + i4_huge
+  end if
+
+  runiform = real ( iseed, kind = 8 ) * 4.656612875D-10
+
+return
+end function
+
 
 
 end subroutine

@@ -117,7 +117,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
 test_that("BFcu", {expect_equal(results2$fit$BF.u[5],results2$fit$Fit[5]/results2$fit$Com[5])})
 # test PMPc
 test_that("PMPc", {expect_equal(  results2$fit$BF.u[c(1,2,3,5)]/sum(results2$fit$BF.u[c(1,2,3,5)]),
-                                results2$fit$PMPc[c(1,2,3,5)]  )  })
+                                  results2$fit$PMPc[c(1,2,3,5)]  )  })
 
 # ==============================================================================
 
@@ -134,8 +134,8 @@ restest <- c(.396,.052)
 
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[4],results2$fit$Com[4]),
-                       c(1 - (sum(results2$fit$Fit[1:2]) - restest[1]),
-                         1 - (sum(results2$fit$Com[1:2]) - restest[2])) , tolerance = .004)})
+                                c(1 - (sum(results2$fit$Fit[1:2]) - restest[1]),
+                                  1 - (sum(results2$fit$Com[1:2]) - restest[2])) , tolerance = .004)})
 # test BFcu
 test_that("BFcu", {expect_equal(results2$fit$BF.u[4],results2$fit$Fit[4]/results2$fit$Com[4])})
 # test PMPc
@@ -250,15 +250,15 @@ resc <- c(.052,.017,.058,.254,.330,.333,.017,.051,.017,.250,.017)
 
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[6],results2$fit$Com[6]),
-        c(1 - (sum(results2$fit$Fit[1:4])
-               - sum(resf[1:6])
-               + sum(resf[7:10])
-               - sum(resf[11])),
-          1 - (sum(results2$fit$Com[1:4])
-               - sum(resc[1:6])
-               + sum(resc[7:10])
-               - sum(resc[11]  )
-          )), tolerance = .025           )})
+                                c(1 - (sum(results2$fit$Fit[1:4])
+                                       - sum(resf[1:6])
+                                       + sum(resf[7:10])
+                                       - sum(resf[11])),
+                                  1 - (sum(results2$fit$Com[1:4])
+                                       - sum(resc[1:6])
+                                       + sum(resc[7:10])
+                                       - sum(resc[11]  )
+                                  )), tolerance = .025           )})
 
 # test BFcu
 test_that("BFcu", {expect_equal(results2$fit$BF.u[6],results2$fit$Fit[6]/results2$fit$Com[6])})
@@ -295,7 +295,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                   1 - (sum(results2$fit$Com[1:3])
                                        - sum(resc[1:3])
                                        + sum(resc[4])
-                                          ))   , tolerance = .008       )})
+                                  ))   , tolerance = .008       )})
 
 # test BFcu
 test_that("BFcu", {expect_equal(results2$fit$BF.u[5],results2$fit$Fit[5]/results2$fit$Com[5])})
@@ -308,7 +308,7 @@ test_that("PMPc", {expect_equal(results2$fit$BF.u[c(1,2,3,5)]/sum(results2$fit$B
 # TEST 7b: Two >< Hypotheses, one about equal hypothesis, CALL WITH LM
 #          TEST MET REDUNDANTIE HYPOTHESES
 anov <- lm(influence~group-1,ldata)
-set.seed(994)
+set.seed(99)
 results3 <- bain(anov, "group3 > group4 > (group2, group1);
                        group5 > (group2, group1); -1 < group5 - group3 < 1;
                        group3 > group4 > (group2, group1);
@@ -318,7 +318,7 @@ results3 <- bain(anov, "group3 > group4 > (group2, group1);
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                 c(results3$fit$Fit[8],results3$fit$Com[8]), tolerance = .038
-                                 )})
+)})
 
 # ==============================================================================
 
@@ -395,7 +395,7 @@ test_that("BFcu", {expect_equal(results2$fit$BF.u[6],results2$fit$Fit[6]/
                                   results2$fit$Com[6])})
 # test PMPc
 test_that("PMPc", {expect_equal(results2$fit$BF.u[c(1,2,3,4,6)]/
-                                sum(results2$fit$BF.u[c(1,2,3,4,6)]),
+                                  sum(results2$fit$BF.u[c(1,2,3,4,6)]),
                                 results2$fit$PMPc[c(1,2,3,4,6)])})
 
 # ==============================================================================
@@ -527,8 +527,8 @@ resc <- c(.050)
 
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[6],results2$fit$Com[6]),
-  c(1-(results2$fit$Fit[1]+results2$fit$Fit[3]-resf),
-    1-(results2$fit$Com[1]+results2$fit$Com[3]-resc) )  , tolerance = .004  )})
+                                c(1-(results2$fit$Fit[1]+results2$fit$Fit[3]-resf),
+                                  1-(results2$fit$Com[1]+results2$fit$Com[3]-resc) )  , tolerance = .004  )})
 
 
 # ==============================================================================
@@ -568,7 +568,7 @@ set.seed(100)
 results2 <-bain(estimate, "pre1 - pre2 = post1 - post2 = fu1 -fu2;
 pre1 - pre2 > post1 - post2 > fu1 -fu2;
 fu1 -fu2 > post1 - post2 > pre1 - pre2"  , n=ngroup, Sigma=covariance,
-               group_parameters=3, joint_parameters = 0)
+                group_parameters=3, joint_parameters = 0)
 
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
@@ -615,15 +615,15 @@ resc <- c(.096,.095,.019,.098,.018,.019,.100,.018,.020,.021,.019)
 
 test_that("PMPc", {expect_equal(c(results2$fit$Fit[7],results2$fit$Com[7]),
                                 c(1 - (sum(results2$fit$Fit[1:5]) - sum(resf[1:6])
-+ sum(resf[7:10]) - resf[11]),1 - (sum(results2$fit$Com[1:5]) - sum(resc[1:6])
-     + sum(resc[7:10]) - resc[11]))   ,tolerance = .05  )})
+                                       + sum(resf[7:10]) - resf[11]),1 - (sum(results2$fit$Com[1:5]) - sum(resc[1:6])
+                                                                          + sum(resc[7:10]) - resc[11]))   ,tolerance = .05  )})
 
 # ==============================================================================
 
 # TEST 24a: TESTING ABOUTS AND ORDER
 
 anov <- lm(influence~group-1,ldata)
-set.seed(99)
+set.seed(997)
 results2 <- bain(anov, "2 < group1 < 3 & 3 <  group3 < 4 &
                        2.5 < group5 < 3.5 ;
                        group1 < group5 - .5 < group3 -.5")
@@ -637,9 +637,9 @@ resc <- .004
 
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[4],results2$fit$Com[4]),
-   c(1-(results2$fit$Fit[1]+results2$fit$Fit[2]-resf[1]) ,
-     1-(results2$fit$Com[1]+results2$fit$Com[2]-resc[1]) ), tolerance = .006
-     )})
+                                c(1-(results2$fit$Fit[1]+results2$fit$Fit[2]-resf[1]) ,
+                                  1-(results2$fit$Com[1]+results2$fit$Com[2]-resc[1]) ), tolerance = .006
+)})
 
 # ==============================================================================
 
@@ -701,7 +701,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
 # TEST 24e: TESTING ABOUTS
 
 anov <- lm(influence~group-1,ldata)
-set.seed(99)
+set.seed(76)
 results2 <- bain(anov, "
 -1 < group1 - group2 < 1 ;  -1 < group1 - group3 < 1 ;  -1 > group2 - group3 > 1
                 ")
@@ -776,7 +776,7 @@ resc <- c(.004,.000)
 test_that("fc", {expect_equal(  c(results2$fit$Fit[5],results2$fit$Com[5]),
                                 c(1-sum(results2$fit$Fit[1:3]) + sum(resf[1:2]),
                                   1-sum(results2$fit$Com[1:3]) + sum(resc[1:2])
-                                  ), tolerance = .007
+                                ), tolerance = .007
 )})
 
 
@@ -792,8 +792,8 @@ results2 <- bain(anov, "group1 < group2 < 2 * group1; -group1 < group2 < group1"
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[4],results2$fit$Com[4]),
                                 c(
-                                1-results2$fit$Fit[1]-results2$fit$Fit[2],
-                                1-results2$fit$Com[1]-results2$fit$Com[2]
+                                  1-results2$fit$Fit[1]-results2$fit$Fit[2],
+                                  1-results2$fit$Com[1]-results2$fit$Com[2]
                                 )  , tolerance = .005
 )})
 
@@ -841,7 +841,7 @@ resc <- c(.137,.181)
 # test fit and complexity of the complement
 test_that("fc", {expect_equal(  c(results2$fit$Fit[7],results2$fit$Com[7]),
                                 c(1-sum(results2$fit$Fit[2:5])+sum(resf[1:2]),
-1-sum(results2$fit$Com[2:5])+sum(resc[1:2])
+                                  1-sum(results2$fit$Com[2:5])+sum(resc[1:2])
                                 ) ,tolerance = .009
 )})
 
@@ -850,7 +850,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[7],results2$fit$Com[7]),
 # TEST 26c: TESTING WITH REALISTIC SITUATIONS
 
 anov <- lm(influence~group-1,ldata)
-set.seed(99)
+set.seed(999)
 results2 <- bain(anov, "
 group1 - group2 + 1 = 2 * group2 - 2 * group3 + 4= 3 * group3 - 3 *group4 + 2;
 group1 - group2 + 1 > (2 * group2 - 2 * group3 + 4, 3 * group3 - 3 *group4 + 2);
@@ -882,7 +882,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[7],results2$fit$Com[7]),
 # TEST 26d: TESTING WITH REALISTIC SITUATIONS
 
 anov <- lm(influence~group-1,ldata)
-set.seed(99)
+set.seed(999)
 results2 <- bain(anov, "
 group1 - group2 + 1 = 2 * group2 - 2 * group3 + 4= 3 * group3 - 3 *group4 + 2;
 group1 - group2 + 1 > (2 * group2 - 2 * group3 + 4, 3 * group3 - 3 *group4 + 2);
