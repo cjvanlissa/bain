@@ -11,8 +11,10 @@ cov <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 set.seed(2)
 y<-bain(estimate,"a>-.96 & a < 2.96 & b>-.96 & b < 2.96 & c>-.96 & c < 2.96",n=sampN,Sigma=cov,group_parameters=0,joint_parameters = 3)
 
+# This test intentionally fails, because we allow bain 0.2.9's random seeds to
+# be not compatible with < 0.2.9:
 test_that("New seed same result as old bain", {
-  expect_equal(y$fit$Fit_in[1], 0.866728935817668)
+  expect_false(abs(y$fit$Fit_in[1] - 0.866728935817668) < .0000000000000001)
   })
 
 set.seed(2)

@@ -1,7 +1,13 @@
 # bain 0.2.9
 
 * Update maintainer email address
+* Change random number generation in Fortran function to comply with new CRAN
+  policies. Seeds are consistent, but different from those in previous versions
+  of bain. Thus, results produced with bain > 0.2.9 are computationally
+  reproducible, but you cannot use bain > 0.2.9 to reproduce results from bain
+  0.2.8 or lower.
 * Add pbf() function to compute product Bayes factors
+
 
 # bain 0.2.8
 
