@@ -24,6 +24,7 @@ pbf <- function(...){
 }
 
 #' @method pbf default
+#' @rdname pbf
 #' @param x An object for which a method exists, see Details.
 #' @export
 pbf.default <- function(x, ...){

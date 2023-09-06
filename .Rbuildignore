@@ -21,3 +21,4 @@ tests_x64
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^CRAN-SUBMISSION$

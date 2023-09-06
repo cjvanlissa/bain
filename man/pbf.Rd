@@ -2,15 +2,20 @@
 % Please edit documentation in R/pbf.R
 \name{pbf}
 \alias{pbf}
+\alias{pbf.default}
 \alias{pbf.numeric}
 \title{Product Bayes Factor}
 \usage{
 pbf(...)
 
+\method{pbf}{default}(x, ...)
+
 \method{pbf}{numeric}(yi, vi, ni, hypothesis = "y = 0", ...)
 }
 \arguments{
 \item{...}{Additional arguments passed to `bain`.}
+
+\item{x}{An object for which a method exists, see Details.}
 
 \item{yi}{Numeric vector with the observed effect sizes.}
 
