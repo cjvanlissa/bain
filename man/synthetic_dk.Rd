@@ -58,7 +58,7 @@ Petersen, M., & Curry, O. S. (2022, May 25). Morality as Cooperation,
 Politics as Conflict. <doi:10.31234/osf.io/wm6rk>
 
 Curry, O. S., Chesters, M. J., & Van Lissa, C. J. (2019). Mapping morality
-with a compass: Testing the theory of ‘morality-as-cooperation’with a new
+with a compass: Testing the theory of 'morality-as-cooperation' with a new
 questionnaire. Journal of Research in Personality, 78, 106-124.
 }
 \keyword{datasets}

@@ -178,6 +178,7 @@ get_estimates.lavaan <- function(x, standardize = FALSE, ...){
 }
 
 #' @method get_estimates htest
+#' @export
 get_estimates.htest <- function(x, ...) {
   stop("To be able to run get_estimates on an object returned by t.test(), you must first load the 'bain' package, and then conduct your t.test. The standard t.test does not return group-specific variances and sample sizes, which are required by get_estimates. The 'bain' package contains a function, t_test(), which does return this necessary information.")
 }

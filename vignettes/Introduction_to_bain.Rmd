@@ -16,7 +16,8 @@ knitr::opts_chunk$set(
 )
 ```
  
-## Acknowledgement
+## Acknowledgment
+
 Besides the authors Marlyne Bosman, Camiel van Zundert, and Fayette Klaassen have contributed examples to this vignette.
 
 ## Introduction
