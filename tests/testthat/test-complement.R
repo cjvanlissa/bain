@@ -537,7 +537,7 @@ test_that("fc", {expect_equal(  c(results2$fit$Fit[6],results2$fit$Com[6]),
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y, var.equal = FALSE)
 set.seed(100)
 results2 <- bain(ttest, "x = y; x > y")
 

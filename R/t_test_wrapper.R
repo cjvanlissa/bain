@@ -34,12 +34,9 @@
 #' tmp2 <- t_test(extra ~ group, data = sleep)
 #' tmp2$n
 #' tmp2$v
-#' tmp <- t_test(extra ~ group, data = sleep, paired = TRUE)
+#' tmp <- t_test(Pair(sleep$extra[sleep$group == 1], sleep$extra[sleep$group == 2]) ~ 1)
 #' tmp$n
 #' tmp$v
-#' tmp2 <- t_test(extra ~ group, data = sleep, paired = TRUE)
-#' tmp2$n
-#' tmp2$v
 #' t_test(sesamesim$postnumb)
 #' tmp <- t_test(sesamesim$prenumb)
 #' tmp$n
@@ -135,10 +132,13 @@ t_test.formula <- function(x, ...) {
   data <- as.data.frame(eval.parent(cl[["data"]]))
   model_frame <- stats::model.frame(cl[["formula"]], data)
   response <- attr(attr(model_frame, "terms"), "response")
-  g <- factor(model_frame[[-response]])
   if (!rval$method == "One Sample t-test") { # If it's a two sample t-test
     if (rval$method == "Paired t-test"){
-      x <- model_frame[model_frame[[2]] == unique(model_frame[[2]])[1], 1] - model_frame[model_frame[[2]] == unique(model_frame[[2]])[2], 1]
+      if(inherits(model_frame[[response]], "Pair")){
+        x <- apply(unclass(model_frame[[response]]), 1, diff)
+      } else {
+        x <- model_frame[model_frame[[2]] == unique(model_frame[[2]])[1], 1] - model_frame[model_frame[[2]] == unique(model_frame[[2]])[2], 1]
+      }
       rval$n <- length(x)
       rval$v <- var(x)
     } else { # Independent samples t-test
@@ -151,8 +151,10 @@ t_test.formula <- function(x, ...) {
     rval$n <- length(model_frame[[1]])
     rval$v <- var(model_frame[[1]])
   }
-  if (length(rval$estimate) == 2L)
+  if (length(rval$estimate) == 2L){
+    g <- factor(model_frame[[-response]])
     names(rval$estimate) <- paste0("mean of group", levels(g))
+  }
   class(rval) <- c("t_test", "htest")
   return(rval)
 }

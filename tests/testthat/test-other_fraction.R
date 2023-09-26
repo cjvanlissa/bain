@@ -250,7 +250,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y, var.equal = FALSE)
 set.seed(100)
 z <- bain(ttest, "x=y; x>y; x<y", fraction =3.5)
 
@@ -285,7 +285,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 
-ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y, var.equal = TRUE)
 set.seed(100)
 z <- bain(ttest, "x=y; x>y; x<y", fraction = 3)
 
@@ -312,7 +312,7 @@ test_that("Bain mutual", {expect_equal(zd$fit$PMPb , z$fit$PMPb)})
 test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$BFmatrix)))})
 
 sesamesim$sex<-as.factor(sesamesim$sex)
-ttest <- t_test(postnumb~sex,data=sesamesim,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(postnumb~sex,data=sesamesim, var.equal = TRUE)
 set.seed(100)
 zh<-bain(ttest, "group1=group2; group1>group2; group1<group2", fraction = 3)
 
@@ -372,7 +372,7 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
 
-ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y, var.equal = TRUE)
 set.seed(100)
 z <- bain(ttest, "x - y > -1 & x - y < 1", fraction =5)
 
@@ -408,12 +408,12 @@ test_that("Bain mutual", {expect_equal(as.vector(t(zd$BFmatrix)), as.vector(t(z$
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE,alternative = c("less"))
+ttest <- t_test(x,y, var.equal = FALSE,alternative = c("less"))
 set.seed(100)
 z1 <- bain(ttest, "x=y; x>y; x<y", fraction =1)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y, var.equal = FALSE)
 set.seed(100)
 z2 <- bain(ttest, "x=y; x>y; x<y", fraction =1)
 
@@ -436,13 +436,13 @@ test_that("Bain mutual", {expect_equal(as.vector(t(z1$BFmatrix)), as.vector(t(z2
 sesamesim$sex <- as.factor(sesamesim$sex)
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE,mu=50)
+ttest <- t_test(x,y, var.equal = FALSE,mu=50)
 set.seed(100)
 z1 <- bain(ttest, "x=y; x>y; x<y", fraction =2)
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t_test(x,y,paired = FALSE, var.equal = FALSE)
+ttest <- t_test(x,y, var.equal = FALSE)
 set.seed(100)
 z2 <- bain(ttest, "x=y; x>y; x<y", fraction =2)
 

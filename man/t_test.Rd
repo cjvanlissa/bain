@@ -46,12 +46,9 @@ tmp$v
 tmp2 <- t_test(extra ~ group, data = sleep)
 tmp2$n
 tmp2$v
-tmp <- t_test(extra ~ group, data = sleep, paired = TRUE)
+tmp <- t_test(Pair(sleep$extra[sleep$group == 1], sleep$extra[sleep$group == 2]) ~ 1)
 tmp$n
 tmp$v
-tmp2 <- t_test(extra ~ group, data = sleep, paired = TRUE)
-tmp2$n
-tmp2$v
 t_test(sesamesim$postnumb)
 tmp <- t_test(sesamesim$prenumb)
 tmp$n

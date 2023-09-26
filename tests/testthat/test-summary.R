@@ -6,7 +6,7 @@ data(sesamesim)
 
 x<-sesamesim$postnumb[which(sesamesim$sex==1)]
 y<-sesamesim$postnumb[which(sesamesim$sex==2)]
-ttest <- t_test(x,y,paired = FALSE, var.equal = TRUE)
+ttest <- t_test(x,y, var.equal = TRUE)
 set.seed(100)
 results <- bain(ttest, "x=y; x>y;x<y")
 des1 <- summary(results, ci = 0.95)
