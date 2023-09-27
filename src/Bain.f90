@@ -541,12 +541,15 @@ function rnormal ( iseed )
 !
   implicit none
 
-real ( kind = 8 ) r1
-real ( kind = 8 ) r2
-real ( kind = 8 ) rnormal
-real ( kind = 8 ), parameter :: pi = 3.141592653589793D+00
-real ( kind = 8 ) x
-integer ( kind = 4 ) iseed
+integer, parameter :: r15 = selected_real_kind(15)
+integer, parameter :: i6 = selected_int_kind(6)
+
+real ( kind = r15 ) r1
+real ( kind = r15 ) r2
+real ( kind = r15 ) rnormal
+real ( kind = r15 ), parameter :: pi = 3.141592653589793D+00
+real ( kind = r15 ) x
+integer ( kind = i6 ) iseed
 
 r1 = runiform (iseed)
 r2 = runiform (iseed + 12345)
@@ -620,19 +623,21 @@ function cumnor ( arg )
 !
   implicit none
 
-real ( kind = 8 ), parameter, dimension ( 5 ) :: a = (/ &
+integer, parameter :: r15 = selected_real_kind(15)
+integer, parameter :: i6 = selected_int_kind(6)
+real ( kind = r15 ), parameter, dimension ( 5 ) :: a = (/ &
                                                         2.2352520354606839287D+00, &
                                                         1.6102823106855587881D+02, &
                                                         1.0676894854603709582D+03, &
                                                         1.8154981253343561249D+04, &
                                                         6.5682337918207449113D-02 /)
-real ( kind = 8 ) arg
-real ( kind = 8 ), parameter, dimension ( 4 ) :: b = (/ &
+real ( kind = r15 ) arg
+real ( kind = r15 ), parameter, dimension ( 4 ) :: b = (/ &
                                                         4.7202581904688241870D+01, &
                                                         9.7609855173777669322D+02, &
                                                         1.0260932208618978205D+04, &
                                                         4.5507789335026729956D+04 /)
-real ( kind = 8 ), parameter, dimension ( 9 ) :: c = (/ &
+real ( kind = r15 ), parameter, dimension ( 9 ) :: c = (/ &
                                                         3.9894151208813466764D-01, &
                                                         8.8831497943883759412D+00, &
                                                         9.3506656132177855979D+01, &
@@ -642,8 +647,8 @@ real ( kind = 8 ), parameter, dimension ( 9 ) :: c = (/ &
                                                         1.1602651437647350124D+04, &
                                                         9.8427148383839780218D+03, &
                                                         1.0765576773720192317D-08 /)
-real ( kind = 8 ) cumnor
-real ( kind = 8 ), parameter, dimension ( 8 ) :: d = (/ &
+real ( kind = r15 ) cumnor
+real ( kind = r15 ), parameter, dimension ( 8 ) :: d = (/ &
                                                         2.2266688044328115691D+01, &
                                                         2.3538790178262499861D+02, &
                                                         1.5193775994075548050D+03, &
@@ -652,31 +657,31 @@ real ( kind = 8 ), parameter, dimension ( 8 ) :: d = (/ &
                                                         3.4900952721145977266D+04, &
                                                         3.8912003286093271411D+04, &
                                                         1.9685429676859990727D+04 /)
-real ( kind = 8 ) del
-real ( kind = 8 ) eps
-integer ( kind = 4 ) i
-real ( kind = 8 ), parameter, dimension ( 6 ) :: p = (/ &
+real ( kind = r15 ) del
+real ( kind = r15 ) eps
+integer ( kind = i6 ) i
+real ( kind = r15 ), parameter, dimension ( 6 ) :: p = (/ &
                                                         2.1589853405795699D-01, &
                                                         1.274011611602473639D-01, &
                                                         2.2235277870649807D-02, &
                                                         1.421619193227893466D-03, &
                                                         2.9112874951168792D-05, &
                                                         2.307344176494017303D-02 /)
-real ( kind = 8 ), parameter, dimension ( 5 ) :: q = (/ &
+real ( kind = r15 ), parameter, dimension ( 5 ) :: q = (/ &
                                                         1.28426009614491121D+00, &
                                                         4.68238212480865118D-01, &
                                                         6.59881378689285515D-02, &
                                                         3.78239633202758244D-03, &
                                                         7.29751555083966205D-05 /)
-real ( kind = 8 ), parameter :: root32 = 5.656854248D+00
-real ( kind = 8 ), parameter :: sixten = 16.0D+00
-real ( kind = 8 ), parameter :: sqrpi = 3.9894228040143267794D-01
-real ( kind = 8 ), parameter :: thrsh = 0.66291D+00
-real ( kind = 8 ) x
-real ( kind = 8 ) xden
-real ( kind = 8 ) xnum
-real ( kind = 8 ) y
-real ( kind = 8 ) xsq
+real ( kind = r15 ), parameter :: root32 = 5.656854248D+00
+real ( kind = r15 ), parameter :: sixten = 16.0D+00
+real ( kind = r15 ), parameter :: sqrpi = 3.9894228040143267794D-01
+real ( kind = r15 ), parameter :: thrsh = 0.66291D+00
+real ( kind = r15 ) x
+real ( kind = r15 ) xden
+real ( kind = r15 ) xnum
+real ( kind = r15 ) y
+real ( kind = r15 ) xsq
 !
   !  Machine dependent constants
 !
@@ -791,18 +796,20 @@ function dinvnr ( p )
 !
   implicit none
 
-real ( kind = 8 ) cum
-real ( kind = 8 ) dinvnr
-real ( kind = 8 ) dx
-real ( kind = 8 ), parameter :: eps = 1.0D-13
-integer ( kind = 4 ) i
-integer ( kind = 4 ), parameter :: maxit = 100
-real ( kind = 8 ) p
-real ( kind = 8 ) pp
-real ( kind = 8 ), parameter :: r2pi = 0.3989422804014326D+00
-real ( kind = 8 ) strtx
-! real ( kind = 8 ) stvaln
-real ( kind = 8 ) xcur
+integer, parameter :: r15 = selected_real_kind(15)
+integer, parameter :: i6 = selected_int_kind(6)
+real ( kind = r15 ) cum
+real ( kind = r15 ) dinvnr
+real ( kind = r15 ) dx
+real ( kind = r15 ), parameter :: eps = 1.0D-13
+integer ( kind = i6 ) i
+integer ( kind = i6 ), parameter :: maxit = 100
+real ( kind = r15 ) p
+real ( kind = r15 ) pp
+real ( kind = r15 ), parameter :: r2pi = 0.3989422804014326D+00
+real ( kind = r15 ) strtx
+! real ( kind = r15 ) stvaln
+real ( kind = r15 ) xcur
 
 pp = min ( p, 1-p )
 strtx = stvaln ( pp )
@@ -867,23 +874,26 @@ function stvaln ( p )
   implicit none
 
 !  real ( kind = 8 ) eval_pol
-real ( kind = 8 ) p
-real ( kind = 8 ) sgn
-real ( kind = 8 ) stvaln
-real ( kind = 8 ), parameter, dimension(0:4) :: xden = (/ &
+
+integer, parameter :: r15 = selected_real_kind(15)
+integer, parameter :: i6 = selected_int_kind(6)
+real ( kind = r15 ) p
+real ( kind = r15 ) sgn
+real ( kind = r15 ) stvaln
+real ( kind = r15 ), parameter, dimension(0:4) :: xden = (/ &
                                                           0.993484626060D-01, &
                                                           0.588581570495D+00, &
                                                           0.531103462366D+00, &
                                                           0.103537752850D+00, &
                                                           0.38560700634D-02 /)
-real ( kind = 8 ), parameter, dimension(0:4) :: xnum = (/ &
+real ( kind = r15 ), parameter, dimension(0:4) :: xnum = (/ &
                                                           -0.322232431088D+00, &
                                                           -1.000000000000D+00, &
                                                           -0.342242088547D+00, &
                                                           -0.204231210245D-01, &
                                                           -0.453642210148D-04 /)
-real ( kind = 8 ) y
-real ( kind = 8 ) z
+real ( kind = r15 ) y
+real ( kind = r15 ) z
 
 if ( p <= 0.5D+00 ) then
 
@@ -931,13 +941,15 @@ function eval_pol ( a, n, x )
 !
   implicit none
 
-integer ( kind = 4 ) n
+integer, parameter :: r15 = selected_real_kind(15)
+integer, parameter :: i6 = selected_int_kind(6)
+integer ( kind = i6 ) n
 
-real ( kind = 8 ) a(0:n)
-real ( kind = 8 ) eval_pol
-integer ( kind = 4 ) i
-real ( kind = 8 ) term
-real ( kind = 8 ) x
+real ( kind = r15 ) a(0:n)
+real ( kind = r15 ) eval_pol
+integer ( kind = i6 ) i
+real ( kind = r15 ) term
+real ( kind = r15 ) x
 
 term = a(n)
 do i = n - 1, 0, -1
@@ -1030,10 +1042,12 @@ function runiform ( iseed )
 !
   implicit none
 
-  integer ( kind = 4 ), parameter :: i4_huge = 2147483647
-  integer ( kind = 4 ) k
-  real ( kind = 8 ) runiform
-  integer ( kind = 4 ) iseed
+  integer, parameter :: r15 = selected_real_kind(15)
+  integer, parameter :: i6 = selected_int_kind(6)
+  integer ( kind = i6 ), parameter :: i4_huge = 2147483647
+  integer ( kind = i6 ) k
+  real ( kind = r15 ) runiform
+  integer ( kind = i6 ) iseed
 
   k = iseed / 127773
 
@@ -1043,7 +1057,7 @@ function runiform ( iseed )
     iseed = iseed + i4_huge
   end if
 
-  runiform = real ( iseed, kind = 8 ) * 4.656612875D-10
+  runiform = real ( iseed, kind = r15 ) * 4.656612875D-10
 
 return
 end function
