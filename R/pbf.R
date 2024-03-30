@@ -83,5 +83,8 @@ pbf.numeric <- function(yi, vi, ni, hypothesis = "y = 0", ...){
          joint_parameters = 1,
          ...)},
     y = yi, v = vi, n = ni, SIMPLIFY = FALSE)
-  pbf(bain_list, hypothesis = hypothesis)
+  cl <- call("pbf")
+  cl[["x"]] <- bain_list
+  cl[["hypothesis"]] <- hypothesis
+  eval.parent(cl)
 }
