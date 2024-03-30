@@ -1,3 +1,6 @@
+^renv$
+^renv\.lock$
+^\.Rprofile$
 ^cran-comments\.md$
 ^news\.md$
 ^CRAN-RELEASE$
