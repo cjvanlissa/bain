@@ -26,7 +26,7 @@ LazyData: true
 URL: https://informative-hypotheses.sites.uu.nl/software/bain/
 BugReports: https://github.com/cjvanlissa/bain/
 NeedsCompilation: yes
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends:
     R (>= 3.0.0),
     stats
