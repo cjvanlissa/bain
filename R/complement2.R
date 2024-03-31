@@ -19,7 +19,6 @@
 #' @importFrom utils combn
 
 PMPcomplement<-function(results){
-
   # determine the number of hypotheses
   Nhypo <- length(results$hypotheses)
   # collect the names of the estimates

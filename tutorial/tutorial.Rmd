@@ -1,0 +1,606 @@
+---
+title             : "Aggregating evidence from conceptual replication studies using the product Bayes factor"
+shorttitle        : "PRODUCT BAYES FACTOR"
+
+author:
+  - name: "Caspar J. Van Lissa"
+    affiliation: "1"
+    corresponding: yes
+    address: "Professor Cobbenhagenlaan 125, 5037 DB Tilburg, The Netherlands"
+    email: "c.j.vanlissa@tilburguniversity.edu"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - Conceptualization
+      - Formal Analysis
+      - Funding acquisition
+      - Methodology
+      - Project administration
+      - Software
+      - Supervision
+      - Writing – original draft
+      - Writing – review & editing
+  - name: "Eli-Boaz Clapper"
+    affiliation: "2"
+    role:
+      - Formal Analysis
+      - Writing – original draft
+      - Writing – review & editing
+  - name: "Rebecca Kuiper"
+    affiliation: "2"
+    role:
+      - Conceptualization
+      - Writing – review & editing
+affiliation:
+  - id            : "1"
+    institution   : "Tilburg University, dept. Methodology & Statistics"
+  - id            : "2"
+    institution   : "Utrecht University, dept. Methodology & Statistics"
+
+authornote: |
+  This is a preprint paper, generated from Git Commit # `r substr(gert::git_commit_id(),1,8)`. This work was funded by a NWO Veni Grant (NWO Grant Number VI.Veni.191G.090), awarded to the lead author.
+
+abstract: |
+  The product Bayes factor (PBF) synthesizes evidence for an informative hypothesis across heterogeneous replication studies. It can be used when fixed- or random effects meta-analysis fall short. For example, when effect sizes are incomparable and cannot be pooled, or when studies diverge significantly in the populations, study designs, and measures used. PBF shines as a solution for small sample meta-analyses, where the number of between-study differences is often large relative to the number of studies, precluding the use of meta-regression to account for these differences. Users should be mindful of the fact that the PBF answers a qualitatively different research question than other evidence synthesis methods. For example, whereas fixed-effect meta-analysis estimates the size of a population effect, the PBF quantifies to what extent an informative hypothesis is supported in all included studies. This tutorial paper showcases the user-friendly PBF functionality within the `bain` R-package. This new implementation of an existing method was validated using an extensive simulation study, available in an Online Supplement. The simulation found that PBF had a high overall accuracy, due to greater sensitivity and lower specificity, compared to random-effects meta-analysis, individual participant data meta-analysis, and vote counting. This tutorial demonstrates applications of the method in several examples based on published research. The examples use datasets included in `bain`, so readers can reproduce the examples, or apply the code to their own data. The PBF is a promising method for synthesizing evidence for informative hypotheses across conceptual replications that are not suitable for conventional meta-analysis.
+  
+keywords          : "bayes factor, evidence synthesis, bayesian, meta-analysis"
+wordcount         : "5039"
+
+bibliography      : ["product_bayes.bib", "references.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+knit: worcs::cite_essential
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+run_everything <- TRUE
+library("papaja")
+library(tidySEM)
+library(kableExtra)
+library(pwr)
+library(bain)
+r_refs("r-references.bib")
+source("UI function/pbf.R")
+out <- readRDS("out.RData")
+resultaction = "hide" # "markup"
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed, warning = FALSE)
+```
+
+Recent years have seen a crisis of confidence over the reliability of published results in psychology, and science more broadly [@brembs2018prestigious].
+Replication research has emerged as one potential way to address this crisis and derive knowledge that will stand the test of time [see @lavelleWhenCrisisBecomes2021]. 
+In step with this interest in replication research,
+research synthesis methods have become increasingly popular.
+These methods aggregate research findings,
+and thus enable drawing overarching conclusions across multiple (replication) studies.
+This paper addresses Bayesian evidence synthesis,
+a research synthesis method that aggregates evidence for an informative hypothesis, quantified by the Bayes factor,
+across multiple studies.
+This method has the potential to provide a more comprehensive and accurate picture of the state of the literature, and to identify areas of consensus and disagreement among studies.
+We describe the method in detail,
+benchmark its performance against other commonly used research synthesis methods,
+and demonstrate its application through a tutorial example analysis.
+To facilitate uptake of the method by applied researchers, we introduce an implementation of the method in the `bain` R-package.
+This implementation enables the use of Bayesian evidence synthesis for many commonly used statistical analyses in R.
+
+A key challenge in quantitative research synthesis is dealing with between-studies heterogeneity [@higginsReevaluationRandomeffectsMetaanalysis2009].
+When studies examine the same research question in different laboratories, use idiosyncratic methods, and sample from distinct populations, these between-study differences can introduce heterogeneity in findings.
+The most common quantitative research synthesis method is meta-analysis,
+in which results of different studies are aggregated to estimate an aggregate effect size [@borensteinIntroductionMetaAnalysis2009].
+In meta-analysis, heterogeneity can be accounted for in four ways [see @vanlissaSmallSampleMetaanalyses2020].
+First, if studies are exact replications,
+one may assume that no heterogeneity in the outcome exists and a fixed-effect meta-analysis can be conducted to estimate the common population effect. 
+Second, when heterogeneity between studies can be assumed to be random,
+random-effects meta-analysis can be used to estimate the mean of a distribution of population effects. 
+Third, when there are a few systematic differences between studies, these can be accounted for using meta-regression.
+Finally, when there are many potential variables that cause systematic differences and it is not known beforehand which are relevant, exploratory techniques like random forest meta-analysis and penalized meta-regression can be used to identify relevant moderators [@vanlissaSelectingRelevantModerators2023].
+However, accounting for moderators requires a relatively high number of observations per moderator,
+which may not be available.
+
+Each of the aforementioned approaches makes different assumptions about the nature of heterogeneity [see "Models for meta-analysis" in @vanlissaSmallSampleMetaanalyses2020].
+A crucial shortcoming of existing research synthesis methods is that these assumptions
+may not be tenable when meta-analyzing studies that investigate the same informative hypothesis,
+but are otherwise very heterogeneous.
+The situation may arise where each study is uniquely identified by a combination of linearly dependent moderators.
+In this case, it is no longer possible to synthesize *effect sizes* while accounting for heterogeneity using statistical methods.
+<!-- even machine learning based methods cannot identify relevant moderators. -->
+It is still possible, however, to quantify the support these studies provide for the underlying informative hypothesis.
+To this end, Bayesian evidence synthesis (BES) aggregates the evidence for a theoretical relationship across studies,
+without imposing assumptions about heterogeneity [@kuiperCombiningStatisticalEvidence2013].
+Although this assumption is not necessary,
+for the sake of simplicity we assume that this theoretical relationship is evaluated via informative hypothesis $H_i$ in all studies.
+
+The amount of evidence for a hypothesis can be expressed as a Bayes factor, or BF.
+The BF can be interpreted as the ratio of evidence for one hypothesis relative to another hypothesis.
+<!-- , so $BF_{12} = \frac{BF_{1u}}{BF_{2u}}$. -->
+<!-- Note that $BF_{12}$ is itself a ratio of two Bayes factors with a common denominator, which renders them comparable [see @guApproximatedAdjustedFractional2018]. -->
+Within the scope of this paper,
+all Bayes factors are the ratio of evidence for an informative hypothesis $H_i$ relative to its complement $H_{!i}$ [see @guApproximatedAdjustedFractional2018].
+<!-- This Bayes factor , $BF_{c} = \frac{H_i}{H_!i}$.  -->
+The subscript $_!$ represents the negation operator;
+in other words, $H_{!i}$ means "not $H_i$".
+This Bayes factor, which we will refer to as $BF_c$, represents the ratio of evidence for $H_i$ divided by evidence against it.
+A value of $BF_c = 10$ means that the data provide ten times more support for the hypothesis than against it.
+
+When multiple studies each provide evidence for $H_i$ in the form of complement Bayes factors,
+these Bayes factors can be synthesized across studies by taking their product [@kuiperCombiningStatisticalEvidence2013].
+The resulting product Bayes factor (PBF) summarizes the total evidence for the hypothesis.
+The only assumption of the PBF is that all study-specific hypotheses provide evidence about the same underlying theoretical relationship.
+Note that other approaches to BES exist;
+for instance, it is possible to use the posterior of one study as the prior for a replication study, and thus accumulate evidence across studies [see @heckReviewApplicationsBayes2022].
+Such applications are out of scope of the present paper,
+which addresses the PBF approach to BES.
+
+Although meta-analysis and BES are both research synthesis methods, they answer different research questions.
+Meta-analysis estimates the point estimate or distribution of a population effect size. 
+It pools estimates of this effect size across multiple studies to obtain an overall estimate of the effect size.
+It thus answers questions like:
+Given certain assumptions about between-studies heterogeneity, what is the average population effect size?
+BES, on the other hand, aggregates evidence for an informative hypothesis across multiple studies.
+It thus answers the question: Do all these studies support the hypothesis of interest?
+Both methods are appropriate for different research questions, and provide complementary information.
+
+This paper introduces the first implementation of BES in user-friendly free open source software.
+This tutorial requires the `bain` R-package for Bayesian informative hypothesis evaluation, version `0.2.10`, which contains the `pbf()` function and all tutorial data.
+<!-- `r as.character(packageVersion("bain"))`. -->
+This paper presents a simulation study to validate the method and benchmark it against alternative evidence synthesis methods.
+It additionally illustrates several use cases through reproducible examples.
+
+# Tutorial
+
+This tutorial demonstrates how to synthesize evidence for an informative hypothesis across heterogeneous replications using the Product Bayes Factor (PBF). 
+We assume that users have installed the free open source statistical programming language R [@R-base].
+The R-package `bain` version `0.2.9` or later is required, which can be installed by running `install.packages("bain")` in the R console.
+The datasets used in this tutorial are all included in the `bain` package.
+The `kuiper2013` dataset is reconstructed from information in @kuiperCombiningStatisticalEvidence2013 and the original publications meta-analyzed therein.
+The dataset documentation is accessed by running `?kuiper2013` in the R console.
+The other datasets used were simulated based on data presented in [@vanleeuwen2022morality].
+The dataset documentation is accessed by running `?synthetic_us`, `?synthetic_dk` or `?synthetic_nl`.
+
+## Tutorial 1: When Meta-Analysis Falls Short
+
+The PBF was first introduced by @kuiperCombiningStatisticalEvidence2013
+for cases where random-effects meta-analysis would otherwise be used,
+but is deemed inappropriate because its assumptions are likely to be violated.
+This Tutorial illustrates the use of the PBF in such cases,
+and compares it to meta-analysis to show that one can straightforwardly perform a PBF analysis with a dataset prepared for meta-analysis.
+Thus, it is also possible to compliment a conventional meta-analysis with a PBF analysis and report both in the same paper.
+This way, readers can determine whether they trust the assumption of normally distributed heterogeneity and interpret the random-effects estimate,
+or doubt the assumption and interpret the PBF instead.
+
+The data for this example is taken from Kuiper and colleagues.
+Run `?kuiper2013` to view its documentation.
+Kuiper and colleagues set out to aggregate evidence for the effect of prior interactions between partners on trust in (economic) exchange relations across four heterogeneous replication studies.
+These studies (Table \@ref(tab:tabkuiper)) investigated the informative hypothesis that past (experience) with a seller has a positive effect on trust.
+
+```{r tabkuiper, eval = TRUE, echo = FALSE}
+library(bain)
+kuiper2013 <- bain::kuiper2013
+knitr::kable(kuiper2013, digits = 2, caption = "Data from Kuiper et al., 2013.")
+```
+
+Batenburg et al. (2003) analyzed survey data using linear regression with covariates; Buskens and Raub (2002) analyzed experimental data using linear regression; Buskens and Weesie (2000) used an experimental design with a binary outcome, analyzed using probit regression; and Buskens, Raub, and Van der Veer (2010) used a longitudinal experimental design, analyzing the data with a three-level logistic regression.
+These studies each provide a regression coefficient assessing the effect of past experience on trust, and its estimated sampling variance (squared standard error).
+However, because the studies differ in terms of design (survey vs. experiment),
+operationalization of variables, measurement level of variables, and statistical model used,
+these regression coefficients are not directly comparable and should not be pooled using meta-analysis.
+The authors developed the PBF to determine whether all studies support the informative hypothesis.
+
+Although there is one clear informative hypothesis, we reproduce the analyses in the original study and estimate the evidence for three competing hypotheses: $H_1: \beta = 0$ (the null hypothesis that the effect of past on trust is zero), $H_2: \beta > 0$ (a directional hypothesis that the effect of past on trust is positive), and $H_3: \beta < 0$ (a directional hypothesis that the effect of past on trust is negative).
+Note, however, that Kuiper and colleagues computed the Bayes factors and posterior model probabilities by hand, using custom priors for the first study, and using the posterior of the first study as prior for subsequent studies.
+The present tutorial instead uses approximate fractional Bayes factors computed using `bain`, with default settings, including a prior derived from the data.
+This will result in different numerical results, although the conclusions remain the same.
+
+We first conduct a random-effects meta-analysis using the function `rma()` from the `metafor` package.
+Then, we perform a PBF analysis using the `pbf()` function in the `bain` package.
+This allows us to compare the interface of both functions and their results.
+First, we will load the required packages.
+This also makes the `kuiper2013` available.
+Printing it to the console should give the same result as Table \@ref(tab:tabkuiper).
+
+```{r echo = TRUE, eval = TRUE, results='hide'}
+library(metafor)
+library(bain)
+kuiper2013
+```
+
+To perform a random-effects meta-analysis, run the following code:
+
+```{r echo = TRUE, eval = FALSE}
+rma(yi = kuiper2013$beta, vi = kuiper2013$vi)
+```
+
+```{r echo = FALSE, eval = TRUE}
+library(tidySEM)
+res_rma <- rma(yi = kuiper2013$beta,
+               vi = kuiper2013$vi)
+print(res_rma, digits = 2)
+```
+
+Note that the pooled effect size is $\beta `r report(res_rma[["b"]][1,1])`$.
+Considering our hypothesis is one-sided, we can divide the p-value by two, and report $p `r report(res_rma[["pval"]]/2)`$.
+Thus, there is a significant positive effect of prior interactions on trust.
+However, this analysis assumes a normal distribution of population effect sizes.
+We doubt this assumption, because the studies are all qualitatively different.
+While empirical evidence for this violation of assumptions is given by a significant heterogeneity test,
+we do not need to make a purely data-driven decision [@wichertsDegreesFreedomPlanning2016].
+We can support the assumption that population effect sizes are *not* normally distributed on theoretical grounds.
+
+We now perform the PBF analysis, using the `pbf()` method for numeric input (see `?pbf`).
+This interface is very similar to `rma()`, and is specifically designed for applications where PBF is applied to meta-analytic datasets.
+Run the following code:
+
+```{r echo = TRUE, eval = FALSE}
+pbf(yi = kuiper2013$beta, vi = kuiper2013$vi, ni = kuiper2013$n)
+```
+```{r echo = FALSE, eval = TRUE}
+res_pbf <- bain:::pbf.numeric(yi = kuiper2013$beta, vi = kuiper2013$vi, ni = kuiper2013$n)
+print_pbf <- function(x){
+x[,] <- sapply(x, formatC, digits = 2, format = "f")
+print(x)  
+}
+print_pbf(res_pbf)
+```
+
+Note that these arguments are the same as those of `rma()`.
+
+These hypotheses are evaluated with the bain() function, which is done for all four studies:
+CODE
+This renders the evidence for each of the three hypotheses, for each of the four studies separately. This evidence can be aggregated / synthesized across all four studies using the  pbf() function:
+CODE
+This renders the aggregate evidence for each of the three hypotheses. This denotes the support for the hypothesis being consistently true for all the four studies.
+
+
+### Tutorial 2: Using `bain`
+
+Van Leeuwen and colleagues conducted a theory-driven, preregistered study to address the research question whether political orientation and moral dispositions are associated.
+Suitable data were collected in three countries: the United states of America, Denmark, and the Netherlands.
+Each sample contained multiple measures of political orientation and moral dispositions.
+In the original publication, the PBF was used to aggregate evidence across scales and countries to obtain an overall measure of support for the central hypothesis.
+This tutorial follows the same rationale, but uses only one effect size per sample,
+and varies the way this effect size is computed to illustrate the more typical use case where the same informative hypothesis has been studied in different ways in multiple studies.
+We will examine the informative hypothesis that self-reported importance of family morality is positively associated with a conservative socio-political orientation.
+We load the `bain` library and assign the data to three objects with convenient names:
+
+```{r eval = TRUE, echo = TRUE}
+library(bain)
+NL <- synthetic_nl
+DK <- synthetic_dk
+US <- synthetic_us
+```
+
+We briefly introduce the basic use of the `bain()` function, and how to interpret its output.
+We must estimate a model suitable for evaluating our informative hypothesis.
+Because both scales consist of multiple items, we can use structural equation modeling (SEM) to perform latent variable regression [see @vanlissaTeacherCornerEvaluating2020]:
+
+```{r echo = TRUE, eval = TRUE}
+# Load lavaan package for SEM
+library(lavaan)
+
+# Specify SEM-model for latent variable regression
+model_nl <- "
+fam =~ fam_1 + fam_2 + fam_3
+con =~ sepa_soc_1 + sepa_soc_2 + sepa_soc_3 + sepa_soc_4 + sepa_soc_5 +
+       sepa_eco_1 + sepa_eco_2 + sepa_eco_3 + sepa_eco_4 + sepa_eco_5
+con ~ beta * fam"
+
+# Estimate the model in lavaan
+results_nl <- sem(model = model_nl, data = NL)
+```
+
+The informative hypothesis in this tutorial is $H_i: \beta > .1$, where $\beta$ (beta) is the standardized regression coefficient.
+Instead of a conventional null hypothesis, $H_0: \beta = 0$,
+the value of $.1$ was used as a minimal effect size of interest.
+The code below illustrates how to obtain a Bayes factor for this informative hypothesis,
+using the output of the SEM analysis above.
+We can refer to the parameter `beta` by name because we labeled it in the `lavaan` syntax;
+if we had not done so, we could find the names of all model parameters by running `get_estimates(results_nl, standardize = TRUE)`.
+The results indicate that the hypothesis is supported when compared to its complement.
+<!-- , $BF_c `report(bf_nl$fit$BF.c[1])`$. -->
+For a more in-depth tutorial on `bain()`, see @hoijtink2019tutorial, and for further guidance on the use of `bain()` for SEM, see @vanlissaTeacherCornerEvaluating2020.
+
+```{r echo = TRUE, eval = TRUE, results = resultaction}
+# Test that the effect labeled 'beta' is positive
+bf_nl <- bain(results_nl, hypothesis = "beta > .1", standardize = TRUE)
+bf_nl
+```
+
+### Aggregating evidence across studies
+
+As mentioned before, suitable data were collected to evaluate the substantive hypothesis in three countries.
+There are differences between countries that prevent analyzing these data as a multilevel model, however.
+For instance, conservatism was measured using different scales.
+This is an appropriate situation to use the PBF to aggregate evidence across countries.
+Below, we estimate a latent regression model for the remaining two countries, taking care to use the same label for the parameter of interest in all samples.
+Then, we bind all three SEM-models in a list, and call PBF to evaluate the hypothesis of interest on all models and aggregate the evidence.
+As the BF in all three samples is positive, the resulting PBF is very large.
+We can thus conclude that the central hypothesis receives overwhelming support across samples.
+
+```{r, eval = TRUE, echo = TRUE}
+# Specify the models for DK and US
+model_dk <- "
+fam =~ fam_1 + fam_2 + fam_3
+con =~
+sepa_soc_1 + sepa_soc_2 + sepa_soc_3 + sepa_soc_4 + sepa_soc_5 +
+sepa_eco_1 + sepa_eco_2 + sepa_eco_3 + sepa_eco_4 + sepa_eco_5
+con ~ beta * fam"
+model_us <- "
+fam =~ fam_1 + fam_2 + fam_3
+con =~
+secs_soc_1 + secs_soc_2 + secs_soc_3 + secs_soc_4 + secs_soc_5 +
+secs_soc_6 + secs_soc_7 +
+secs_eco_1 + secs_eco_2 + secs_eco_3 + secs_eco_4 + secs_eco_5
+con ~ beta * fam"
+
+# Estimate the model in lavaan
+results_dk <- sem(model = model_dk, data = DK)
+results_us <- sem(model = model_us, data = US)
+
+# Bind the models into a list
+results <- list(results_nl, results_dk, results_us)
+# Test the hypothesis that the effect size labeled 'beta' is positive
+pbf(results, hypothesis = "beta > .1", standardize = TRUE)
+```
+
+### Using bain objects
+
+The `pbf()` function also accepts multiple `bain` objects.
+This makes it possible to, for example, evaluate different sets of hypotheses on different data sets before using the resulting `bain` objects to aggregate the evidence for all common hypotheses across datasets.
+The example below illustrates this use case.
+As before, all analyses share one hypotheses in common ($H_i: \beta_{fam} > .1$),
+but the Dutch sample now contains a sample-specific hypothesis regarding the effect of group morality, namely that $\beta_{grp} < .1$.
+The `pbf()` function is called on a list of `bain` objects.
+Note that, in this case, `pbf()` does not require an argument `hypothesis`, as the hypotheses are contained in the `bain` objects.
+
+```{r, echo = TRUE, eval = TRUE, results = resultaction}
+# Add the additional predictor to the model, label the effect beta2
+model_nl <- c(model_nl, "group =~ grp_1 + grp_2 + grp_3
+                         con ~ beta2 * group")
+
+# Estimate the model in lavaan
+results_nl <- sem(model = model_nl, data = NL)
+```
+
+```{r, echo = TRUE, eval = TRUE, results = resultaction}
+# Obtain BF for each sample; note that the Dutch sample has two hypotheses
+bf_nl <- bain(results_nl, hypothesis = "beta > .1;
+                                        beta2 < .1", 
+              standardize = TRUE)
+```
+
+```{r, echo = TRUE, eval = FALSE, results = resultaction}
+bf_dk <- bain:::bain(results_dk, hypothesis = "beta > .1", standardize = TRUE)
+bf_us <- bain(results_us, hypothesis = "beta > .1", standardize = TRUE)
+```
+```{r, echo = FALSE, eval = TRUE, results = resultaction}
+bf_dk <- readRDS("bf_dk.rdata")
+bf_us <- readRDS("bf_us.rdata")
+```
+
+```{r, echo = TRUE, eval = TRUE, results = resultaction}
+# Bind bain objects into a list
+bfs <- list(bf_nl, bf_dk, bf_us)
+```
+
+```{r, echo = TRUE, eval = TRUE, results = resultaction}
+# Call pbf on that list
+pbf(bfs)
+```
+
+As can be seen, the results are equivalent to the results in the previous example.
+The sample-specific hypothesis has been left out, and common hypotheses are retained and aggregated.
+If there are no common hypotheses across all objects, `pbf()` throws an error.
+
+### Using sufficient statistics
+
+A third use case occurs when the raw data from different samples are not available.
+This may happen, for example, when aggregating findings from the published literature (similar to meta-analysis).
+In this case, one can use the default interface of `bain`, as explained in [@hoijtink2019tutorial].
+This function requires four arguments: A named vector of parameter estimates, their asymptotic covariance matrix, the original sample size, and the number of within-group and between-group parameters.
+Note that, when analyzing a single parameter per sample, the standard error is sufficient to construct the asymptotic covariance matrix.
+Thus, this method can be applied to data that have been prepared for classic meta-analysis (effect sizes and their sampling variances).
+Importantly, unlike meta-analysis, the present method is suitable for conceptual replications.
+It does not require uniform effect size measures across studies.
+The example below illustrates how to aggregate evidence for one hypotheses across three studies that each used different methods.
+<!-- CJ: What I'd like to do here is show how to aggregate a t-test, a regression coefficient and a correlation coefficient -->
+
+The present use case evaluates the following hypothesis:
+*There is a positive association between family morality and political conservatism*.
+This conceptual hypothesis is evaluated differently in the three samples, resulting in three different types of statistics and distinct sample-specific hypotheses:
+
+1. A t-test was performed using the NL data; using Cohen's D gives $H_i^{NL}: \delta_{conservative > liberal} > 0$, where $\delta$ is the mean difference between groups.
+1. A bivariate regression coefficient was calculated using the DK data, giving $H_i^{DK}: \beta_{fam} > 0$
+1. A correlation coefficient was calculated using the US data, giving $H_i^{US}: \rho_{fam,con} > 0$, where $\rho$ is the correlation between family morality and conservatism.
+
+Note that we intentionally manipulate the data to illustrate these different analyses;
+for example, we compute mean scale scores and dichotomize the continuous conservatism scale to conduct a t-test.
+We do not advocate these practices for applied research.
+
+First we obtain the relevant parameter estimates and their sampling variances,
+which allows us to evaluate the specific hypotheses in `bain`:
+
+```{r eval = TRUE, echo = TRUE}
+# Create mean scale scores
+NL <- data.frame(
+  family = rowMeans(NL[c("fam_1", "fam_2", "fam_3")]),
+  conservative = rowMeans(NL[c("sepa_soc_1", "sepa_soc_2", "sepa_soc_3",
+                               "sepa_soc_4", "sepa_soc_5", "sepa_eco_1",
+                               "sepa_eco_2", "sepa_eco_3", "sepa_eco_4",
+                               "sepa_eco_5")]))
+DK <- data.frame(
+  family = rowMeans(DK[c("fam_1", "fam_2", "fam_3")]),
+  conservative = rowMeans(DK[c("sepa_soc_1", "sepa_soc_2", "sepa_soc_3",
+                               "sepa_soc_4", "sepa_soc_5", "sepa_eco_1",
+                               "sepa_eco_2", "sepa_eco_3", "sepa_eco_4",
+                               "sepa_eco_5")]))
+
+US <- data.frame(
+  family = rowMeans(US[c("fam_1", "fam_2", "fam_3")]),
+  conservative = rowMeans(US[c("secs_soc_1", "secs_soc_2", "secs_soc_3",
+                               "secs_soc_4", "secs_soc_5", "secs_soc_6",
+                               "secs_soc_7", "secs_eco_1", "secs_eco_2",
+                               "secs_eco_3", "secs_eco_4", "secs_eco_5")]))
+
+# NL: Conduct t-test using Cohen's D
+NL$group <- cut(NL$conservative, breaks = 2,
+                labels = c("liberal", "conservative"))
+sample_sizes <- table(NL$group)
+sds <- tapply(NL$family, NL$group, sd)
+pooled_sd <- sqrt(sum((sample_sizes - 1) * sds) / (sum(sample_sizes) - 2))
+NL_est <- diff(tapply(NL$family, NL$group, mean)) / pooled_sd
+NL_var <- (sum(sample_sizes) / prod(sample_sizes)) +
+  (NL_est^2 / (2*sum(sample_sizes)))
+
+# DK: Conduct bivariate regression
+DK_fit <- lm(conservative ~ family, data = DK)
+DK_est <- coef(DK_fit)["family"]
+DK_var <- vcov(DK_fit)["family", "family"]
+
+# US: Correlation coefficient
+US_est <- cor(US)[1, 2]
+US_var <- (1 - US_est^2)^2 / (nrow(US) - 1)
+
+# Name the estimates so hypotheses will be the same
+names(NL_est) <- names(DK_est) <- names(US_est) <- "parameter"
+```
+
+Then, we use `bain.default()` to evaluate the central hypothesis on each parameter estimate. 
+The `pbf()` function can be called on a list of the resulting bain objects.
+
+```{r eval = TRUE, echo = TRUE, results = resultaction}
+# Use bain.default() to obtain BF for the central hypothesis 
+NL_bain <- bain(x = NL_est, 
+                Sigma = matrix(NL_var, 1, 1),
+                n = nrow(NL),
+                hypothesis = "parameter > 0",
+                joint_parameters = 1)
+DK_bain <- bain(x = DK_est,
+                Sigma = matrix(DK_var, 1, 1),
+                n = nrow(DK),
+                hypothesis = "parameter > 0",
+                joint_parameters = 1)
+US_bain <- bain(x = US_est,
+                Sigma = matrix(US_var, 1, 1),
+                n = nrow(US),
+                hypothesis = "parameter > 0",
+                joint_parameters = 1)
+
+# Aggregate evidence using pbf()
+pbf(list(US_bain, DK_bain, NL_bain))
+```
+
+The results suggest substantial evidence for the hypothesis that there is a positive association between family morality and political conservatism.
+Although each study used a different method to assess this hypothesis,
+their evidence can be synthesized using `pbf()`.
+
+# Conclusion
+
+<!-- Researchers need to choose a method that best suits their research question, -->
+ <!-- the study highlights the importance of carefully considering the research question when selecting a method for meta-analysis, and the potential trade-offs that may exist between sensitivity and specificity when using different methods. -->
+
+In conclusion, this study evaluated the performance of the product Bayes factor as a method for evidence synthesis,
+and compared it against other commonly used evidence synthesis methods under different simulation conditions.
+Compared to the other methods,
+PBF had the highest overall accuracy.
+This was primarily due to its greater sensitivity.
+However, PBF had lower specificity than all other algorithms, suggesting a trade-off between sensitivity and specificity.
+The other algorithms showed ceiling effects in specificity, limiting their sensitivity.
+The performance of the PBF was most strongly affected by sample size,
+followed by the number of samples and reliability.
+We introduced a user-friendly implementation of the PBF in the `bain` R-package,
+and demonstrated its use with various analysis techniques in R,
+as well as with sufficient statistics that are already routinely coded for meta-analysis (i.e., effect sizes and their sampling variance).
+This means that researchers can now use the PBF to aggregate evidence in situations where classic meta-analytic methods are less suitable.
+For example, when one informative hypothesis has been evaluated in several replication studies,
+but these replication studies are quite heterogeneous because they sample from different populations and use different methods or analysis techniques.
+Especially when the number of replication studies is too small to adequately account for these sources of between-study heterogeneity,
+the PBF may be a useful method to aggregate evidence for the common informative hypothesis.
+Researchers should be aware that the PBF trades off increased sensitivity for decreased specificity,
+and that it addresses a different research question than other research synthesis methods.
+This highlights the importance of careful interpretation of the results,
+and consideration of the research question when selecting an aggregation method.
+In sum,
+our results suggest that PBF is a useful evidence synthesis method,
+which is now broadly accessible due to its inclusion in the `bain` R-package.
+
+\newpage
+# Highlights
+
+* Many research synthesis methods make strong assumptions about between-studies heterogeneity that are violated when studies are conceptually replicated.
+* The product Bayes factor (PBF) aggregates evidence for an informative hypothesis across conceptual replication studies without imposing assumptions about heterogeneity.
+* This paper introduces a user-friendly way to compute the PBF for a variety of widely used models via the `pbf()` function in the `bain` R-package.
+* A simulation study shows favorable performance for PBF relative to random effects meta-analysis, individual participant data meta-analysis, and vote counting.
+* Three tutorial examples illustrate distinct use cases of the method.
+
+# Data Availability Statement
+
+All analysis code is available in a version-controlled repository at <https://github.com/cjvanlissa/bayesynth>.
+
+# Conflict of Interest Statement
+
+The authors declare no conflict of interest.
+
+\newpage
+
+# References
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id="refs" custom-style="Bibliography"></div>
+\endgroup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
