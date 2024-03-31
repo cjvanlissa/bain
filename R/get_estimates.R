@@ -59,7 +59,6 @@ rename_estimate <- function(estimate){
   if(is.null(names_est)){
     stop("The 'estimates' supplied to bain() were unnamed. This is not allowed, because estimates are referred to by name in the 'hypothesis' argument. Please name your estimates.")
   }
-  browser()
   if(length(new_names) < 3){
     new_names <- gsub("mean of the differences", "difference", new_names)
     new_names <- gsub("mean of ", "", new_names)
