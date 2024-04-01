@@ -722,8 +722,13 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
 # an extra row and column to the bain output object.
 
   if (Bainres$gocomplement == TRUE){
-    cl <- call("PMPcomplement", results = Bainres)
-    Bainres <- eval(cl)
+    Bainres <- tryCatch({
+      Argslist <- list(results = Bainres)
+      do.call(PMPcomplement, Argslist)
+    },
+    error = function(e){
+      return(Bainres)
+    })
   }
   class(Bainres) <- "bain"
   Bainres
