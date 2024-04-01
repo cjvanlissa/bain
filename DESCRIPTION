@@ -1,7 +1,7 @@
 Package: bain
 Type: Package
 Title: Bayes Factors for Informative Hypotheses
-Version: 0.2.11.2
+Version: 0.2.11.3
 Authors@R: c(
     person(c("Xin"), "Gu", role = c("aut"), email = "guxin57@hotmail.com"),
     person(c("Herbert"), "Hoijtink", role = c("aut"), email = "h.hoijtink@uu.nl"),
