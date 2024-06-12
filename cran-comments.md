@@ -1,7 +1,7 @@
-# bain 0.2.10
+# bain 0.2.11
 
-* Update formula interface of t_test() to ensure compliance with PR#14359 to
-  stats::t.test()
+* Add dataset kuiper2013
+* Finalize pbf() function for PBF paper
 
 ## Test environments
 

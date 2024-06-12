@@ -25,3 +25,4 @@ tests_x64
 ^docs$
 ^pkgdown$
 ^CRAN-SUBMISSION$
+tutorial/

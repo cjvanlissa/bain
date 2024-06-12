@@ -43,7 +43,7 @@
 #'
 #' Hoijtink, H., Mulder, J., van Lissa, C., & Gu, X. (2019). A tutorial on
 #' testing hypotheses using the Bayes factor. *Psychological methods, 24*(5),
-#' 539. \doi{10.31234/osf.io/v3shc}
+#' 539. \doi{10.1037/met0000201}
 #'
 #' For applications in structural equation modeling, see:
 #'
