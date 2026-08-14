@@ -19,7 +19,7 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">bain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.12</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -62,7 +62,7 @@
 <li>
   <a href="https://github.com/cjvanlissa/bain/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -73,7 +73,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="contents col-md-9">
@@ -82,7 +82,7 @@
 <div class="section level1">
 <div class="page-header"><h1 id="bain">bain<a class="anchor" aria-label="anchor" href="#bain"></a>
 </h1></div>
-<p>Bain stands for Bayesian informative hypothesis evaluation. It computes Bayes factors for informative hypotheses in a wide variety of statistical models. Just run your analysis as usual, and then apply bain to the output. A tutorial is available at <a href="https://psyarxiv.com/v3shc/" class="external-link">DOI:10.31234/osf.io/v3shc</a>. A sequel with the focus on Structural Equation Models is available at <a href="https://doi.org/10.1080/10705511.2020.1745644" class="external-link uri">https://doi.org/10.1080/10705511.2020.1745644</a>.</p>
+<p>Bain stands for Bayesian informative hypothesis evaluation. It computes Bayes factors for informative hypotheses in a wide variety of statistical models. Just run your analysis as usual, and then apply bain to the output. A tutorial is available at <a href="https://doi.org/10.1037/met0000201" class="external-link">DOI:10.1037/met0000201</a>. A sequel with the focus on Structural Equation Models is available at <a href="https://doi.org/10.1080/10705511.2020.1745644" class="external-link uri">https://doi.org/10.1080/10705511.2020.1745644</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -92,7 +92,7 @@
 <p>You can also install the latest development version of <code>bain</code> from GitHub. This requires a working toolchain, to compile the Fortran source code. <a href="https://cjvanlissa.github.io/worcs/articles/setup.html" class="external-link">Step 3 in this tutorial</a> explains how to set up the toolchain. Then, run:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"cjvanlissa/bain"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install-deprecated.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"cjvanlissa/bain"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
@@ -103,22 +103,21 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://informative-hypotheses.sites.uu.nl/software/bain/" class="external-link">bain</a></span><span class="op">)</span></span>
 <span><span class="co"># dplyr to access the %&gt;% operator</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'dplyr' was built under R version 4.0.5</span></span>
 <span><span class="co"># Iris as example data</span></span>
-<span><span class="va">iris</span> <span class="op">%&gt;%</span></span>
+<span><span class="va">iris</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co"># Select outcome and predictor variables</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Species</span><span class="op">)</span> <span class="op">%&gt;%</span>      </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Species</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>      </span>
 <span>  <span class="co"># Add -1 to the formula to estimate group means, as in ANOVA</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="op">-</span><span class="fl">1</span> <span class="op">+</span> <span class="va">Species</span>, <span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="op">-</span><span class="fl">1</span> <span class="op">+</span> <span class="va">Species</span>, <span class="va">.</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="reference/bain.html">bain</a></span><span class="op">(</span><span class="st">"Speciessetosa &lt; Speciesversicolor = Speciesvirginica;</span></span>
 <span><span class="st">       Speciessetosa &lt; Speciesversicolor &lt; Speciesvirginica"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Bayesian informative hypothesis testing for an object of class lm (ANOVA):</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    Fit   Com   BF.u  BF.c             PMPa  PMPb  PMPc </span></span>
 <span><span class="co">#&gt; H1 0.000 0.224 0.000 0.000            0.000 0.000 0.000</span></span>
-<span><span class="co">#&gt; H2 1.000 0.171 5.863 118577263118.841 1.000 0.854 1.000</span></span>
-<span><span class="co">#&gt; Hu                                          0.146      </span></span>
-<span><span class="co">#&gt; Hc 0.000 0.829 0.000                              0.000</span></span>
+<span><span class="co">#&gt; H2 1.000 0.166 6.027 502986932347.232 1.000 0.858 1.000</span></span>
+<span><span class="co">#&gt; Hu                                          0.142      </span></span>
+<span><span class="co">#&gt; Hc 0.000 0.834 0.000                              0.000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Hypotheses:</span></span>
 <span><span class="co">#&gt;   H1: Speciessetosa&lt;Speciesversicolor=Speciesvirginica</span></span>
@@ -137,7 +136,7 @@
 </h2>
 <p>You can cite the R-package with the following citation:</p>
 <blockquote>
-<p>Gu, X., Hoijtink, H., Mulder, J., &amp; van Lissa, C. (2021). bain: Bayes factors for informative hypotheses. (Version 0.2.8) [R package]. <a href="https://CRAN.R-project.org/package=bain" class="external-link uri">https://CRAN.R-project.org/package=bain</a></p>
+<p>Gu, X., Hoijtink, H., Mulder, J., &amp; van Lissa, C. (2019). bain: Bayes factors for informative hypotheses. (Version 0.2.3) [R package]. <a href="https://CRAN.R-project.org/package=bain" class="external-link uri">https://CRAN.R-project.org/package=bain</a></p>
 </blockquote>
 </div>
 <div class="section level2">
@@ -162,7 +161,7 @@
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=bain" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/cjvanlissa/bain/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/cjvanlissa/bain/" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/cjvanlissa/bain/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -191,10 +190,10 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Xin Gu <br><small class="roles"> Author </small>  </li>
-<li>Herbert Hoijtink <br><small class="roles"> Author </small>  </li>
-<li>Joris Mulder <br><small class="roles"> Author </small>  </li>
-<li>Caspar J van Lissa <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Xin Gu <br><small class="roles"> Author </small>   </li>
+<li>Herbert Hoijtink <br><small class="roles"> Author </small>   </li>
+<li>Joris Mulder <br><small class="roles"> Author </small>   </li>
+<li>Caspar J van Lissa <br><small class="roles"> Author, maintainer </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -204,7 +203,7 @@
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="lifecycle"></a></li>
 <li><a href="https://cran.r-project.org/package=bain" class="external-link"><img src="https://www.r-pkg.org/badges/version/bain" alt="CRAN status"></a></li>
-<li><a href="https://github.com/cjvanlissa/bain/actions" class="external-link"><img src="https://github.com/cjvanlissa/bain/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/cjvanlissa/bain/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/cjvanlissa/bain/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://cran.r-project.org/package=bain" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/bain"></a></li>
 <li><a href="https://github.com/cjvanlissa/bain/actions" class="external-link"><img src="https://github.com/cjvanlissa/bain/workflows/test-coverage/badge.svg" alt="test-coverage"></a></li>
 <li><a href="https://www.contributor-covenant.org/version/2/0/code_of_conduct.html" class="external-link"><img src="https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg" alt="Contributor Covenant"></a></li>
@@ -223,16 +222,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>
