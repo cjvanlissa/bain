@@ -61,7 +61,11 @@ test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,2))})
 
 varnames <- c("a", "b", "c")
 hyp1 <- "20<-21*a<4.5; a>b> c; 4a > 7; 4 + 7 > a - 4* b  + 8"
+test_that("implicit premult throws error", {
+  expect_error(bain:::parse_hypothesis(varnames, hyp1))})
+hyp1 <- "20<-21*a<4.5; a>b> c; 4*a > 7; 4 + 7 > a - 4* b  + 8"
 x<-bain:::parse_hypothesis(varnames, hyp1)
+
 test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(-21,  0,  0 ,20.0,
                                                                              21,  0,  0 ,-4.5,
                                                                              1, -1,  0,  0.0,
@@ -119,6 +123,8 @@ test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0, 3, 1, 2, 1, 1
 
 varnames <- c("a","b","c","d","e","f")
 hyp1 <- "2a -3b < 4f-c"
+test_that("implicit premult throws error", expect_error(bain:::parse_hypothesis(varnames, hyp1)))
+hyp1 <- "2*a -3*b < 4*f-c"
 x<-bain:::parse_hypothesis(varnames, hyp1)
 test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(-2, 3, -1, 0, 0, 4, 0))})
 test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,1))})
@@ -186,7 +192,7 @@ test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(-1,
 test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,3))})
 
 varnames <- c("a","b","c","d","e","f")
-hyp1 <- "2a -3b > 4f-c"
+hyp1 <- "2*a -3*b > 4*f-c"
 x<-bain:::parse_hypothesis(varnames, hyp1)
 test_that("parser", {expect_equal(as.vector(t(do.call(rbind, x$hyp_mat))), c(2, -3, 1, 0, 0, -4, 0))})
 test_that("parser", {expect_equal(as.vector(x$n_constraints), c(0,1))})

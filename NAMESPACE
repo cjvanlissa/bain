@@ -29,27 +29,33 @@ export(get_estimates)
 export(pbf)
 export(seBeta)
 export(t_test)
-importFrom(lavaan,lavInspect)
-importFrom(lavaan,parTable)
-importFrom(lavaan,parametertable)
-importFrom(lavaan,standardizedsolution)
-importFrom(stats,as.formula)
-importFrom(stats,coef)
-importFrom(stats,complete.cases)
-importFrom(stats,cov)
-importFrom(stats,lm)
-importFrom(stats,model.frame)
-importFrom(stats,model.matrix)
-importFrom(stats,pt)
-importFrom(stats,qnorm)
-importFrom(stats,qt)
-importFrom(stats,sd)
-importFrom(stats,setNames)
-importFrom(stats,summary.lm)
-importFrom(stats,terms)
-importFrom(stats,var)
-importFrom(stats,vcov)
-importFrom(utils,combn)
-importFrom(utils,getFromNamespace)
-importFrom(utils,tail)
+importFrom(lavaan,
+  lavInspect,
+  parTable,
+  parametertable,
+  standardizedsolution
+)
+importFrom(stats,
+  as.formula,
+  coef,
+  complete.cases,
+  cov,
+  lm,
+  model.frame,
+  model.matrix,
+  pt,
+  qnorm,
+  qt,
+  sd,
+  setNames,
+  summary.lm,
+  terms,
+  var,
+  vcov
+)
+importFrom(utils,
+  combn,
+  getFromNamespace,
+  tail
+)
 useDynLib(bain, .registration = TRUE)

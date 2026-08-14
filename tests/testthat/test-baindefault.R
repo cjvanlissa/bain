@@ -390,7 +390,10 @@ names(estimate) <- c("a", "b", "c")
 sampN <- 100
 covariance <- matrix(c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
 set.seed(199)
-y<-bain(estimate,"3a + .5 + .5 > 2b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
+test_that("implicit premultiplication throws error", {
+  expect_error(bain(estimate,"3a + .5 + .5 > 2b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3))
+})
+y<-bain(estimate,"3*a + .5 + .5 > 2*b -1 + 1> c -1.5 -.5",n=sampN,Sigma=covariance,group_parameters=0,joint_parameters = 3)
 a <- rnorm(100000,0,1)
 b <- rnorm(100000,1,1)
 c <- rnorm(100000,2,1)

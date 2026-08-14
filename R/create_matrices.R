@@ -1,14 +1,21 @@
 parse_hypothesis <- function(varnames, hyp){
-# Check hypothesis syntax -------------------------------------------------
 
+# Check hypothesis syntax -------------------------------------------------
+  # Add multiplier to variable names with numeric prefix
+  #hyp <- gsub("(?<=\\d)(?=[A-Za-z]|\\.(?!\\d))", "*", hyp, perl = TRUE)
+  #hyp <- gsub("(?<![A-Za-z0-9_.~|:])(\\d+)(?=[A-Za-z]|\\.(?!\\d))", "\\1*", hyp, perl = TRUE)
   if(grepl("\\([^,]+?\\)", hyp)){
     stop("Bain hypothesis contains a syntax error: Parentheses did not contain a comma to separate named parameters.", call. = FALSE)
   }
+  if(grepl("(?:(?<=^)|(?<=\\s|[,;+\\-*&,()<>]|=(?!~)))\\d[A-Za-z\\.](?=$|\\s|[,;+\\-*&,()<>]|=(?!~))", hyp, perl = TRUE)){
+    stop("Bain hypothesis contains a syntax error: It is no longer allowed to implicitly pre-multiply parameters, as in `5a>b`. Pre-multiplication must be explicit, as in `5*a>b`.", call. = FALSE)
+  }
+
   names_est <- varnames
   # Clean varnames and hyp, to turn parameter names into legal object names
   # Might be better to do this elsewhere
-  hyp <- rename_function(hyp)
-  varnames <- rename_function(varnames)
+  #hyp <- rename_function(hyp)
+  #varnames <- rename_function(varnames)
 
   # Check if varnames occur in hyp.
   hyp_params <- params_in_hyp(hyp)
@@ -20,7 +27,7 @@ parse_hypothesis <- function(varnames, hyp){
     stop("Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' did not match any parameters in 'x': ",
          paste(reverse_rename_function(hyp_params[is.na(match_names)]), collapse = ", "),
          "\n  The parameters in object 'x' are named: ",
-         paste(reverse_rename_function(varnames), collapse = ", "))
+         paste(varnames, collapse = ", "))
   }
   if(any(match_names == 0)){
     stop("Some of the parameters referred to in the 'hypothesis' matched multiple parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' matched multiple parameters in 'x': ",
@@ -29,17 +36,30 @@ parse_hypothesis <- function(varnames, hyp){
          paste(varnames, collapse = ", "))
   }
   # Substitute partial names in hypothesis with full names
-  for(par in 1:length(hyp_params)){
-    hyp <- gsub(hyp_params[par], varnames[match_names[par]], hyp)
+  if(!all(hyp_params %in% varnames)){
+    for(par in 1:length(hyp_params)){
+      hyp <- gsub(escape_wholeword(hyp_params[par]), varnames[match_names[par]], hyp, perl = TRUE)
+    }
+    # Substitute parameter names with full names
+    hyp_params <- varnames[match_names]
   }
-  # Substitute parameter names with full names
-  hyp_params <- varnames[match_names]
 
+  # Replace names here
+  varnames_orig <- varnames
+  hyp_orig <- hyp
+  hyp_params_orig <- hyp_params
+  for(i in seq_along(varnames_orig)){
+    newnam <- paste0("xxxxxx", i)
+    varnames[i] <- newnam
+    hyp <- gsub(escape_wholeword(varnames_orig[i]), newnam, hyp, perl = TRUE)
+    hyp_params[which(hyp_params == varnames_orig[i])] <- newnam
+  }
+  names(varnames) <- varnames_orig
   # Start parsing hypothesis here
 
   legal_varnames <- sapply(hyp_params, grepl, pattern = "^[a-zA-Z\\.][a-zA-Z0-9\\._]{0,}$")
   if(!all(legal_varnames)){
-    stop("Could not parse the names of the 'estimates' supplied to parse_hypothesis(). Estimate names must start with a letter or period (.), and can be a combination of letters, digits, period and underscore (_).\nThe estimates violating these rules were originally named: ", paste("'", names_est[!legal_varnames], "'", sep = "", collapse = ", "), ".\nAfter parsing, these parameters are named: ", paste("'", hyp_params[!legal_varnames], "'", sep = "", collapse = ", "), call. = FALSE)
+    stop("Could not parse the names of the 'estimates' supplied to parse_hypothesis(). Estimate names must start with a letter or period (.), and can be a combination of letters, digits, period and underscore (_).\nThe estimates violating these rules were originally named: ", paste("'", names_est[!legal_varnames], "'", sep = "", collapse = ", "), ".", call. = FALSE)
   }
 
   # Currently disabled: Is it a problem if there are parameters that don't occur in the hypothesis?
@@ -88,9 +108,17 @@ parse_hypothesis <- function(varnames, hyp){
       IRr <- t(sapply(hyp_list[[i]][grep("[<>]", hyp_list[[i]])],
                       constraint_to_row, varnames = varnames))
     }
-    rbind(ERr, IRr)
+    out <- rbind(ERr, IRr)
+    colnames(out) <- reverse_rename_function(colnames(out))
+    for(i in seq_along(varnames)){
+      rownames(out) <- reverse_rename_function(gsub(escape_wholeword(varnames[i]), names(varnames)[i], rownames(out), perl = TRUE))
+    }
+    out
   })
-
+  for(i in seq_along(varnames)){
+    original_hypothesis <- gsub(escape_wholeword(varnames[i]), names(varnames)[i], original_hypothesis, perl = TRUE)
+  }
+  original_hypothesis <- reverse_rename_function(original_hypothesis)
   list(hyp_mat = hyp_mat, n_constraints = n_constraints, n_ec = nec_vec, original_hypothesis = original_hypothesis)
 }
 
@@ -351,8 +379,41 @@ constraint_to_row <- function(varnames, hyp){
   }), equal_to)
 }
 
+# params_in_hyp <- function(hyp){
+#   hyp <- rename_function(hyp)
+#   out <- unique(regmatches(
+#     hyp,
+#     gregexpr(
+#       "[A-Za-z][A-Za-z0-9_\\.]*(?:\\[[^]]+\\])?",
+#       hyp,
+#       perl = TRUE
+#     )
+#   )[[1]])
+#   reverse_rename_function(out)
+# }
 params_in_hyp <- function(hyp){
-  params_in_hyp <- trimws(unique(strsplit(hyp, split = "[ =<>,\\(\\);&\\*+-]+", perl = TRUE)[[1]]))
-  params_in_hyp <- params_in_hyp[!sapply(params_in_hyp, grepl, pattern = "^[0-9]*\\.?[0-9]+$")]
-  params_in_hyp[grepl("^[a-zA-Z]", params_in_hyp)]
+  parts <- regmatches(
+    hyp,
+    gregexpr(
+      "\\(Intercept\\)|[A-Za-z][A-Za-z0-9_.:]*(?:\\[[0-9]+(?:,[0-9]+)*\\])?(?:(?:\\||=~|~~|~)[A-Za-z0-9_.:]+(?:\\[[0-9]+(?:,[0-9]+)*\\])?)*",
+      hyp,
+      perl = TRUE
+    )
+  )[[1]]
+  unique(parts[grepl("^[A-Za-z\\.]", parts)])
+}
+
+escape_regex <- function(x) {
+  gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", x)
+}
+# escape_wholeword <- function(x){
+#   paste0("(?<![A-Za-z0-9_.])", escape_regex(x), "(?![A-Za-z0-9_.])")
+# }
+
+escape_wholeword <- function(x){
+  paste0(
+    "(?:(?<=^)|(?<=\\s|[,;+\\-*&,()<>]|=(?!~)))",
+    escape_regex(x),
+    "(?=$|\\s|[,;+\\-*&,()<>]|=(?!~))"
+  )
 }

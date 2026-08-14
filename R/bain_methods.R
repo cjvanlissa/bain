@@ -89,8 +89,10 @@
 #' @rdname bain
 #' @export
 #' @useDynLib bain, .registration = TRUE
-#' @importFrom stats as.formula coef complete.cases cov lm model.frame
-#' model.matrix pt qt sd setNames summary.lm var vcov
+#' @importFrom stats as.formula coef complete.cases cov
+#' @importFrom stats lm model.frame
+#' @importFrom stats model.matrix pt qt sd setNames
+#' @importFrom stats var vcov summary.lm
 #' @md
 bain <- function(x, hypothesis, fraction = 1, ...) {
   UseMethod("bain", x)
@@ -126,7 +128,6 @@ bain.lm <-
            ...,
            standardize = FALSE
            ) {
-
     cl <- match.call()
     Args <- as.list(cl[-1])
 
@@ -164,7 +165,7 @@ bain.lm <-
              n <- table(x$model[, 2])
              anovafm <- lm(x$model[, 1] ~ -1 + x$model[, 2])
              Args$x <- anovafm$coefficients
-             names(Args$x) <- paste0(names(x$model)[2], levels(x$model[, 2]))
+             names(Args$x) <- paste0(rename_function(names(x$model)[2]), levels(x$model[, 2]))
              Args$Sigma <- lapply((1/n * summary.lm(anovafm)$sigma**2), matrix)
              Args$group_parameters <- 1
              Args$joint_parameters <- 0
@@ -201,22 +202,24 @@ bain.lm <-
              predictor <- model.matrix(as.formula(x$call[2]), x$model)
 
              hyp_params <- params_in_hyp(hypothesis)
-
+             if(any(grepl("(Intercept)", names(x$coefficients)))){
+               names(x$coefficients)[which(names(x$coefficients) == "(Intercept)")] <- "Intercept"
+             }
              # Partial matching implemented here
-             coef_in_hyp <- charmatch(rename_function(hyp_params),
-                                   rename_function(names(x$coefficients)))
+             coef_in_hyp <- charmatch(hyp_params,
+                                   names(x$coefficients))
 
              if(anyNA(coef_in_hyp)){
                stop("Some of the parameters referred to in the 'hypothesis' do not correspond to parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' did not match any parameters in 'x': ",
-                    paste(reverse_rename_function(hyp_params[is.na(coef_in_hyp)]), collapse = ", "),
+                    paste(hyp_params[is.na(coef_in_hyp)], collapse = ", "),
                     "\n  The parameters in object 'x' are named: ",
-                    paste(reverse_rename_function(names(x$coefficients)), collapse = ", "))
+                    paste(names(x$coefficients), collapse = ", "))
              }
              if(any(coef_in_hyp == 0)){
                stop("Some of the parameters referred to in the 'hypothesis' matched multiple parameter names of object 'x'.\n  The following parameter names in the 'hypothesis' matched multiple parameters in 'x': ",
-                    paste(reverse_rename_function(hyp_params[coef_in_hyp == 0]), collapse = ", "),
+                    paste(hyp_params[coef_in_hyp == 0], collapse = ", "),
                     "\n  The parameters in object 'x' are named: ",
-                    paste(reverse_rename_function(names(x$coefficients)), collapse = ", "))
+                    paste(names(x$coefficients), collapse = ", "))
              }
 
              if (!standardize) {
@@ -244,7 +247,6 @@ bain.lm <-
              Args$n <- nrow(x$model)
            }
            )
-
     Bain_res <- do.call(bain, Args)
     Bain_res$call <- cl
     Bain_res$model <- x
@@ -285,7 +287,6 @@ bain.lavaan <- function(x, hypothesis, fraction = 1, ..., standardize = FALSE) {
 
   Args[c("x", "Sigma", "n", "group_parameters", "joint_parameters")] <- lav_get_estimates(x, standardize)
   Args$hypothesis <-  hypothesis
-  #browser()
   Bain_res <- do.call(bain, Args)
   Bain_res$call <- cl
   Bain_res$model <- x
@@ -703,7 +704,7 @@ evaluated, OR, one of your hypotheses is impossible. See the vignette
     posterior = as.matrix(thetacovpost),
     call = cl,
     model = x,
-    hypotheses = gsub("___X___", ":", parsed_hyp$original_hypothesis),
+    hypotheses = parsed_hyp$original_hypothesis,
     independent_restrictions = rank_hyp,
     estimates = x,
     n = as.vector(n),

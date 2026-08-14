@@ -3,12 +3,12 @@ rename_function <- function(text){
   fulltext <- paste(text, collapse = "")
   new_names <- names_est <- text
   #if(grepl("[\\(\\)]", fulltext)){
-  #  text <- gsub("\\(", "___O___", text)
-  #  text <- gsub("\\)", "___C___", text)
+  #  text <- gsub("\\(", "xxxOxxx", text)
+  #  text <- gsub("\\)", "xxxCxxx", text)
   #}
   text[text == "(Intercept)"] <- "Intercept"
   if(grepl(":", fulltext)){
-    text <- gsub(":", "___X___", text)
+    text <- gsub(":", "xxxXxxx", text)
   }
 
   if(grepl("mean of ", fulltext)){
@@ -29,24 +29,24 @@ rename_function <- function(text){
     })
   }
 
-  text <- gsub(":", "___text___", text)
-  text <- gsub("\\|", "___thres___", text)
-  text <- gsub("=~", "___by___", text)
-  text <- gsub("~~", "___w___", text)
-  text <- gsub("~1", "___int___", text)
-  text <- gsub("~", "___on___", text)
+  text <- gsub(":", "xxxtextxxx", text)
+  text <- gsub("\\|", "xxxthresxxx", text)
+  text <- gsub("=~", "xxxbyxxx", text)
+  text <- gsub("~~", "xxxwxxx", text)
+  text <- gsub("~1", "xxxintxxx", text)
+  text <- gsub("~", "xxxonxxx", text)
 
   text
 }
 
 
 reverse_rename_function <- function(x){
-  x <- gsub("___X___", ":", x)
-  x <- gsub("___thres___", "\\|", x)
-  x <- gsub("___by___", "=~", x)
-  x <- gsub("___w___", "~~", x)
-  x <- gsub("___int___", "~1", x)
-  x <- gsub("___on___", "~", x)
+  x <- gsub("xxxXxxx", ":", x)
+  x <- gsub("xxxthresxxx", "\\|", x)
+  x <- gsub("xxxbyxxx", "=~", x)
+  x <- gsub("xxxwxxx", "~~", x)
+  x <- gsub("xxxintxxx", "~1", x)
+  x <- gsub("xxxonxxx", "~", x)
   x
 }
 
@@ -78,7 +78,7 @@ rename_estimate <- function(estimate){
   }
 
   # Any interaction terms: replace : with _X_
-  new_names <- gsub(":", "___X___", new_names)
+  new_names <- gsub(":", "xxxXxxx", new_names)
 
   legal_varnames <- sapply(new_names, grepl, pattern = "^[a-zA-Z\\.][a-zA-Z0-9\\._]{0,}$")
   if(!all(legal_varnames)){

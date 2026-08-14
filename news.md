@@ -1,3 +1,11 @@
+# bain 0.2.12
+
+* Improve handling of parameter names in hypotheses
+* Require explicit use of multiplication operator `*`
+  when using pre-multipliers in hypotheses. E.g.,
+  "2a > b" is now disallowed, and should be replaced with
+  "2*a > b".
+
 # bain 0.2.11
 
 * Add dataset kuiper2013
